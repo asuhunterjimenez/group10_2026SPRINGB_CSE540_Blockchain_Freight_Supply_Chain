@@ -20,9 +20,9 @@ The project tracks product creation for known clients or producers,freight shipm
 
 | Role          | Stakeholder Mapping              | Description                                                                 | Example Username | Example Password      |
 |---------------|---------------------------------|-----------------------------------------------------------------------------|-----------------|----------------------|
-| **Producer**  | Producer / Manufacturer         | Creates and registers shipments/products on blockchain, initiating the provenance record | producer1       | your_password_here   |
+| **Producer**  | Producer / Manufacturer         | Creates and registers shipments/products on blockchain,request quotes, initiating the provenance record | producer1       | your_password_here   |
 | **Admin**     | Regulator / System Authority    | Full system access, manages users, roles, permissions, and audits blockchain events | admin_user      | your_password_here   |
-| **Client**    | Retailer / Consumer             | Views shipments, confirms bookings, tracks delivery, verifies product authenticity | client_user     | your_password_here   |
+| **Client**    | Retailer / Consumer             | Views shipments,request quotes, confirms bookings, tracks delivery, verifies product authenticity | client_user     | your_password_here   |
 | **Finance**   | Financial Authority / Support   | Handles payments, monitors transactions, and generates financial reports    | finance_user    | your_password_here   |
 | **Sales**     | Distributor / Supplier          | Manages bookings, quotations, and coordinates shipment operations           | sales1          | your_password_here   |
 | **Warehouse** | Storage / Logistics Handler     | Updates shipment status (received, stored, dispatched)                     | warehouse1      | your_password_here   |
@@ -192,9 +192,9 @@ Instead of using http://127.0.0.1:8000/, use the Ngrok-generated public link and
 
 ## Usage
 
-- **Producer / Manufacturer** can create and register new shipments/products on the blockchain, initiating the provenance record. Each creation triggers a `ProductCreated` blockchain event.  
+- **Producer / Manufacturer** can create and register new shipments/products on the blockchain, request quotes, initiating the provenance record. Each creation triggers a `ProductCreated` blockchain event.  
 - **Admin** (Regulator / System Authority) can manage users, roles, system settings, and audit all blockchain records for compliance.  
-- **Clients / Consumers** can view their shipments, confirm bookings, track delivery status, and verify product authenticity.  
+- **Clients / Consumers** can view their shipments, request quotes, confirm bookings, track delivery status, and verify product authenticity.  
 - **Finance** team can handle payments, monitor transactions, generate financial reports, and verify payments on-chain.  
 - **Sales / Distributor** team can create and manage bookings, quotations, and coordinate shipment operations.  
 - **Warehouse / Logistics Handler** can update shipment status during storage and delivery (e.g., received, stored, dispatched), triggering `StatusUpdated` events on the blockchain.  
