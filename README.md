@@ -116,7 +116,7 @@ This section describes the main folders and files in the project and their purpo
      
 2. **Clone the repository**
    ```bash
-   git clone https://github.com/kasibanteg/Blockchain-Freight-SupplyChain.git
+   git clone https://github.com/asuhunterjimenez/group10_2026SPRINGB_CSE540_Blockchain_Freight_Supply_Chain.git
 
 3. **Install python Python 3.11+**
 
