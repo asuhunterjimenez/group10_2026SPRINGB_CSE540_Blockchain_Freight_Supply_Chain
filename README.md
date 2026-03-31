@@ -161,14 +161,14 @@ This section describes the main folders and files in the project and their purpo
       docker-compose down
       ```
     
-9.  **Install**
+7.  **Install**
      - Web3.py via virtual Python environment. so as to open up communication between our appliactaion and blockchain service(Ganache)
      - Vscode: To edit and write your python codes
      - Remix IDE : is a browser-based development environment used to write, edit, compile, run, and deploy smart contracts written in Solidity. It provides built-in tools for testing, debugging, and interacting with contracts, making it especially useful for beginners and rapid prototyping. Remix supports deployment to local blockchains, test networks, and the Ethereum mainnet, and integrates easily with wallets like MetaMask for transaction signing
      - MetaMask Wallet : is a popular crypto wallet and browser extension that allows users to store, send, and receive cryptocurrencies like Ethereum. It also acts as a gateway to decentralized applications, enabling secure interaction with blockchain networks directly from a web browser or mobile device.
      - Ganache : is a local blockchain simulator used for testing smart contracts.
   
- 10. **Deploy smart contracts via Remix connected to Ganache or Polygon Amoy Testnet**
+ 8. **Deploy smart contracts via Remix connected to Ganache or Polygon Amoy Testnet**
 
 ## Usage
 
@@ -196,11 +196,11 @@ Our project uses three smart contracts on Ethereum to handle payments, shipments
 
   - Manages all payment transactions for freight bookings.
   - Tracks each payment with details such as sessionId, transactionId, amount, currency, status (success/failed), payer, and associated shipmentId.
-  - Supports payments via debit/credit cards and optionally ETH through MetaMask integration.
-  - Emits events like PaymentCreated, PaymentProcessed, and EmailMarkedSent to notify the system when a payment occurs, is confirmed, or a confirmation email is sent.
+  - Supports payments via ETH through **MetaMask integration**.
+  - Emits events like **PaymentCreated, PaymentProcessed, and EmailMarkedSent** to notify the system when a payment occurs, is confirmed, or a confirmation email is sent.
   - Ensures **traceability and auditability** by recording all payment events on-chain.
-  - Only the contract owner can create and update payments, enforcing controlled and secure management.
-  - Provides functions to query payment history for a shipment or user, supporting transparency for stakeholders.<br><br>
+  - Only the contract owner can create and update payments, enforcing controlled and secure management through Django Interface.
+  - Provides functions to query payment history for a shipment or blockchain transaction fees, supporting transparency for stakeholders.<br><br>
   <img width="891" height="465" alt="image" src="https://github.com/user-attachments/assets/82416b32-1095-416c-8647-db29af68acb9" /><br>
   *Figure 5: Flow of Payment.sol showing payment creation, status updates, and email notification.*
 
