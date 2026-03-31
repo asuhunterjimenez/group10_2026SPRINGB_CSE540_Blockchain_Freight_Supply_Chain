@@ -11,10 +11,10 @@
 ## Project Overview
 This project is designed and developed by group10 with the aim of implementing a hybrid blockchain Django solution for freight supply chain management. It enables secure product creation for known clients or producers,shipment tracking, booking confirmations, and payments using Ethereum smart contracts, while providing a user friendly interface with Django and Stripe integration. Key features include immutable payment records, shipment provenance, and automated reporting for admins and users.<br>
 The project tracks product creation for known clients or producers,freight shipments, booking confirmations, and payments using a hybrid architecture:
-- **Django backend** for authentication, quotes, bookings, and system configuration (PostgreSQL DB)
-- **Ethereum blockchain** for immutable storage of products,payments, shipment records, and status reports
-- **Stripe** for payments (credit/debit)
-- **MetaMask + Remix** for Ethereum testnet interactions (optional ETH payments)
+- **Django backend** for authentication, quotes, bookings, and system configuration (PostgreSQL database)
+- **Local Ethereum blockchain (Ganache)** for immutable storage of products, payments, shipment records, and status updates
+- **MetaMask** for ETH-based payments and transaction signing or pay for gas
+- **Remix + MetaMask** for smart contract deployment and interaction on Ethereum test networks
   
 ### 🔑 CRM Access Levels & Stakeholder Mapping – Group10 Shippers Inc
 
