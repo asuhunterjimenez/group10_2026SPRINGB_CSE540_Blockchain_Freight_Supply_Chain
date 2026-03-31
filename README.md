@@ -221,7 +221,7 @@ Our project uses three smart contracts on Ethereum to handle payments, shipments
   - Maintains an on-chain array of all products for transparent, immutable, and tamper-proof record keeping.
   - Provides read functions like `getProductCount` and `getProduct` to efficiently retrieve product data.
   - Emits `ProductCreated` events whenever a new product is added, enabling seamless integration with backend systems (e.g., Django) and real-time tracking.
-    <br><br>
+    
 ### MetaMask → Ganache Shipment Payment & Provenance Flow
 
 ```text
