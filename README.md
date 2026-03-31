@@ -10,7 +10,7 @@
 
 ## Project Overview
 This project is designed and developed by group10 with the aim of implementing a hybrid blockchain Django solution for freight supply chain management. It enables secure product creation for known clients or producers,shipment tracking, booking confirmations, and payments using Ethereum smart contracts, while providing a user friendly interface with Django and Stripe integration. Key features include immutable payment records, shipment provenance, and automated reporting for admins and users.<br>
-The project tracks product creation for known clients or producers,freight shipments, booking confirmations, and payments using a hybrid architecture:
+The project tracks product creation for registered company clients and producers, freight shipments, booking confirmations, and payments using a hybrid architecture:
 - **Django backend** for authentication, quotes, bookings, and system configuration (PostgreSQL database)
 - **Local Ethereum blockchain (Ganache)** for immutable storage of products, payments, shipment records, and status updates
 - **MetaMask** for ETH-based payments and transaction signing or pay for gas
@@ -40,12 +40,8 @@ The project tracks product creation for known clients or producers,freight shipm
 ### ⛓️ Blockchain
 - **Web3.py** – Interaction with Ethereum blockchain  
 - **Ganache** – Local Ethereum blockchain for testing. <a href="https://archive.trufflesuite.com/ganache/" target="_blank">Download</a> 
-- **MetaMask Wallet** – User wallet for blockchain transactions. <a href="https://metamask.io/download" target="_blank">Download</a>   
+- **MetaMask Wallet** – User wallet for blockchain transactions and ETH based shipping fee payments. <a href="https://metamask.io/download" target="_blank">Download</a>   
 - **Remix IDE** – Smart contract development and deployment. <a href="https://remix.ethereum.org/" target="_blank">Download</a>   
-
-### 💳 Payments & Integrations
-- **Stripe API** – Payment processing integration. <a href="https://stripe.dev/stripe-ios/stripe/documentation/stripe/stripeapi" target="_blank">Download</a>  
-- **Ngrok** – Exposes local server via a temporary public URL for Stripe webhooks, demos, and remote testing. <a href="https://ngrok.com/" target="_blank">Download</a>  
 
 ### 📄 Reporting & Email
 - **requirements.txt packages**:
@@ -164,22 +160,6 @@ This section describes the main folders and files in the project and their purpo
       ```bash
       docker-compose down
       ```
-
-     
-7. **Use Ngrok**<br>
-Ngrok creates a secure public URL for your local server, allowing external services like Stripe to access your application during development.
-Instead of using http://127.0.0.1:8000/, use the Ngrok-generated public link and update your settings.py with this URL. This ensures Stripe can reach your application for testing webhooks and payments locally <br><br>
-  <img width="1000" height="402" alt="image" src="https://github.com/user-attachments/assets/444df54f-5c9d-4ef5-bfeb-e992765d4009" /><br>
-  *Figure 3: Ngrok generates a public secure URL for local development to allow Stripe access.*
-
-
-8. **Setup Stripe for payments**
-   - Stripe will be handling Payments using Debit/Credit cards and sends a webhook through django using web3.py and stores payment transactions into on-chain(blockchain) service
-   - create an account with stripe : https://stripe.com/en-ca #based on region
-   - Go to dashboard -> developer and get API Keys and cpoy Publishable key and Secret key and update them in settings.py
-   - Download stripe.exe if you are using windows and run it using command line enter stripe listen http: <port> #This Listens for webhook events and generates  secret key with whsec_......... copy the key and update your settings.py #python page<br><br>
-     <img width="1103" height="143" alt="image" src="https://github.com/user-attachments/assets/004eafe9-db6b-4479-86c8-6aed38e492ea" />
-     <br> *Figure 4: Stripe setup for handling payments and listening to webhook events locally.*
     
 9.  **Install**
      - Web3.py via virtual Python environment. so as to open up communication between our appliactaion and blockchain service(Ganache)
@@ -199,14 +179,15 @@ Instead of using http://127.0.0.1:8000/, use the Ngrok-generated public link and
 - **Sales / Distributor** team can create and manage bookings, quotations, and coordinate shipment operations.  
 - **Warehouse / Logistics Handler** can update shipment status during storage and delivery (e.g., received, stored, dispatched), triggering `StatusUpdated` events on the blockchain.  
 
-- Users can make payments using **debit/credit cards** and optionally pay with **ETH via MetaMask**.  
+- Users can make payments shipping and block chain transaction fees using **ETH via MetaMask**.  
 - All payment transactions and shipment status updates are **recorded on blockchain** for traceability, auditability, and provenance.  
 - Account settings, quoting, documentation, and bookings are stored in **PostgreSQL** as off-chain services to optimize storage and performance.  
-- Every shipment and payment action generates blockchain events (e.g., `ProductCreated`, `OwnershipTransferred`, `StatusUpdated`) to ensure a full **provenance trail** across the product lifecycle.
+- Every shipment and payment action generates blockchain events (e.g., **`ProductCreated`, `OwnershipTransferred`, `StatusUpdated`**) to ensure a full **provenance trail** across the product lifecycle.
   
 ## Notes
-- ETH payments are optional; Stripe payments are fully functional
 - Smart contract logic is stored in blockchain/contracts/
+- Smart contract Django-Ganache-MetaMask for **Payments transactions** is stored in **apps/Payments/**
+- Smart contract Django-Ganache for **Shipment transactions** is stored in **apps/Shipments/**
 
 ## Smart Contract Structure & Interfaces
 Our project uses three smart contracts on Ethereum to handle payments, shipments and product creation for known producers or clients securely:<br>
