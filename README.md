@@ -223,40 +223,39 @@ Our project uses three smart contracts on Ethereum to handle payments, shipments
   - Emits `ProductCreated` events whenever a new product is added, enabling seamless integration with backend systems (e.g., Django) and real-time tracking.
     <br><br>
 ### Booking --> Payment --> Shipment Blockchain Flow
-## 🚢 Blockchain Freight Payment & Shipment Flow
 
 ```text
 User (MetaMask Wallet)
         │
-        │ 1️⃣ Connect Wallet
+        │ 1️. Connect Wallet
         │
         ▼
 Shipping App (Django Frontend)
         │
-        │ 2️⃣ User confirms booking
-        │ 3️⃣ Booking saved in PostgreSQL
+        │ 2️. User confirms booking
+        │ 3️. Booking saved in PostgreSQL
         │
         ▼
 Deposit Payment Screen
         │
-        │ 4️⃣ User clicks "Pay Initial Deposit"
+        │ 4️. User clicks "Pay Initial Deposit"
         │
         ▼
 MetaMask Popup
         │
-        │ 5️⃣ Shows deposit amount + gas fee
-        │ 6️⃣ User clicks "Confirm"
+        │ 5️. Shows deposit amount + gas fee
+        │ 6️. User clicks "Confirm"
         │
         ▼
 Ganache Local Blockchain
         │
-        │ 7️⃣ ETH sent to Payment.sol
-        │ 8️⃣ Transaction mined
+        │ 7️. ETH sent to Payment.sol
+        │ 8️. Transaction mined
         │
         ▼
 Payment.sol Smart Contract
         │
-        │ 9️⃣ Stores:
+        │ 9️. Stores:
         │    - wallet address
         │    - booking ID
         │    - shipment ID
@@ -267,49 +266,49 @@ Payment.sol Smart Contract
         ▼
 Shipment.sol / Provenance Contract
         │
-        │ 🔟 Save shipment booking hash
+        │ 10. Save shipment booking hash
         │    linked to payment record
         │
         ▼
 Django Backend
         │
-        │ 1️⃣1️⃣ Verifies tx receipt from Ganache
-        │ 1️⃣2️⃣ Updates PostgreSQL:
+        │ 1️.1️ Verifies tx receipt from Ganache
+        │ 1️.2️ Updates PostgreSQL:
         │      status = Deposit Paid
         │      balance_due = remaining amount
         │
         ▼
 Shipment Operations Continue
         │
-        │ 1️⃣3️⃣ Air / Sea / Customs / Delivery continues
+        │ 1️.3️ Air / Sea / Customs / Delivery continues
         │
         ▼
 Remaining Balance Payment (Later)
         │
-        │ 1️⃣4️⃣ User opens Django Payments GUI
-        │ 1️⃣5️⃣ Clicks "Pay Remaining Balance"
+        │ 1️.4️ User opens Django Payments GUI
+        │ 1️.5️ Clicks "Pay Remaining Balance"
         │
         ▼
 MetaMask Popup
         │
-        │ 1️⃣6️⃣ Confirms remaining ETH amount
+        │ 1️.6️ Confirms remaining ETH amount
         │
         ▼
 Ganache → Payment.sol
         │
-        │ 1️⃣7️⃣ Stores second transaction:
+        │ 1️.7️ Stores second transaction:
         │      payment stage = FINAL
         │
         ▼
 Django Backend
         │
-        │ 1️⃣8️⃣ Marks shipment = Fully Paid
-        │ 1️⃣9️⃣ Release final documents / delivery proof
+        │ 1️.8️ Marks shipment = Fully Paid
+        │ 1️.9️ Release final documents / delivery proof
         │
         ▼
 Dashboard / User Interface
         │
-        │ 2️⃣0️⃣ User sees:
+        │ 2️.0️ User sees:
         │      Deposit Paid ✅
         │      Final Paid ✅
         │      Shipment Delivered 🚢
