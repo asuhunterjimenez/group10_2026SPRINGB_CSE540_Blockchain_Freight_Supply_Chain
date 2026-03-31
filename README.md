@@ -179,7 +179,7 @@ This section describes the main folders and files in the project and their purpo
 - **Sales / Distributor** team can create and manage bookings, quotations, and coordinate shipment operations.  
 - **Warehouse / Logistics Handler** can update shipment status during storage and delivery (e.g., received, stored, dispatched), triggering `StatusUpdated` events on the blockchain.  
 
-- Users can make payments shipping and block chain transaction fees using **ETH via MetaMask**.  
+- Users can make payments shipping and block chain transaction fees using **ETH via MetaMask**. **Django --> MetaMask --> Solidity --> Ganache**
 - All payment transactions and shipment status updates are **recorded on blockchain** for traceability, auditability, and provenance.  
 - Account settings, quoting, documentation, and bookings are stored in **PostgreSQL** as off-chain services to optimize storage and performance.  
 - Every shipment and payment action generates blockchain events (e.g., **`ProductCreated`, `OwnershipTransferred`, `StatusUpdated`**) to ensure a full **provenance trail** across the product lifecycle.
@@ -200,17 +200,13 @@ Our project uses three smart contracts on Ethereum to handle payments, shipments
   - Emits events like **PaymentCreated, PaymentProcessed, and EmailMarkedSent** to notify the system when a payment occurs, is confirmed, or a confirmation email is sent.
   - Ensures **traceability and auditability** by recording all payment events on-chain.
   - Only the contract owner can create and update payments, enforcing controlled and secure management through Django Interface.
-  - Provides functions to query payment history for a shipment or blockchain transaction fees, supporting transparency for stakeholders.<br><br>
-  <img width="891" height="465" alt="image" src="https://github.com/user-attachments/assets/82416b32-1095-416c-8647-db29af68acb9" /><br>
-  *Figure 5: Flow of Payment.sol showing payment creation, status updates, and email notification.*
+  - Provides functions to query payment history for a shipment or blockchain transaction fees, supporting transparency for stakeholders.
 
 ### Shipment.sol
   - Handles creation, tracking, and status updates of shipments.
   - Stores shipment information like shipmentId, origin, destination, containerType, weight, status, and delivery confirmation.
   - Emits events such as ShipmentCreated, ShipmentStatusUpdated, and DeliveryConfirmed for real-time monitoring.
-  - Only the contract owner can create or update shipments, maintaining integrity of shipment data.<br><br>
-  <img width="903" height="505" alt="image" src="https://github.com/user-attachments/assets/f11f6204-c083-4251-8442-ec6180d43f3b" /><br>
-  *Figure 6: Flow of Shipment.sol showing shipment creation, status updates, and delivery confirmation.*
+  - Only the contract owner can create or update shipments, maintaining integrity of shipment data.
 
 ### How Payment.sol and Shipment.sol work together:
 - When a customer makes a payment (Payment.sol), it is linked to a freight quote.
@@ -226,9 +222,99 @@ Our project uses three smart contracts on Ethereum to handle payments, shipments
   - Provides read functions like `getProductCount` and `getProduct` to efficiently retrieve product data.
   - Emits `ProductCreated` events whenever a new product is added, enabling seamless integration with backend systems (e.g., Django) and real-time tracking.
     <br><br>
-  <img width="917" height="580" alt="image" src="https://github.com/user-attachments/assets/d402de05-f986-4be4-877c-35e71462802a" /><br>
+### Booking --> Payment --> Shipment Blockchain Flow
+## 🚢 Blockchain Freight Payment & Shipment Flow
 
-   *Figure 7: Flow of ProducerProduct.sol showing producer approval, product creation, and on-chain product retrieval.*
+```text
+User (MetaMask Wallet)
+        │
+        │ 1️⃣ Connect Wallet
+        │
+        ▼
+Shipping App (Django Frontend)
+        │
+        │ 2️⃣ User confirms booking
+        │ 3️⃣ Booking saved in PostgreSQL
+        │
+        ▼
+Deposit Payment Screen
+        │
+        │ 4️⃣ User clicks "Pay Initial Deposit"
+        │
+        ▼
+MetaMask Popup
+        │
+        │ 5️⃣ Shows deposit amount + gas fee
+        │ 6️⃣ User clicks "Confirm"
+        │
+        ▼
+Ganache Local Blockchain
+        │
+        │ 7️⃣ ETH sent to Payment.sol
+        │ 8️⃣ Transaction mined
+        │
+        ▼
+Payment.sol Smart Contract
+        │
+        │ 9️⃣ Stores:
+        │    - wallet address
+        │    - booking ID
+        │    - shipment ID
+        │    - deposit amount
+        │    - tx hash
+        │    - payment stage = DEPOSIT
+        │
+        ▼
+Shipment.sol / Provenance Contract
+        │
+        │ 🔟 Save shipment booking hash
+        │    linked to payment record
+        │
+        ▼
+Django Backend
+        │
+        │ 1️⃣1️⃣ Verifies tx receipt from Ganache
+        │ 1️⃣2️⃣ Updates PostgreSQL:
+        │      status = Deposit Paid
+        │      balance_due = remaining amount
+        │
+        ▼
+Shipment Operations Continue
+        │
+        │ 1️⃣3️⃣ Air / Sea / Customs / Delivery continues
+        │
+        ▼
+Remaining Balance Payment (Later)
+        │
+        │ 1️⃣4️⃣ User opens Django Payments GUI
+        │ 1️⃣5️⃣ Clicks "Pay Remaining Balance"
+        │
+        ▼
+MetaMask Popup
+        │
+        │ 1️⃣6️⃣ Confirms remaining ETH amount
+        │
+        ▼
+Ganache → Payment.sol
+        │
+        │ 1️⃣7️⃣ Stores second transaction:
+        │      payment stage = FINAL
+        │
+        ▼
+Django Backend
+        │
+        │ 1️⃣8️⃣ Marks shipment = Fully Paid
+        │ 1️⃣9️⃣ Release final documents / delivery proof
+        │
+        ▼
+Dashboard / User Interface
+        │
+        │ 2️⃣0️⃣ User sees:
+        │      Deposit Paid ✅
+        │      Final Paid ✅
+        │      Shipment Delivered 🚢
+```
+   *Figure 3: Flow of ProducerProduct.sol showing producer approval, product creation, and on-chain product retrieval.*
 ## Code Documentation & Comments
 Each Django model and smart contract function should have comments explaining:
 - Purpose
@@ -237,7 +323,7 @@ Each Django model and smart contract function should have comments explaining:
 - Example usage
   <br>**Example in Django model:**<br>
   <img width="1150" height="331" alt="image" src="https://github.com/user-attachments/assets/fdb6356f-32ff-4390-849e-bfd02cc609c6" /><br>
-  *Figure 8: Example of properly commented Django model explaining purpose, parameters, and usage.*
+  *Figure 4: Example of properly commented Django model explaining purpose, parameters, and usage.*
   
   ---
 Developed by **Group10**, Spring 2026, Arizona State University
