@@ -9,7 +9,7 @@
 ---
 
 ## Project Overview
-This project is designed and developed by group10 with the aim of implementing a hybrid blockchain Django solution for freight supply chain management. It enables secure product creation for known clients or producers,shipment tracking, booking confirmations, and payments using Ethereum smart contracts, while providing a user friendly interface with Django and Stripe integration. Key features include immutable payment records, shipment provenance, and automated reporting for admins and users.<br>
+This project is designed and developed by group10 with the aim of implementing a hybrid blockchain Django solution for freight supply chain management. It enables secure product creation for company registered clients or producers,shipment tracking, booking confirmations, and payments using Ethereum smart contracts, while providing a user friendly interface with Django and Stripe integration. Key features include immutable payment records, shipment provenance, and automated reporting for admins and users.<br>
 The project tracks product creation for registered company clients and producers, freight shipments, booking confirmations, and payments using a hybrid architecture:
 - **Django backend** for authentication, quotes, bookings, and system configuration (PostgreSQL database)
 - **Local Ethereum blockchain (Ganache)** for immutable storage of products, payments, shipment records, and status updates
@@ -71,7 +71,7 @@ This section describes the main folders and files in the project and their purpo
 │  ├─ Payments/ <span style="color:gray;font-style:italic;"># Stripe payments, webhook handling</span>
 │  ├─ Quotings/ <span style="color:gray;font-style:italic;"># Freight quotes and price calculations</span>
 │  ├─ Reports/ <span style="color:gray;font-style:italic;"># Generating reports (CSV, PDF, etc.)</span>
-   ├─ Products/ <span style="color:gray;font-style:italic;"># Manages Products for Known clients,producers,suppliers</span>
+   ├─ Products/ <span style="color:gray;font-style:italic;"># Manages Products for company registered clients,producers,suppliers</span>
 │  ├─ Shipments/ <span style="color:gray;font-style:italic;"># Shipment tracking and details</span>
 │  └─ Helpers/ <span style="color:gray;font-style:italic;"># Shared helper functions and utilities across apps</span>
 │
@@ -190,7 +190,7 @@ This section describes the main folders and files in the project and their purpo
 - Smart contract Django-Ganache for **Shipment transactions** is stored in **apps/Shipments/**
 
 ## Smart Contract Structure & Interfaces
-Our project uses three smart contracts on Ethereum to handle payments, shipments and product creation for known producers or clients securely:<br>
+Our project uses three smart contracts on Ethereum to handle payments, shipments and product creation for company registered producers or clients securely:<br>
 
 ### Payment.sol
 
