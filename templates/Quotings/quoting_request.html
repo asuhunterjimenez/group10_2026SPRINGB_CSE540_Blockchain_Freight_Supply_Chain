@@ -1,0 +1,1542 @@
+{% extends "extended_base_tamplates/base.html" %}
+{% block upper_scripts %}
+<!--loading upper scripts-->
+{% include "extended_base_tamplates/upper_scripts.html" %}
+{% endblock upper_scripts %}
+
+{% block links_and_common_content %}
+<!-- Default content can go here -->
+{% include "extended_base_tamplates/links_and_common_content.html" %}
+{% endblock links_and_common_content %}
+
+<!--loading static files to support the main_content-->
+{% load static %}
+
+{% block main_content %}
+<!-- Main Content area start-->
+
+<script>
+  $(document).ready(function () {
+    $('#datepicker').datepicker({
+      format: 'mm/dd/yyyy',
+      autoclose: true,
+      todayHighlight: true
+    });
+  });
+
+</script>
+<!-- =================================== -->
+<!-- hide div until selected option is chosen as per the requirement
+custom JavaScript to show/hide the "Other Commodity" input field
+for quoting request form module
+This code listens for changes on the commodity dropdown and shows/hides the "Other Commodity" -->
+{% load static %}
+<script src="{% static 'js/jenik/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/jenik/div_show_hide.js' %}"></script>
+<!-- =========================================== -->
+<script>
+  // for setting today's date in the input field 
+  document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const formattedToday = dd + "/" + mm + "/" + yyyy;
+
+    // List of input IDs
+    const inputs = ["today_date", "date_2", "date_3", "date_4"];
+
+    // Set today's date for all inputs
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = formattedToday;
+      }
+    });
+  });
+  // disable past dates in the date picker
+  $(document).ready(function () {
+    let today = new Date();
+    let minDate = new Date();
+    minDate.setDate(today.getDate() + 0); // disable past + next 0 days
+
+    // Initialize datepicker for all inputs
+    $('#today_date, #date_2, #date_3, #date_4').datepicker({
+      format: 'dd/mm/yyyy',
+      startDate: minDate,
+      autoclose: true
+    });
+  });
+</script>
+<style>
+  .touchspin1,
+  .touchspin2,
+  .touchspin3,
+  .touchspin4 {
+    width: 100%;
+    /* full width of parent */
+    height: 45px;
+    /* taller input */
+    font-size: 16px;
+    /* bigger text */
+    padding: 10px;
+    /* more padding inside */
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    /* wrapper takes full width of parent */
+  }
+
+  .autocomplete-results {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+    /* full width */
+    box-sizing: border-box;
+    /* include padding/border inside width */
+  }
+
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    /* full width */
+    padding: 8px;
+    box-sizing: border-box;
+    /* keep padding inside width */
+  }
+
+  .autocomplete-suggestions {
+    border: none;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: antiquewhite;
+    z-index: 9999;
+    width: 300px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: 2px;
+    /* space from input box */
+    border-radius: 4px;
+    /* rounded edges */
+  }
+
+  .suggestion {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .suggestion:hover {
+    background-color: #eee;
+  }
+
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+</style>
+<!-- {% for message in messages %}
+{{ message }}
+{% endfor %} -->
+<!-- load address api key -->
+<script>
+  window.ADDRESS_API_KEY = "{{ API_KEY }}";
+</script>
+<!-- works here -->
+<script src="{% static 'auto_completion/auto2/comp.js' %}"></script>
+<link rel="stylesheet" href="{% static 'auto_completion/auto2/comp1.css' %}">
+
+
+
+<div class="advanced-form-area mg-b-15">
+  <div class="container-fluid">
+
+    <!-- Basic Form Start -->
+    <form>
+      {% csrf_token %}
+      <!--Select service -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h1>New Quoting Request</h1>
+                <div class="sparkline15-outline-icon">
+                  <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline15-graph">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="touchspin-inner">
+                    <label>Select Service</label>
+
+                    <select class="select2_demo_3 form-control" name="service_type" data-validate="required,min(3)"
+                      id="service_type">
+                      <option value="">Select Service</option>
+                      <option value="Ocean Freight">Ocean Freight</option>
+                      <option value="Air Freight">Air Freight</option>
+                      <option value="Customs Brokerage">Customs Brokerage</option>
+                      <option value="RORO">Roll-on/Roll-off (RORO)</option>
+                    </select>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- show and hide -->
+    <div id="show_ocean_freight" style="display: none;">
+
+      <form method="POST" action="{% url 'quoting_request' %}">
+        <input type="hidden" name="service_type_hidden" value="Ocean Freight">
+        {% csrf_token %}
+        <div class="sparkline15-list shadow-reset mg-t-30">
+          <div class="sparkline15-hd">
+            <div class="main-spark">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="sparkline10-list shadow-reset mg-t-30">
+                    <div class="sparkline10-hd">
+                      <div class="main-sparkline10-hd">
+                        <h4>
+                          <font color="red">Origin and Destination</font>
+                        </h4>
+                        <div class="sparkline10-outline-icon">
+                          <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline10-graph">
+                      <div class="input-knob-dial-wrap">
+                        <div class="row">
+                          <div class="col-lg-12">
+
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Place of Receipt <font color="red">**</font></label>
+                                <label class="color-group" for="shipping_origin_address">
+                                  <input type="text" placeholder="Place of Receipt" name="place_of_receipt"
+                                    data-validate="required,min(5)" id="address1" autocomplete="off">
+                                  <div class="autocomplete-results" id="results1"></div>
+                                </label>
+                              </div>
+                            </div>
+
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="color-group">Port of Loading<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" id="ocean_port-loading" name="port_of_loading"
+                                    data-validate="required,min(5)" placeholder="P.O.L" autocomplete="off">
+                                  <div id="ocean_suggestions-loading" class="autocomplete-suggestions"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Port of discharge <font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" id="ocean_port-discharge" name="port_of_discharge"
+                                    data-validate="required,min(5)" placeholder="P.O.D" autocomplete="off">
+                                  <div id="ocean_suggestions-discharge" class="autocomplete-suggestions"></div>
+                                </label>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="sparkline11-list shadow-reset mg-t-30">
+                    <div class="sparkline11-hd">
+                      <div class="main-sparkline11-hd">
+                        <h4>
+                          <font color=red>Ocean Freight</font>
+                        </h4>
+                        <div class="sparkline11-outline-icon">
+                          <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline11-graph">
+                      <div class="input-knob-dial-wrap">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="chosen-select-single mg-b-20">
+                              <label>Equipment size<font color="red">**</font></label>
+                              <select class="select2_demo_3 form-control" name="equipment_size"
+                                data-validate="required,min(5)">
+                                <option value="">Select One</option>
+                                <option value="20 ft">20 ft</option>
+                                <option value="40 HC">40 HC</option>
+                                <option value="40 DC">40 DC</option>
+                                <option value="45 ft">45 ft</option>
+                              </select>
+                            </div>
+
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Estimated date of shipment <font color="red">**</font></label>
+                                <label class="color-group" for="estimated_shipping_date">
+                                  <div class="form-group data-custon-pick" id="data_1">
+                                    <div class="input-group date">
+                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                      <input type="text" class="form-control" id="today_date" value="today_date"
+                                        name="estimated_shipping_date" data-validate="required,min(5)">
+                                    </div>
+                                  </div>
+                                  <input type="text" id="ocean_country-loading" readonly
+                                    style="display:none; background-color: antiquewhite;" name="country_of_loading"
+                                    class="form-control">
+                                  <input type=" text" id="ocean_country-discharge" readonly
+                                    style="display:none; background-color: antiquewhite;" name="country_of_discharge"
+                                    class="form-control">
+
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--start service type  -->
+            <div class="row">
+              <div class="col-lg-12">
+                <!-- service type  1 -->
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Service type</h4>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph row">
+                    <div class="col-lg-3">
+                      <div class="touchspin-inner">
+                        <label for="door_delivery_service1">Do You require Tracking? <span
+                            class="text-danger">***</span></label>
+                        <select class="commodity-select form-control" name="tracking" id="door_delivery_service1"
+                          data-validate="required">
+                          <option value="">-- Select Option --</option>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="touchspin-inner subCategory" id="door_delivery_address_wrapper1"
+                        style="display: none;">
+                        <label for="address3">Door Delivery Address: <span class="text-danger">***</span></label>
+                        <input type="text" placeholder="Enter door delivery address" name="door_delivery_address"
+                          id="address3" class="form-control" data-validate="min(5),required"
+                          style="width:100%;background-color:aquamarine" autocomplete="off">
+                        <div class="autocomplete-results" id="results3"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end service  type-->
+
+            <!-- start commodity category and sub category -->
+            <div class=" row">
+              <div class="col-lg-12">
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Ocean Freight Commodity and Hazardous</h4>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph">
+                    <div class="row">
+                      <!-- Main Category -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label>Select Commodity<font color="red">**</font></label>
+                          <select class="commodity-select form-control" name="commodity_cat"
+                            data-target="ocean_subCategory" data-validate="required">
+                            <option value="">-- Select Category --</option>
+                            <option value="Consumer Goods">Consumer Goods</option>
+                            <option value="Food & Beverages">Food & Beverages</option>
+                            <option value="Raw Materials">Raw Materials</option>
+                            <option value="Chemicals & Hazardous Goods">Chemicals & Hazardous
+                              Goods</option>
+                            <option value="Automotive & Machinery">Automotive & Machinery</option>
+                            <option value="Agricultural Products">Agricultural Products</option>
+                            <option value="Energy & Fuels">Energy & Fuels</option>
+                            <option value="Medical & Healthcare">Medical & Healthcare</option>
+                            <option value="Luxury & Special Items">Luxury & Special Items</option>
+                            <option value="Miscellaneous">Miscellaneous</option>
+                          </select>
+                        </div>
+                      </div>
+                      <!-- Sub Category -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner subCategory" id="ocean_subCategory" style="display: none;">
+                          <label>Select Subcategory: <font color="red">**</font></label>
+                          <select class="subDetails form-control" name="commodity_sub"></select>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label for="hazardous">Hazardous <span class="text-danger">***</span></label>
+                          <select class="commodity-select form-control" name="hazardous" data-validate="required">
+                            <option value="">-- Select Option --</option>
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- end commodity category and sub category -->
+
+
+            <!-- text columns -->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Additional Information</h4>
+                      <div class="sparkline15-outline-icon">
+                        <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                        <span><i class="fa fa-wrench"></i></span>
+                        <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="touchspin-inner mb-3">
+                          <label for="additional_info" class="form-label">Additional
+                            Information</label>
+                          <textarea id="jenik_text_area_id" class="form-control" name="additional_info" rows="5"
+                            placeholder="Enter any additional information here..." maxlength="300"
+                            oninput="updateCounter()"></textarea>
+                          <div id="charCount" class="form-text text-end">0 / 300</div>
+                        </div>
+                      </div>
+                      <p>&nbsp;</p>
+                      <input button type="submit" class="forgot-password" value="Submit Quote">
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!-- Basic Form End-->
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- show and hide end -->
+
+    <!-- show and hide Air Freight-->
+    <div id="show_air_freight" style="display: none;">
+      <form method="POST" action="{% url 'quoting_request' %}">
+        <input type="hidden" name="service_type_hidden" value="Air Freight">
+        {% csrf_token %}
+        <div class="sparkline15-list shadow-reset mg-t-30">
+          <div class="sparkline15-hd">
+            <div class="main-spark"></div>
+            <div class=" row">
+              <div class="col-lg-6">
+                <div class="sparkline10-list shadow-reset mg-t-30">
+                  <div class="sparkline10-hd">
+                    <div class="main-sparkline10-hd">
+                      <h4>
+                        <font color="red">Origin and Destination</font>
+                      </h4>
+                      <div class="sparkline10-outline-icon">
+                        <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                        <span><i class="fa fa-wrench"></i></span>
+                        <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sparkline10-graph">
+                    <div class="input-knob-dial-wrap">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="colorpicker-inner ts-forms mg-b-23">
+                            <div class="tsbox">
+                              <label class="label">Place of Receipt <font color="red">**</font></label>
+                              <label class="color-group">
+                                <input type="text" placeholder="Place of Receipt" name="place_of_receipt"
+                                  data-validate="required,min(5)" id="address2" autocomplete="off">
+                                <div class="autocomplete-results" id="results2"></div>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="colorpicker-inner ts-forms mg-b-23">
+                            <div class="tsbox">
+                              <label class="color-group">Departure<font color="red">**</font></label>
+                              <label class="color-group">
+                                <input type="text" id="air_port-loading" name="departure"
+                                  data-validate="required,min(5)" placeholder="From Airport" autocomplete="off">
+                                <div id="air_suggestions-loading" class="autocomplete-suggestions"></div>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="colorpicker-inner ts-forms mg-b-23">
+                            <div class="tsbox">
+                              <label class="label">Destination <font color="red">**</font></label>
+                              <label class="color-group">
+                                <input type="text" id="air_port-discharge" name="destination"
+                                  data-validate="required,min(5)" placeholder="To Airport" autocomplete="off">
+                                <div id="air_suggestions-discharge" class="autocomplete-suggestions"></div>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="colorpicker-inner ts-forms mg-b-23">
+                            <div class="tsbox">
+                              <label class="label">Number of Units <font color="red">**</font></label>
+                              <label class="color-group" for="number_of_units">
+                                <input class="touchspin3" type="text" placeholder="Number of Units: Maximum:900"
+                                  name="number_of_units"
+                                  data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)" min="1"
+                                  max="900">
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="sparkline11-list shadow-reset mg-t-30">
+                  <div class="sparkline11-hd">
+                    <div class="main-sparkline11-hd">
+                      <h4>
+                        <font color=red>Air Freight</font>
+                      </h4>
+                      <div class="sparkline11-outline-icon">
+                        <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                        <span><i class="fa fa-wrench"></i></span>
+                        <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sparkline11-graph">
+                    <div class="input-knob-dial-wrap">
+                      <div class="row">
+                        <div class="col-lg-12">
+
+                          <div class="colorpicker-inner ts-forms mg-b-23">
+                            <div class="tsbox">
+                              <label class="label">Estimated date of shipment <font color="red">**</font></label>
+                              <label class="color-group" for="estimated_shipping_date">
+                                <div class="form-group data-custon-pick" id="data_1">
+                                  <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" id="date_2" value=""
+                                      name="estimated_shipping_date" data-validate="required,min(5)">
+                                  </div>
+                                </div>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="chosen-select-single mg-b-20">
+                            <label>Units of Measurements(<b>Weight</b>)<font color="red">**</font></label>
+                            <select class="select2_demo_3 form-control" name="unit_of_measurement_weight"
+                              data-validate="required,min(3)">
+                              <option value="">Select Weight Measure</option>
+                              <option value="Lbs">Lbs</option>
+                              <option value="Kgs">Kgs</option>
+                            </select>
+                          </div>
+                          <div class="chosen-select-single mg-b-20">
+                            <label>Units of Measurements(<b>Length,Width,Height</b>)<font color="red">**</font>
+                            </label>
+                            <select class="select2_demo_3 form-control" name="unit_of_measurement_L_W_H"
+                              data-validate="required,min(5)">
+                              <option value="">Select L,W,H Measure</option>
+                              <option value="Inches">Inches</option>
+                              <option value="Centimeters">Centimeters</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div style="width: 100%;">
+                          <div class="tsbox">
+                            <input type="text" id="air_country-loading" readonly
+                              style="display:none; background-color: antiquewhite;width: 100%;"
+                              name="country_of_departure">
+                            <input type="text" id="air_country-discharge" readonly
+                              style="display:none; background-color: antiquewhite;width: 100%;"
+                              name="country_of_discharge">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--start service type  -->
+            <div class="row">
+              <div class="col-lg-12">
+                <!-- service type  1 -->
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Service type</h4>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph row">
+                    <div class="col-lg-3">
+                      <div class="touchspin-inner">
+                        <label for="door_delivery_service2">Do you require Tracking? <span
+                            class="text-danger">***</span></label>
+                        <select class="commodity-select form-control" name="tracking" id="door_delivery_service2"
+                          data-validate="required">
+                          <option value="">-- Select Option --</option>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="touchspin-inner subCategory" id="door_delivery_address_wrapper2"
+                        style="display: none;">
+                        <label for="address2">Door Delivery Address: <span class="text-danger">***</span></label>
+                        <input type="text" placeholder="Enter door delivery address" name="door_delivery_address"
+                          id="address4" class="form-control" data-validate="min(5),required"
+                          style="width:100%;background-color:aquamarine" autocomplete="off">
+                        <div class="autocomplete-results" id="results4"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end service  type-->
+
+            <!-- start commodity category and sub category -->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Air Freight Commodity and Hazardous</h4>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph">
+                    <div class="row">
+                      <!-- Main Category -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label>Select Commodity<font color="red">**</font></label>
+                          <select class="commodity-select form-control" name="commodity_cat"
+                            data-target="air_subCategory">
+                            <option value="">-- Select Category --</option>
+                            <option value="Consumer Goods">Consumer Goods</option>
+                            <option value="Food & Beverages">Food & Beverages</option>
+                            <option value="Raw Materials">Raw Materials</option>
+                            <option value="Chemicals & Hazardous Goods">Chemicals & Hazardous Goods</option>
+                            <option value="Automotive & Machinery">Automotive & Machinery</option>
+                            <option value="Agricultural Products">Agricultural Products</option>
+                            <option value="Energy & Fuels">Energy & Fuels</option>
+                            <option value="Medical & Healthcare">Medical & Healthcare</option>
+                            <option value="Luxury & Special Items">Luxury & Special Items</option>
+                            <option value="Miscellaneous">Miscellaneous</option>
+                          </select>
+                        </div>
+                      </div>
+                      <!-- Sub Category -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner subCategory" id="air_subCategory" style="display: none;">
+                          <label>Select Subcategory: <font color="red">**</font></label>
+                          <select class="subDetails form-control" name="commodity_sub"></select>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label for="hazardous">Hazardous <span class="text-danger">***</span></label>
+                          <select class="commodity-select form-control" name="hazardous" data-validate="required">
+                            <option value="">-- Select Option --</option>
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end commodity category and sub category -->
+            <!-- measurements...Height,Width,Length,Weight -->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Package Measurements</h4>
+                      <div class="sparkline15-outline-icon">
+                        <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                        <span><i class="fa fa-wrench"></i></span>
+                        <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph">
+                    <div class="row">
+                      <!-- Height -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label>Height<font color="red">**</font></label>
+                          <input class="form-control" type="number" name="height" min="0" step="any"
+                            placeholder="Enter height"
+                            data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                        </div>
+                      </div>
+                      <!-- Width -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label>Width<font color="red">**</font></label>
+                          <input class="form-control" type="number" name="width" min="0" step="any"
+                            placeholder="Enter width"
+                            data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                        </div>
+                      </div>
+                      <!-- Length -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label>Length<font color="red">**</font></label>
+                          <input class="form-control" type="number" name="length" min="0" step="any"
+                            placeholder="Enter length"
+                            data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                        </div>
+                      </div>
+                      <!-- Weight -->
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label>Weight<font color="red">**</font></label>
+                          <input class="form-control" type="number" name="weight" min="0" step="any"
+                            placeholder="Enter weight"
+                            data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end measurements...Height,Width,Length,Weight -->
+            <!-- text columns -->
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="sparkline15-list shadow-reset mg-t-30">
+                  <div class="sparkline15-hd">
+                    <div class="main-sparkline15-hd">
+                      <h4 class="text-danger">Additional Information</h4>
+                      <div class="sparkline15-outline-icon">
+                        <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                        <span><i class="fa fa-wrench"></i></span>
+                        <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sparkline15-graph">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="touchspin-inner mb-3">
+                          <label for="additional_info" class="form-label">Additional Information</label>
+                          <textarea id="jenik_text_area_id" class="form-control" name="additional_info" rows="5"
+                            placeholder="Enter any additional information here..." maxlength="300"
+                            oninput="updateCounter()"></textarea>
+                          <div id="charCount" class="form-text text-end">0 / 300</div>
+                        </div>
+                      </div>
+                      <p>&nbsp;</p>
+                      <input button type="submit" class="forgot-password" value="Submit Quote">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Basic Form End-->
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- show and hide end Air Freight-->
+
+    <!-- show and hide end Customs Brokerage-->
+    <!-- show and hide RORO Shipping-->
+    <div id="show_roro" style="display: none;">
+      <form method="POST" action="{% url 'quoting_request' %}">
+        <input type="hidden" name="service_type_hidden" value="RORO Freight">
+        {% csrf_token %}
+        <div class="sparkline15-list shadow-reset mg-t-30">
+          <div class="sparkline15-hd">
+            <div class="main-spark">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="sparkline10-list shadow-reset mg-t-30">
+                    <div class="sparkline10-hd">
+                      <div class="main-sparkline10-hd">
+                        <h4>
+                          <font color="red">Origin and Destination</font>
+                        </h4>
+                        <div class="sparkline10-outline-icon">
+                          <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline10-graph">
+                      <div class="input-knob-dial-wrap">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Pickup Address <font color="red">**</font></label>
+                                <label class="color-group" for="pickup_address">
+                                  <input type="text" placeholder="Enter Pickup Address" name="pickup_address"
+                                    data-validate="required,min(5)" id="address5" autocomplete="off">
+                                  <div class="autocomplete-results" id="results5"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Drop off Address <font color="red">**</font></label>
+                                <label class="color-group" for="drop_off_address">
+                                  <input type="text" placeholder="Enter Drop Off Address" name="drop_off_address"
+                                    data-validate="required,min(5)" id="address6">
+                                  <div class="autocomplete-results" id="results6"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Number of Units <font color="red">**</font></label>
+                                <label class="color-group" for="number_of_units">
+                                  <input class="touchspin3" type="text" placeholder="Number of Units: Maximum:100"
+                                    name="number_of_units"
+                                    data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)" min="1"
+                                    max="100">
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="sparkline11-list shadow-reset mg-t-30">
+                    <div class="sparkline11-hd">
+                      <div class="main-sparkline11-hd">
+                        <h4>
+                          <font color=red>Roll-on/Roll-off (RORO) Freight</font>
+                        </h4>
+                        <div class="sparkline11-outline-icon">
+                          <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline11-graph">
+                      <div class="input-knob-dial-wrap">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Estimated date of shipment <font color="red">**</font></label>
+                                <label class="color-group" for="estimated_shipping_date">
+                                  <div class="form-group data-custon-pick" id="data_1">
+                                    <div class="input-group date">
+                                      <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                      <input type="text" class="form-control" id="date_3" value=""
+                                        name="estimated_shipping_date" data-validate="required,min(5)">
+                                    </div>
+                                  </div>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="chosen-select-single mg-b-20">
+                              <label>Units of Measurements(<b>Weight</b>)<font color="red">**</font></label>
+                              <select class="select2_demo_3 form-control" name="unit_of_measurement_weight"
+                                data-validate="required,min(3)">
+                                <option value="">Select Weight Measure</option>
+                                <option value="Lbs">Lbs</option>
+                                <option value="Kgs">Kgs</option>
+                              </select>
+                            </div>
+                            <div class="chosen-select-single mg-b-20">
+                              <label>Units of Measurements(<b>Length,Width,Height</b>)<font color="red">**</font>
+                              </label>
+                              <select class="select2_demo_3 form-control" name="unit_of_measurement_L_W_H"
+                                data-validate="required,min(5)">
+                                <option value="">Select L,W,H Measure</option>
+                                <option value="Inches">Inches</option>
+                                <option value="Centimeters">Centimeters</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- measurements...Height,Width,Length,Weight -->
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="sparkline15-list shadow-reset mg-t-30">
+                    <div class="sparkline15-hd">
+                      <div class="main-sparkline15-hd">
+                        <h4 class="text-danger">Package Measurements</h4>
+                        <div class="sparkline15-outline-icon">
+                          <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline15-graph">
+                      <div class="row">
+                        <!-- Height -->
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner">
+                            <label>Height<font color="red">**</font></label>
+                            <input class="form-control" type="number" name="height" min="0" step="any"
+                              placeholder="Enter height"
+                              data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                          </div>
+                        </div>
+                        <!-- Width -->
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner">
+                            <label>Width<font color="red">**</font></label>
+                            <input class="form-control" type="number" name="width" min="0" step="any"
+                              placeholder="Enter width"
+                              data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                          </div>
+                        </div>
+                        <!-- Length -->
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner">
+                            <label>Length<font color="red">**</font></label>
+                            <input class="form-control" type="number" name="length" min="0" step="any"
+                              placeholder="Enter length"
+                              data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                          </div>
+                        </div>
+                        <!-- Weight -->
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner">
+                            <label>Weight<font color="red">**</font></label>
+                            <input class="form-control" type="number" name="weight" min="0" step="any"
+                              placeholder="Enter weight"
+                              data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end measurements...Height,Width,Length,Weight -->
+              <!--start service type  -->
+              <div class="row">
+                <div class="col-lg-12">
+                  <!-- service type  1 -->
+                  <div class="sparkline15-list shadow-reset mg-t-30">
+                    <div class="sparkline15-hd">
+                      <div class="main-sparkline15-hd">
+                        <h4 class="text-danger">Service type</h4>
+                      </div>
+                    </div>
+                    <div class="sparkline15-graph row">
+                      <div class="col-lg-3">
+                        <div class="touchspin-inner">
+                          <label for="door_delivery_service3">Do you require Tracking? <span
+                              class="text-danger">***</span></label>
+                          <select class="commodity-select form-control" name="tracking" id="door_delivery_service3"
+                            data-validate="required">
+                            <option value="">-- Select Option --</option>
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="touchspin-inner subCategory" id="door_delivery_address_wrapper3"
+                          style="display: none;">
+                          <label for="address7">Door Delivery Address: <span class="text-danger">***</span></label>
+                          <input type="text" placeholder="Enter door delivery address" name="door_delivery_address"
+                            id="address7" class="form-control" data-validate="min(5),required"
+                            style="width:100%;background-color:aquamarine" autocomplete="off">
+                          <div class="autocomplete-results" id="results7"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end service  type-->
+
+              <!--start roro commodity -->
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="sparkline15-list shadow-reset mg-t-30">
+                    <div class="sparkline15-hd">
+                      <div class="main-sparkline15-hd">
+                        <h4 class="text-danger">RORO Freight Commodity</h4>
+                      </div>
+                    </div>
+                    <div class="sparkline15-graph">
+                      <div class="row">
+                        <!-- Main Category -->
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner">
+                            <label>Select Commodity<font color="red">**</font></label>
+                            <select class="commodity-select form-control" name="commodity_cat"
+                              data-target="roro_subCategory">
+                              <option value="">-- Select Category --</option>
+                              <option value="Consumer Goods">Consumer Goods</option>
+                              <option value="Food & Beverages">Food & Beverages</option>
+                              <option value="Raw Materials">Raw Materials</option>
+                              <option value="Chemicals & Hazardous Goods">Chemicals & Hazardous Goods</option>
+                              <option value="Automotive & Machinery">Automotive & Machinery</option>
+                              <option value="Agricultural Products">Agricultural Products</option>
+                              <option value="Energy & Fuels">Energy & Fuels</option>
+                              <option value="Medical & Healthcare">Medical & Healthcare</option>
+                              <option value="Luxury & Special Items">Luxury & Special Items</option>
+                              <option value="Miscellaneous">Miscellaneous</option>
+                            </select>
+                          </div>
+                        </div>
+                        <!-- Sub Category -->
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner subCategory" id="roro_subCategory" style="display: none;">
+                            <label>Select Subcategory: <font color="red">**</font></label>
+                            <select class="subDetails form-control" name="commodity_sub"></select>
+                          </div>
+                        </div>
+                        <div class="col-lg-3">
+                          <div class="touchspin-inner">
+                            <label for="hazardous">Hazardous <span class="text-danger">***</span></label>
+                            <select class="commodity-select form-control" name="hazardous" data-validate="required">
+                              <option value="">-- Select Option --</option>
+                              <option value="No">No</option>
+                              <option value="Yes">Yes</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end roro commodity -->
+
+              <!-- text columns -->
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="sparkline15-list shadow-reset mg-t-30">
+                    <div class="sparkline15-hd">
+                      <div class="main-sparkline15-hd">
+                        <h4 class="text-danger">Additional Information</h4>
+                        <div class="sparkline15-outline-icon">
+                          <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline15-graph">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="touchspin-inner mb-3">
+                            <label for="additional_info" class="form-label">Additional Information</label>
+                            <textarea id="jenik_text_area_id" class="form-control" name="additional_info" rows="5"
+                              placeholder="Enter any additional information here..." maxlength="300"
+                              oninput="updateCounter()"></textarea>
+                            <div id="charCount" class="form-text text-end">0 / 300</div>
+                          </div>
+                        </div>
+                        <p>&nbsp;</p>
+                        <input button type="submit" class="forgot-password" value="Submit Quote">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Basic Form End-->
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+  <!-- End hide RORO Shipping-->
+  <!-- show and hide Customs Brokerage-->
+  <div id="show_customs_brokerage" style="display: none;">
+    <!-- Customs Brokerage Content -->
+    <form method="POST" action="{% url 'quoting_request' %}" enctype="multipart/form-data">
+      <input type="hidden" name="service_type_hidden" value="Customs Brokerage">
+      {% csrf_token %}
+      <div class="sparkline15-list shadow-reset mg-t-30">
+        <div class="sparkline15-hd">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="sparkline10-list shadow-reset mg-t-30">
+                <div class="sparkline10-hd">
+                  <div class="main-sparkline10-hd">
+                    <h4>
+                      <font color="red">Customs Brokerage Freight</font>
+                    </h4>
+                    <div class="sparkline10-outline-icon">
+                      <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                      <span><i class="fa fa-wrench"></i></span>
+                      <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="sparkline10-graph">
+                  <div class="input-knob-dial-wrap">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="colorpicker-inner ts-forms mg-b-23">
+                          <div class="tsbox">
+                            <label class="label">Place of Receipt <font color="red">**</font></label>
+                            <label class="color-group">
+                              <input type="text" placeholder="Place of Receipt" name="place_of_receipt"
+                                data-validate="required,min(5)" id="address8" autocomplete="off">
+                              <div class="autocomplete-results" id="results8"></div>
+                            </label>
+                          </div>
+                        </div>
+                        <div class="colorpicker-inner ts-forms mg-b-23">
+                          <div class="tsbox">
+                            <label class="label">Port of Loading <font color="red">**</font></label>
+                            <label class="color-group" for="port of Loading">
+                              <input type="text" placeholder="Port of Loading" id="brokerage_port-loading"
+                                name="port_of_loading" data-validate="required,min(5)" autocomplete="off">
+
+                              <div class="autocomplete-suggestions" id="brokerage_suggestions-loading">
+                              </div>
+                            </label>
+
+                          </div>
+                        </div>
+                        <div class="colorpicker-inner ts-forms mg-b-23">
+                          <div class="tsbox">
+                            <label class="label">Port of discharge <font color="red">**</font></label>
+                            <label class="color-group" for="port_of_discharge">
+                              <input type="text" placeholder="Port of discharge" id="brokerage_port-discharge"
+                                name="port_of_discharge" data-validate="required,min(5)" autocomplete="off">
+
+                              <div id="brokerage_suggestions-discharge" class="autocomplete-suggestions"></div>
+                            </label>
+                          </div>
+                        </div>
+
+
+                        <div class="colorpicker-inner ts-forms mg-b-23">
+                          <div class="tsbox">
+                            <label class="label">Estimated date of shipment <font color="red">**</font></label>
+                            <label class="color-group" for="estimated_shipping_date">
+                              <div class="form-group data-custon-pick" id="data_1">
+                                <div class="input-group date">
+                                  <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                  <input type="text" class="form-control" id="today_date" name="estimated_shipping_date"
+                                    data-validate="required,min(5)">
+                                </div>
+                              </div>
+
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="sparkline11-list shadow-reset mg-t-30">
+                <div class="sparkline11-hd">
+                  <div class="main-sparkline11-hd">
+                    <h4>
+                      <font color="red">Upload Commercial Invoice and Packing List</font>
+                    </h4>
+                    <div class="sparkline11-outline-icon">
+                      <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                      <span><i class="fa fa-wrench"></i></span>
+                      <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="sparkline11-graph">
+                  <div class="input-knob-dial-wrap">
+                    <div class="row">
+
+                      <div class="col-lg-12">
+                        <div class="chosen-select-single mg-b-20">
+                          <label>Upload Commercial Invoice and Packing List <font color="red">**</font></label>
+
+                          <!-- Drag & Drop Area -->
+                          <div id="drop-area" class="drop-area">
+                            <p>📂 Drag & Drop files here or click to select</p>
+                            <input type="file" id="fileElem" multiple style="display:none">
+                          </div>
+                          <!-- Hidden input to attach all files for submission -->
+                          <input type="file" id="hiddenFiles" name="upload_invoice_packaging_list" multiple
+                            style="display:none">
+
+                          <!-- Messages -->
+                          <div id="messages"></div>
+
+                          <!-- Uploaded Files List -->
+                          <ul id="file-list" class="file-list"></ul>
+                        </div>
+
+                        <style>
+                          .drop-area {
+                            border: 2px dashed #6c757d;
+                            border-radius: 12px;
+                            padding: 25px;
+                            text-align: center;
+                            color: #6c757d;
+                            cursor: pointer;
+                            transition: background 0.3s ease, border-color 0.3s ease;
+                          }
+
+                          .drop-area.dragover {
+                            background: #f0f9ff;
+                            border-color: #007bff;
+                            color: #007bff;
+                          }
+
+                          /* Scoped messages styles */
+                          #messages .success {
+                            color: green;
+                            font-weight: 500;
+                          }
+
+                          #messages .error {
+                            color: red;
+                            font-weight: 500;
+                          }
+
+                          .file-list {
+                            margin-top: 15px;
+                            padding: 0;
+                            list-style: none;
+                          }
+
+                          .file-list li {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            background: #f8f9fa;
+                            border: 1px solid #dee2e6;
+                            padding: 8px 12px;
+                            margin-bottom: 5px;
+                            border-radius: 6px;
+                            font-size: 14px;
+                          }
+
+                          .file-list button {
+                            background: transparent;
+                            border: none;
+                            color: red;
+                            font-weight: bold;
+                            cursor: pointer;
+                            font-size: 16px;
+                          }
+
+                          .file-list button:hover {
+                            color: darkred;
+                          }
+                        </style>
+
+                        <script>
+                          const dropArea = document.getElementById("drop-area");
+                          const fileInput = document.getElementById("fileElem");
+                          const hiddenInput = document.getElementById("hiddenFiles");
+                          const messages = document.getElementById("messages");
+                          const fileList = document.getElementById("file-list");
+
+                          let uploadedFiles = new Map();
+
+                          // Open file dialog
+                          dropArea.addEventListener("click", () => fileInput.click());
+
+                          // Drag & drop
+                          dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("dragover"); });
+                          dropArea.addEventListener("dragleave", () => dropArea.classList.remove("dragover"));
+                          dropArea.addEventListener("drop", (e) => {
+                            e.preventDefault();
+                            dropArea.classList.remove("dragover");
+                            handleFiles(e.dataTransfer.files);
+                          });
+
+                          // File selection
+                          fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
+                          function handleFiles(files) {
+                            for (let file of files) {
+                              let key = file.name + "_" + file.size;
+                              if (!uploadedFiles.has(key)) {
+                                uploadedFiles.set(key, file);
+                                addFileToList(key, file.name);
+                              } else {
+                                showMessage(`❌ Duplicate skipped: ${file.name}`, "error");
+                              }
+                            }
+                            updateHiddenInput();
+                          }
+
+                          function addFileToList(key, fileName) {
+                            const li = document.createElement("li");
+                            li.textContent = fileName;
+                            const removeBtn = document.createElement("button");
+                            removeBtn.textContent = "❌";
+                            removeBtn.onclick = () => {
+                              uploadedFiles.delete(key);
+                              li.remove();
+                              updateHiddenInput();
+                            };
+                            li.appendChild(removeBtn);
+                            fileList.appendChild(li);
+                          }
+
+                          function updateHiddenInput() {
+                            const dt = new DataTransfer();
+                            uploadedFiles.forEach(f => dt.items.add(f));
+                            hiddenInput.files = dt.files; // attach all files to form submission
+                          }
+
+                          function showMessage(msg, type) {
+                            const div = document.createElement("div");
+                            div.className = type;
+                            div.textContent = msg;
+                            messages.appendChild(div);
+                            setTimeout(() => div.remove(), 4000);
+                          }
+                        </script>
+
+                      </div>
+                    </div>
+
+                    <div style="width: 100%;">
+                      <div class="tsbox">
+                        <input type="text" id="brokerage_country-loading" readonly
+                          style="display:none; background-color: antiquewhite;width: 100%;" name="country_of_departure">
+                        <input type="text" id="brokerage_country-discharge" readonly
+                          style="display:none; background-color: antiquewhite;width: 100%;" name="country_of_discharge">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </di>
+            </div>
+          </div>
+
+          <!--start service type  -->
+          <div class="row">
+            <div class="col-lg-12">
+              <!-- service type  1 -->
+              <div class="sparkline15-list shadow-reset mg-t-30">
+                <div class="sparkline15-hd">
+                  <div class="main-sparkline15-hd">
+                    <h4 class="text-danger">Service type</h4>
+                  </div>
+                </div>
+                <div class="sparkline15-graph row">
+                  <div class="col-lg-3">
+                    <div class="touchspin-inner">
+                      <label for="door_delivery_service4">Do you require Tracking? <span
+                          class="text-danger">***</span></label>
+                      <select class="commodity-select form-control" name="tracking" id="door_delivery_service4"
+                        data-validate="required">
+                        <option value="">-- Select Option --</option>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="touchspin-inner subCategory" id="door_delivery_address_wrapper4" style="display: none;">
+                      <label for="address9">Door Delivery Address: <span class="text-danger">***</span></label>
+                      <input type="text" placeholder="Enter door delivery address" name="door_delivery_address"
+                        id="address9" class="form-control" data-validate="min(5),required"
+                        style="width:100%;background-color:aquamarine" autocomplete="off">
+                      <div class="autocomplete-results" id="results9"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end service  type-->
+          <!-- start brokerage commodity -->
+          <!-- ⚖️ Brokerage -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="sparkline15-list shadow-reset mg-t-30">
+                <div class="sparkline15-hd">
+                  <div class="main-sparkline15-hd">
+                    <h4 class="text-danger">Brokerage Commodity</h4>
+                  </div>
+                </div>
+                <div class="sparkline15-graph">
+                  <div class="row">
+                    <!-- Main Category -->
+                    <div class="col-lg-3">
+                      <div class="touchspin-inner">
+                        <label>Select Commodity<font color="red">**</font></label>
+                        <select class="commodity-select form-control" name="commodity_cat"
+                          data-target="brokerage_subCategory">
+                          <option value="">-- Select Category --</option>
+                          <option value="Consumer Goods">Consumer Goods</option>
+                          <option value="Food & Beverages">Food & Beverages</option>
+                          <option value="Raw Materials">Raw Materials</option>
+                          <option value="Chemicals & Hazardous Goods">Chemicals & Hazardous Goods</option>
+                          <option value="Automotive & Machinery">Automotive & Machinery</option>
+                          <option value="Agricultural Products">Agricultural Products</option>
+                          <option value="Energy & Fuels">Energy & Fuels</option>
+                          <option value="Medical & Healthcare">Medical & Healthcare</option>
+                          <option value="Luxury & Special Items">Luxury & Special Items</option>
+                          <option value="Miscellaneous">Miscellaneous</option>
+                        </select>
+                      </div>
+                    </div>
+                    <!-- Sub Category -->
+                    <div class="col-lg-3">
+                      <div class="touchspin-inner subCategory" id="brokerage_subCategory" style="display: none;">
+                        <label>Select Subcategory: <font color="red">**</font></label>
+                        <select class="subDetails form-control" name="commodity_sub"></select>
+                      </div>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="touchspin-inner">
+                        <label for="hazardous">Hazardous <span class="text-danger">***</span></label>
+                        <select class="commodity-select form-control" name="hazardous" data-validate="required">
+                          <option value="">-- Select Option --</option>
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- end brokerage commodity -->
+          <!-- text columns -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="sparkline15-list shadow-reset mg-t-30">
+                <div class="sparkline15-hd">
+                  <div class="main-sparkline15-hd">
+                    <h4 class="text-danger">Additional Information</h4>
+                    <div class="sparkline15-outline-icon">
+                      <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                      <span><i class="fa fa-wrench"></i></span>
+                      <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="sparkline15-graph">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="touchspin-inner mb-3">
+                        <label for="additional_info" class="form-label">Additional Information</label>
+                        <textarea id="jenik_text_area_id" class="form-control" name="additional_info" rows="5"
+                          placeholder="Enter any additional information here..." maxlength="300"
+                          oninput="updateCounter()"></textarea>
+                        <div id="charCount" class="form-text text-end">0 / 300</div>
+                      </div>
+                    </div>
+                    <p>&nbsp;</p>
+                    <input button type="submit" class="forgot-password" value="Submit Quote">
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- Basic Form End-->
+    </form>
+  </div>
+
+
+  {%block commodity_sub_category%}
+  {% include "Quotings/commodity_and_sea_ports.html" %}
+  {% endblock commodity_sub_category %}
+
+  <!-- main content area end-->
+  {% endblock main_content %}
+
+  <!--loading footer-->
+  {% block footer %}
+  {% include "extended_base_tamplates/footer.html" %}
+  {% endblock footer %}
+  <!--footer area end-->
+  <!--loading bottom scripts-->
+  {% block bottom_script %}
+  {% include "extended_base_tamplates/bottom_script.html" %}
+  {% endblock bottom_script %}
+  <!--bottom script end-->

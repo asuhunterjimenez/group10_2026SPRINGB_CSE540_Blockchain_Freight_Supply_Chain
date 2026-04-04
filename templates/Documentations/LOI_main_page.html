@@ -1,0 +1,280 @@
+<style>
+  @page {
+    size: A4;
+    margin: 40px;
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    position: relative;
+  }
+
+  /* Watermark */
+  body::before {
+    content: "G10 BLOCKCHAIN FREIGHT";
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 100px;
+    color: rgba(0, 0, 128, 0.05);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+
+  /* Header */
+  headers {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    border-bottom: 2px solid #004080;
+    padding-bottom: 10px;
+    background-color: #fff;
+    z-index: 1;
+  }
+
+  headers h1 {
+    font-size: 28px;
+    color: #004080;
+    margin: 10px 0;
+  }
+
+  /* Footer */
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    font-size: 0.9em;
+    color: #555;
+    padding-top: 5px;
+    background-color: #fff;
+    z-index: 1;
+  }
+
+  section {
+    margin-bottom: 30px;
+    padding: 15px;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h2 {
+    color: #004080;
+    font-size: 20px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+
+  p {
+    margin-bottom: 12px;
+  }
+
+  p strong {
+    color: #000;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  li strong {
+    width: 120px;
+    display: inline-block;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 40px 0;
+  }
+
+  cite {
+    color: #555;
+    font-size: 0.9em;
+    margin-left: 5px;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .signature {
+    margin-top: 60px;
+  }
+
+  .signature-line {
+    margin-top: 40px;
+    width: 300px;
+    border-top: 1px solid #000;
+    text-align: center;
+  }
+</style>
+
+
+
+<h1 class="text-info">
+  <center>Letter of Indemnity (LOI)</center>
+</h1>
+
+
+<footer>
+  Page <span class="pageNumber"></span>
+</footer>
+
+<article>
+  <section id="liability">
+    <h2>Liability for Stolen Vehicles and Customs Penalties</h2>
+    <p><strong>Stolen Vehicles</strong></p>
+    <p>If any vehicle included in a shipment arranged by the Customer is discovered to be stolen, whether
+      during routine customs inspection or via intelligence-based enforcement action, the Customer shall be held fully
+      responsible for all ensuing penalties, fines, and associated liabilities.</p>
+    <p>A minimum additional penalty of <font color="red"><b>USD $20,000</b></font> per stolen vehicle shall apply,
+      which the Customer
+      acknowledges as a reasonable estimate of G10 Blockchain Freight's damages relating to its working relationship
+      with its
+      shipping partners because of this conduct. This figure is subject to increase depending on
+      the fine or assessment imposed by the customs authority, police, or any investigative agency and reputational
+      risk this might cause to G10 Blockchain Freight .</p>
+    <p>This is in addition to the <font color="red"><b>USD $10,000</b></font> administrative fee charges if your cargo
+      is seized.</p>
+    <p>In the event that you ship or accept shipments from your customers and move them with G10 Blockchain, and
+      subsequent costs are incurred by G10 Blockchain because of these shipments, you will reimburse G10 Blockchain for
+      all costs, which
+      include but are not limited to legal fees, court costs, fines, freight, demurrage, detention, storage, etc.
+
+      You further commit to this reimbursement obligation if you are on the booking as the shipper of such shipments
+      or the booking party.
+    </p>
+    <p>Further, in the event that your shipment is seized by government authorities, you shall pay G10 Blockchain
+      and carriers an additional <font color="red"><b>USD 5000</b></font> administrative fee each. You also agree to
+      provide
+      G10 Blockchain the additional documentation that is required for these shipments.</p>
+
+    <h2>Reputational Standards</h2>
+    <p>The customer further agrees to indemnify G10 Blockchain Freight against all damages (including reputational
+      damages) or loss of carrier privileges that may result from such an incident.</p>
+    <p>G10 Blockchain Freight will have no obligation to continue processing, clearing, or managing shipments from
+      or on behalf of the Customer under such circumstances .</p>
+
+    <h2>Governing Terms</h2>
+    <p>All business transacted by G10 Blockchain Services Inc/G10 Blockchain Freight is governed by the Canadian
+      International Freight Forwarders Association's standard trading conditions. A copy is
+      available upon request.</p>
+
+    <hr class="page-break">
+
+
+    <form method="POST" action="{% url 'onboarding_LOI_form'  %}">
+      {% csrf_token %}
+      <!-- <input type="hidden" name="request_id_hidden" value="{{ request_id }}">
+      <input type="hidden" name="service_type_hidden" value="{{ service_type }}">
+      <input type="hidden" name="request_status_hidden" value="{{ new_status }}"> -->
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="sparkline10-list shadow-reset mg-t-30">
+            <div class="sparkline10-hd">
+              <div class="main-sparkline10-hd">
+                <h4>
+                  <font color="red">Accept to Sign Agreement</font>
+                </h4>
+                <div class="sparkline10-outline-icon">
+                  <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline10-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group mb-4">
+                      <label class="font-weight-bold text-dark d-block mb-2">
+                        Choose Action <span class="text-danger">*</span>
+                      </label>
+                      <select class="form-control select2_demo_3 shadow-sm border-primary rounded-lg"
+                        name="request_status" data-validate="required,min(3)">
+                        <option value="">🚀 Select Next Action</option>
+                        <option value="Accept Agreement">✅ Accept Agreement</option>
+                        <option value="Reject Agreement">❌ Reject Agreement</option>
+                      </select>
+                      <small class="form-text text-muted">Accept to sign an agreement</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline11-list shadow-reset mg-t-30">
+            <div class="sparkline11-hd">
+              <div class="main-sparkline11-hd">
+                <h4>
+                  <font color=red>Read below Info!!!</font>
+                </h4>
+                <div class="sparkline11-outline-icon">
+                  <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <div class="ts-has-borders">
+                          <div class="alert alert-danger" role="alert">
+                            <b>Note:</b> By selecting "Accept Agreement", you agree to the terms outlined in the
+                            Letter of Indemnity (LOI) above. This includes accepting full responsibility for any stolen
+                            vehicles, customs penalties, and associated liabilities as specified. You also commit to
+                            indemnifying G10 Blockchain Freight against all damages or loss of carrier privileges that
+                            may result
+                            from such incidents. Please ensure you have read and understood the LOI before proceeding.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <center>
+        <p>&nbsp;</p>
+        <input type="submit" class="forgot-password" value="Submit To Accept">
+      </center>
+    </form>
+
+
+  </section>
+</article>
+
+<script>
+  // Simple page number for printing
+  document.querySelectorAll('footer. pageNumber').forEach((el, index) => {
+    el.textContent = index + 1;
+  });
+</script>

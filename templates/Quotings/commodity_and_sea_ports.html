@@ -1,0 +1,228 @@
+{%load static%}
+
+
+<script>
+  // Subcategories map
+  const subcategories = {
+    "Consumer Goods": ["Electronics", "Clothing & Textiles", "Furniture & Home Goods", "Household Supplies"],
+    "Food & Beverages": ["Fresh Produce", "Processed Foods", "Frozen Foods", "Beverages", "Grains, Rice, Wheat, Corn"],
+    "Raw Materials": ["Metals", "Wood, Lumber, Paper", "Plastics, Rubber", "Cement, Sand, Construction Materials"],
+    "Chemicals & Hazardous Goods": ["Industrial Chemicals", "Pharmaceuticals", "Cleaning Products", "Fertilizers", "Dangerous Goods (Hazardous)"],
+    "Automotive & Machinery": ["Vehicles", "Auto Parts", "Heavy Equipment & Machinery", "Engines, Generators"],
+    "Agricultural Products": ["Seeds, Fertilizers, Pesticides", "Animal Feed", "Cotton, Tobacco, Coffee, Cocoa", "Livestock Products"],
+    "Energy & Fuels": ["Crude Oil", "Petroleum & Gasoline", "Coal", "Renewable Energy Equipment"],
+    "Medical & Healthcare": ["Medical Devices", "PPE (Masks, Gloves, Gowns)", "Vaccines & Medicines", "Lab Equipment"],
+    "Luxury & Special Items": ["Jewelry & Watches", "Artwork & Antiques", "Musical Instruments", "High-value Electronics"],
+    "Miscellaneous": ["Books & Printed Material", "Toys & Sports Equipment", "Office Supplies", "Personal Effects"]
+  };
+
+  // Attach event listener for all commodity selects
+  document.querySelectorAll('.commodity-select').forEach(select => {
+    select.addEventListener('change', function () {
+      const selected = this.value;
+      const targetId = this.dataset.target;
+      const subCategory = document.getElementById(targetId);
+      const subDetails = subCategory.querySelector('.subDetails');
+
+      if (subcategories[selected]) {
+        subDetails.innerHTML = ""; // reset
+        subcategories[selected].forEach(item => {
+          const option = document.createElement('option');
+          option.value = item;
+          option.textContent = item;
+          subDetails.appendChild(option);
+        });
+        subCategory.style.display = 'block';
+      } else {
+        subCategory.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+<!--sea port/airport loading and discharge -->
+
+
+<!-- Put this script at the end of <body> -->
+<script>
+  (function () {
+    const cache = { air: null, sea: null };
+    const fetchPromises = { air: null, sea: null };
+
+    function loadDataset(type) {
+      if (cache[type]) return Promise.resolve(cache[type]);
+      if (fetchPromises[type]) return fetchPromises[type];
+
+      const url = type === 'air'
+        ? "{% static 'data/airports.json' %}"
+        : "{% static 'data/seaports.json' %}";
+
+      fetchPromises[type] = fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to load ' + url);
+          return res.json();
+        })
+        .then(data => {
+          cache[type] = Array.isArray(data) ? data : (data.data || []);
+          return cache[type];
+        })
+        .catch(err => {
+          console.error(err);
+          cache[type] = [];
+          return [];
+        });
+
+      return fetchPromises[type];
+    }
+
+    function normalizePortRecord(r) {
+      if (!r) return { code: '', name: '', country_code: '', country_name: '' };
+
+      const code = r.iata || r.iata_code || r.code || r.port_code || r.id || '';
+      const name = r.name || r.port_name || r.airport_name || r.display_name || r.city || r.station_name || '';
+      const country_code = r.country_code || r.iso || '';
+      const country_name = r.country || r.country_name || r.country_full || r.nation || '';
+
+      return {
+        code: String(code).trim(),
+        name: String(name).trim(),
+        country_code: String(country_code).trim(),
+        country_name: String(country_name).trim()
+      };
+    }
+
+    function highlightMatch(text, q) {
+      if (!q) return escapeHtml(text);
+      const safeQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return escapeHtml(text).replace(new RegExp('(' + safeQ + ')', 'ig'), '<span class="highlight">$1</span>');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function setupAutocomplete(inputId, countryId, suggestionsId, type) {
+      const input = document.getElementById(inputId);
+      const countryInput = document.getElementById(countryId);
+      const suggestions = document.getElementById(suggestionsId);
+
+      if (!input || !suggestions) return;
+
+      if (suggestions.parentElement !== document.body) {
+        document.body.appendChild(suggestions);
+      }
+
+      let lastQuery = '';
+
+      input.addEventListener('input', function () {
+        const q = this.value.trim().toLowerCase();
+        lastQuery = q;
+        suggestions.innerHTML = '';
+        suggestions.style.display = 'none';
+        countryInput && (countryInput.style.display = 'none');
+
+        if (!q) return;
+
+        loadDataset(type)
+          .then(list => {
+            if (lastQuery !== q) return;
+            const results = [];
+            for (let i = 0; i < list.length && results.length < 12; i++) {
+              const norm = normalizePortRecord(list[i]);
+              const hay = (norm.country_code + norm.code + ' ' + norm.name).toLowerCase();
+              if (hay.indexOf(q) !== -1) results.push(norm);
+            }
+
+            if (results.length === 0) {
+              suggestions.innerHTML = '<div class="suggestion">No matches</div>';
+              positionSuggestionsUnderInput(input, suggestions);
+              suggestions.style.display = 'block';
+              return;
+            }
+
+            const frag = document.createDocumentFragment();
+            results.forEach(r => {
+              const div = document.createElement('div');
+              div.className = 'suggestion';
+              const displayText = (r.country_code ? r.country_code : '') + (r.code ? r.code : '') + ' ' + (r.name ? r.name : '');
+              div.innerHTML = highlightMatch(displayText, q);
+
+              div.addEventListener('click', function (ev) {
+                ev.stopPropagation();
+                input.value = displayText;
+                input.focus();
+
+                if (countryInput) {
+                  const labelText = (countryId && countryId.indexOf('loading') !== -1) ? 'Country of Loading' :
+                    (countryId && countryId.indexOf('discharge') !== -1) ? 'Country of Discharge' : 'Country';
+                  // Show full country name
+                  countryInput.value = `${labelText} : ${r.country_name}`;
+                  countryInput.style.display = 'block';
+                }
+
+                suggestions.innerHTML = '';
+                suggestions.style.display = 'none';
+              });
+
+              frag.appendChild(div);
+            });
+
+            suggestions.innerHTML = '';
+            suggestions.appendChild(frag);
+            positionSuggestionsUnderInput(input, suggestions);
+            suggestions.style.display = 'block';
+          })
+          .catch(err => {
+            console.error('autocomplete error:', err);
+          });
+      });
+
+      document.addEventListener('click', function (ev) {
+        if (ev.target === input || suggestions.contains(ev.target)) return;
+        suggestions.innerHTML = '';
+        suggestions.style.display = 'none';
+      });
+    }
+
+    function positionSuggestionsUnderInput(input, suggestionsEl) {
+      const rect = input.getBoundingClientRect();
+      suggestionsEl.style.position = 'absolute';
+      suggestionsEl.style.left = (rect.left + window.pageXOffset) + 'px';
+      suggestionsEl.style.top = (rect.bottom + window.pageYOffset) + 'px';
+      suggestionsEl.style.minWidth = rect.width + 'px';
+      suggestionsEl.style.maxWidth = Math.max(rect.width, 200) + 'px';
+    }
+
+    const fields = [
+      ['ocean_port-loading', 'ocean_country-loading', 'ocean_suggestions-loading', 'sea'],
+      ['ocean_port-discharge', 'ocean_country-discharge', 'ocean_suggestions-discharge', 'sea'],
+      ['air_port-loading', 'air_country-loading', 'air_suggestions-loading', 'air'],
+      ['air_port-discharge', 'air_country-discharge', 'air_suggestions-discharge', 'air'],
+      ['roro_port-loading', 'roro_country-loading', 'roro_suggestions-loading', 'sea'],
+      ['roro_port-discharge', 'roro_country-discharge', 'roro_suggestions-discharge', 'sea'],
+      ['brokerage_port-loading', 'brokerage_country-loading', 'brokerage_suggestions-loading', 'sea'],
+      ['brokerage_port-discharge', 'brokerage_country-discharge', 'brokerage_suggestions-discharge', 'sea']
+    ];
+
+    fields.forEach(f => setupAutocomplete(f[0], f[1], f[2], f[3]));
+  })();
+</script>
+
+
+<!-- loading javascript for the door delivery -->
+<script>
+  // show hide div for door delivery
+  ['1', '2', '3', '4'].forEach(function (i) {
+    document.getElementById('door_delivery_service' + i).addEventListener('change', function () {
+      const wrapper = document.getElementById('door_delivery_address_wrapper' + i);
+      if (this.value === 'Yes') {
+        wrapper.style.display = 'block';
+      } else {
+        wrapper.style.display = 'none';
+      }
+    });
+  });
+</script>

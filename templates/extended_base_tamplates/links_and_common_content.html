@@ -1,0 +1,527 @@
+{% load static %}
+{% load group_tags %} <!--this tag supports loading of left links,mobile links depending on usergroup-->
+
+<body class="materialdesign">
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <!-- Header top area start-->
+    <div class="wrapper-pro">
+        <div class="left-sidebar-pro" align="left"> <!--added left alignment-->
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <a href="#"><img src="{% static 'img/message/1.jpg' %}" alt="" />
+                    </a>
+                    <h3>G10 Blockchain</h3>
+                    <p>Freight</p>
+                    <strong>G10</strong>
+
+                </div>
+                <!--load left  links-->
+                {% if user.is_authenticated %}
+                {% if user|has_group:"admin" %}
+                {% include "extended_base_tamplates/all_links/left/admin_left_links.html" %}
+                {% endif %}
+                {% if user|has_group:"sales_team" %}
+                {%include "extended_base_tamplates/all_links/left/sales_team_left_links.html"%}
+                {% endif %}
+                {% if user|has_group:"finance_team" %}
+                {%include "extended_base_tamplates/all_links/left/finance_team_left_links.html"%}
+                {% endif %}
+                {% if user|has_group:"clients_team" %}
+                {%include "extended_base_tamplates/all_links/left/clients_team_left_links.html"%}
+                {% endif %}
+                {% if user|has_group:"Producer_team" %}
+                {%include "extended_base_tamplates/all_links/left/Producer_team_left_links.html"%}
+                {% endif %}
+                {% endif %}
+                <!---End loading all left links-->
+
+            </nav>
+        </div>
+        <div class="content-inner-all">
+            <div class="header-top-area">
+                <div class="fixed-header-top">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-1 col-md-6 col-sm-6 col-xs-12">
+                                <button type="button" id="sidebarCollapse"
+                                    class="btn bar-button-pro header-drl-controller-btn btn-info navbar-btn">
+                                    <i class="fa fa-bars"></i>
+                                </button>
+                                <div class="admin-logo logo-wrap-pro">
+                                    <a href="#"><img src="{% static 'img/logo/log.png' %}" alt="" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-1 col-sm-1 col-xs-12">
+                                <div class="header-top-menu tabl-d-n">
+                                    <ul class="nav navbar-nav mai-top-nav">
+                                        <li class="nav-item"><a href="#" class="nav-link">Home</a>
+                                        </li>
+                                        <li class="nav-item"><a href="#" class="nav-link">New Quoting</a>
+                                        </li>
+                                        <li class="nav-item"><a href="#" class="nav-link">New Booking</a>
+                                        </li>
+                                        <li class="nav-item"><a href="#" class="nav-link">Shipment Tracking</a>
+                                        </li>
+                                        <li class="nav-item"><a href="#" class="nav-link">Support</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
+                                <div class="header-right-info">
+                                    <ul class="nav navbar-nav mai-top-nav header-right-menu">
+                                        <li class="nav-item dropdown">
+                                            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+                                                class="nav-link dropdown-toggle"><span
+                                                    class="adminpro-icon adminpro-chat-pro"></span><span
+                                                    class="indicator-ms"></span></a>
+                                            <div role="menu" class="author-message-top dropdown-menu animated flipInX">
+                                                <div class="message-single-top">
+                                                    <h1>Message</h1>
+                                                </div>
+                                                <ul class="message-menu">
+                                                    <li>
+                                                        <a href="#">
+                                                            <div class="message-img">
+                                                                <img src="{% static 'img/message/1.jpg' %}" alt="">
+                                                            </div>
+                                                            <div class="message-content">
+                                                                <span class="message-date">25 July</span>
+                                                                <h2>Tips</h2>
+                                                                <p>Shipping services made easy by Blockchain Freight.
+                                                                </p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+
+
+                                                    <li>
+                                                        <a href="#">
+                                                            <div class="message-img">
+                                                                <img src="{% static 'img/message/2.jpg' %}" alt="">
+                                                            </div>
+                                                            <div class="message-content">
+                                                                <span class="message-date">25 July</span>
+                                                                <h2>Geoffrey</h2>
+                                                                <p>Here is some important shipping tips from CEO.</p>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                                <div class="message-view">
+                                                    <a href="#">View All Messages</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="nav-item">2<a href="#" data-toggle="dropdown" role="button"
+                                                aria-expanded="false" class="nav-link dropdown-toggle"><i
+                                                    class="fa fa-bell-o" aria-hidden="true"></i><span
+                                                    class="indicator-nt"></span></a>
+
+                                        </li>
+                                        <li class="nav-item">1
+                                            <a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+                                                class="nav-link dropdown-toggle">
+                                                <span
+                                                    class="adminpro-icon adminpro-user-rounded header-riht-inf"></span>
+                                                <span class="admin-name">My Account</span>
+                                                <span
+                                                    class="author-project-icon adminpro-icon adminpro-down-arrow"></span>
+                                            </a>
+                                            <ul role="menu"
+                                                class="dropdown-header-top author-log dropdown-menu animated flipInX">
+                                                <li><a href="#"><span
+                                                            class="adminpro-icon adminpro-home-admin author-log-ic"></span>My
+                                                        Account</a>
+                                                </li>
+                                                <li><a href="#"><span
+                                                            class="adminpro-icon adminpro-user-rounded author-log-ic"></span>My
+                                                        Profile</a>
+                                                </li>
+                                                <li><a href="#"><span
+                                                            class="adminpro-icon adminpro-money author-log-ic"></span>User
+                                                        Billing</a>
+                                                </li>
+                                                <li><a href="#"><span
+                                                            class="adminpro-icon adminpro-settings author-log-ic"></span>Settings</a>
+                                                </li>
+                                                <li><a href="#"><span
+                                                            class="adminpro-icon adminpro-locked author-log-ic"></span>Log
+                                                        Out</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li class="nav-item nav-setting-open"><a href="#" data-toggle="dropdown"
+                                                role="button" aria-expanded="false" class="nav-link dropdown-toggle"><i
+                                                    class="fa fa-tasks"></i></a>
+
+                                            <div role="menu"
+                                                class="admintab-wrap menu-setting-wrap menu-setting-wrap-bg dropdown-menu animated flipInX">
+                                                <ul class="nav nav-tabs custon-set-tab">
+                                                    <li class="active"><a data-toggle="tab" href="#Notes">Notes</a>
+                                                    </li>
+                                                    <li><a data-toggle="tab" href="#Settings">Settings</a>
+                                                    </li>
+                                                </ul>
+
+                                                <div class="tab-content">
+                                                    <div id="Notes" class="tab-pane fade in active">
+                                                        <div class="notes-area-wrap">
+                                                            <div class="note-heading-indicate">
+                                                                <h2><i class="fa fa-comments-o"></i> Latest Notes</h2>
+                                                                <p>You have 3 new message.</p>
+                                                            </div>
+                                                            <div class="notes-list-area notes-menu-scrollbar">
+                                                                <ul class="notes-menu-list">
+                                                                    <li>
+                                                                        <a href="#">
+                                                                            <div class="notes-list-flow">
+                                                                                <div class="notes-img">
+                                                                                    <img src="{% static 'img/notification/5.jpg' %}"
+                                                                                        alt="" />
+                                                                                </div>
+                                                                                <div class="notes-content">
+                                                                                    <p> How to use the New G10
+                                                                                        Blockchain Freight
+                                                                                        CRM</p>
+                                                                                    <span>Yesterday 2:45 pm</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="#">
+                                                                            <div class="notes-list-flow">
+                                                                                <div class="notes-img">
+                                                                                    <img src="{% static 'img/notification/1.jpg' %}"
+                                                                                        alt="" />
+                                                                                </div>
+                                                                                <div class="notes-content">
+                                                                                    <p>G10 Blockchain Freight tips when
+                                                                                        choosing
+                                                                                        a carier service</p>
+                                                                                    <span>Yesterday 2:45 pm</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a href="#">
+                                                                            <div class="notes-list-flow">
+                                                                                <div class="notes-img">
+                                                                                    <img src="{% static 'img/notification/2.jpg' %}"
+                                                                                        alt="" />
+                                                                                </div>
+                                                                                <div class="notes-content">
+                                                                                    <p> Tips on password and account
+                                                                                        safety.</p>
+                                                                                    <span>Yesterday 2:45 pm</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </a>
+                                                                    </li>
+
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="Settings" class="tab-pane fade">
+                                                        <div class="setting-panel-area">
+                                                            <div class="note-heading-indicate">
+                                                                <h2><i class="fa fa-gears"></i> Settings Panel</h2>
+                                                                <p> You have 20 Settings. 5 not completed.</p>
+                                                            </div>
+                                                            <ul class="setting-panel-list">
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Show notifications</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu"
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Disable Chat</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu"
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example3">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example3">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Enable history</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu"
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example4">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example4">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Show charts</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu"
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example7">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example7">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Update everyday</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu" checked=""
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example2">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example2">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Global search</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu" checked=""
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example6">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example6">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="checkbox-setting-pro">
+                                                                        <div class="checkbox-title-pro">
+                                                                            <h2>Offline users</h2>
+                                                                            <div class="ts-custom-check">
+                                                                                <div class="onoffswitch">
+                                                                                    <input type="checkbox"
+                                                                                        name="collapsemenu" checked=""
+                                                                                        class="onoffswitch-checkbox"
+                                                                                        id="example5">
+                                                                                    <label class="onoffswitch-label"
+                                                                                        for="example5">
+                                                                                        <span
+                                                                                            class="onoffswitch-inner"></span>
+                                                                                        <span
+                                                                                            class="onoffswitch-switch"></span>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Header top area end-->
+            <div align="left">
+                &nbsp;
+                <h3>&nbsp;Log-In as: <font color="blue">{{user.username}}</font>
+                </h3>
+            </div>
+
+            <!-- Mobile Menu start -->
+            <div class="mobile-menu-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="mobile-menu">
+                                <nav id="dropdown">
+                                    <ul class="mobile-menu-nav">
+                                        <li><a data-target="#Home_mob" href="{% url 'dashboard' %}">Dashboard <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#Quoting_mob" href="#">Quoting <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="Quoting_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">New Quote</a>
+                                                </li>
+                                                <li><a href="#">Quote History</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#Documentations_mob"
+                                                href="#">Documentations <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="Documentations_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">Request Documentations</a>
+                                                </li>
+                                                <li><a href="#">Documentations Details</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+
+                                        <li><a data-toggle="collapse" data-target="#Bookings_mob" href="#">Bookings
+                                                <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="Bookings_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">New Booking</a>
+                                                </li>
+                                                <li><a href="#">Unassigned</a>
+                                                </li>
+                                                <li><a href="#">In Progress</a>
+                                                </li>
+                                                <li><a href="#">Completed</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#Payments_mob" href="#">Payments
+                                                <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="Payments_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">Debit/Credit</a>
+                                                </li>
+                                                <li><a href="#">PayPal</a>
+                                                </li>
+                                                <li><a href="#">Bank Details</a>
+                                                </li>
+                                                <li><a href="#">E-Transfer</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#Shipments_mob" href="#">Shipments
+                                                <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="Shipments_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">New Shipment</a>
+                                                </li>
+                                                <li><a href="#">History</a>
+                                                </li>
+                                                <li><a href="#">Tracking</a>
+                                                </li>
+                                                <li><a href="#">Milestones</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#Reports_mob" href="#">Reports <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="Reports_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">Quoting Reports</a>
+                                                </li>
+                                                <li><a href="#">Booking Reports</a>
+                                                </li>
+                                                <li><a href="#">Shipping Reports</a>
+                                                </li>
+                                                <li><a href="#">Payment Reports</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#account_settings_mob"
+                                                href="#">Account
+                                                settings <span
+                                                    class="admin-project-icon adminpro-icon adminpro-down-arrow"></span></a>
+                                            <ul id="account_settings_mob" class="collapse dropdown-header-top">
+                                                <li><a href="#">password Reset</a>
+                                                </li>
+                                                <li><a href="#">User details</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a data-toggle="collapse" data-target="#" href="#">Log Out</a></li>
+
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu end -->
+            <!-- Breadcome start-->
+            <div class="breadcome-area des-none">
+
+            </div>
+            <!-- Breadcome End-->

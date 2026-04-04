@@ -1,0 +1,295 @@
+{% load static %}
+<script src="{% static 'js/vendor/jquery-1.11.3.min.js' %}"></script>
+<script src="{% static 'js/js_form_validator/verify.notify.min.js' %}"></script> <!--form validator-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'login_files/style.css' %}" />
+  <style>
+    .forgot-password {
+      background: linear-gradient(120deg, #00c6ff, #0072ff);
+      color: #fff;
+      font-weight: bold;
+      padding: 12px 35px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .forgot-password::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: rgba(255, 255, 0, 0.3);
+      transform: skewX(-25deg);
+      transition: all 0.5s ease;
+    }
+
+    .forgot-password:hover::before {
+      left: 125%;
+    }
+
+    .forgot-password:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .forgot-password:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .forgot-password::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: rgba(255, 255, 0, 0.3);
+      transform: skewX(-25deg);
+      transition: all 0.5s ease;
+      pointer-events: none;
+      /* <- allow clicks to pass through */
+    }
+  </style>
+  <title>Sign in & Sign up Form</title>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="forms-container">
+      <div class="signin-signup">
+        <form class="sign-in-form" method="post">
+          {% csrf_token %}
+          <h2 class="title">Sign in</h2>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Username" name="username" />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" name="password" />
+          </div>
+          <input type="submit" value="Login" class="btn solid" />
+          <p class="social-text">G10 Blockchain Freight social platforms</p>
+          <div class="social-media">
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-youtube"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+          <div>
+            <!-- <h2>{{ message }}</h2> -->
+          </div>
+        </form>
+
+        <form action="{% url 'Create_client_user' %}" class="sign-up-form" method="POST">
+          {% csrf_token %}
+          <h2 class="title">Sign up</h2>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="First Name" name="first_name"
+              data-validate="required,min(3),regex(^[A-Za-z ]+$,Only letters allowed)" />
+
+          </div>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Last Name" name="second_name"
+              data-validate="required,min(3),regex(^[A-Za-z ]+$,Only letters allowed)" />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Username" name="username" data-validate="required,min(5)" />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-envelope"></i>
+            <input type="email" placeholder="Email" name="email" data-validate="required,email" />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" name="password" data-validate="required,min(5)" />
+          </div>
+          <input type="submit" class="btn" value="Sign up" />
+
+          <p class="social-text">G10 Blockchain Freight social platforms</p>
+          <div class="social-media">
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-youtube"></i>
+            </a>
+            <a href="#" target="_blank" class="social-icon">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="panels-container">
+      <div class="panel left-panel">
+        <div class="content">
+          <h3>G10 Blockchain Freight<h3>
+
+              <p style="
+                          font-family: Arial, Helvetica, sans-serif;
+                          font-size: 18px;
+                          line-height: 1.6;
+                          color: #31334b;      /* dark blue for readability */
+                          /*background-color: #e2ccbb; /* light lavender background */
+                          padding: 15px;
+                          border-radius: 8px;
+                          max-width: 500px;
+                          margin: 20px auto;
+                          text-align: center;
+                          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                      ">
+                <strong>Group Team 10:</strong> Supply Chain Based Project<br>
+                <strong>CSE 540:</strong> Engr Blockchain Applications<br>
+                <strong>Semester:</strong> 2026 Spring B<br>
+                <strong>Arizona State University</strong><br>
+                Tempe, AZ 85281<br>
+                USA
+              </p>
+              <button class="btn transparent" id="sign-up-btn"> Sign up</button>
+              &nbsp;&nbsp;
+              <button class="btn transparent" id="sign-up-btn">Request Quote</button>
+              &nbsp;&nbsp;
+              <button class="btn transparent" id="sign-up-btn">Reset Password</button>
+
+        </div>
+        <img src="{% static 'login_files/img/log.svg' %}" class="image" alt="" />
+      </div>
+      <div class="panel right-panel">
+        <div class="content">
+          <h3>G10 Blockchain Freight</h3>
+          <p style="
+                          font-family: Arial, Helvetica, sans-serif;
+                          font-size: 18px;
+                          line-height: 1.6;
+                          color: #31334b;      /* dark blue for readability */
+                          /*background-color: #5069f4; /* light lavender background */
+                          padding: 15px;
+                          border-radius: 8px;
+                          max-width: 500px;
+                          margin: 20px auto;
+                          text-align: center;
+                          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                      ">
+            <strong>Group Team 10:</strong> Supply Chain Based Project<br>
+            <strong>CSE 540:</strong> Engr Blockchain Applications<br>
+            <strong>Semester:</strong> 2026 Spring B<br>
+            <strong>Arizona State University</strong><br>
+            Tempe, AZ 85281<br>
+            USA
+          </p>
+          <button class="btn transparent" id="sign-in-btn">Sign in</button>
+          &nbsp;&nbsp;
+          <button class="btn transparent" id="sign-in-btn">Request Quote</button>
+          &nbsp;&nbsp;
+          <button class="btn transparent" id="sign-in-btn">Reset Password</button>
+
+        </div>
+        <img src="{% static 'login_files/img/register.svg' %}" class="image" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'login_files/app.js' %}"></script>
+
+  {% block messages %}
+  {%include "extended_base_tamplates/message_template.html"%}
+  {% endblock %}
+
+
+</body>
+
+</html>
+
+<!-- Modal HTML (place just before the closing </body> tag) -->
+<div id="reset_password_Modal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h2>Forgot Password</h2>
+
+    <form name="forgot_password" class="forgot-password-form" method="post" action="{% url 'forgot_password' %}">
+      {% csrf_token %}
+      <div class="form-row">
+
+        <div class="form-row">
+
+          <div class="input-field">
+            <i class="fas fa-envelope"></i>
+            <input type="email" placeholder="Enter Email" name="client_email" data-validate="required,email" />
+          </div>
+          <button type="submit" class="forgot-password">Submit</button>
+        </div>
+
+      </div>
+    </form>
+    <!-- ...existing code... -->
+  </div>
+</div>
+
+
+<script>
+  // Show modal on page load
+  window.addEventListener('DOMContentLoaded', function () {
+    //change display to block from none if you want to display on page load
+    document.getElementById('reset_password_Modal').style.display = 'none';
+  });
+
+  // Show modal on "Request password" button click
+  document.querySelectorAll('button.btn.transparent').forEach(function (btn) {
+    if (btn.textContent.trim() === 'Reset Password') {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('reset_password_Modal').style.display = 'block';
+      });
+    }
+  });
+
+  // Close modal
+  document.getElementById('closeModal').onclick = function () {
+    document.getElementById('reset_password_Modal').style.display = 'none';
+  };
+  // Close modal when clicking outside modal content
+  window.onclick = function (event) {
+    var modal = document.getElementById('reset_password_Modal');
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  };
+</script>

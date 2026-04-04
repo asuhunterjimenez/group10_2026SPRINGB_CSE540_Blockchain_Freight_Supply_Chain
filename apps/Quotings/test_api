@@ -1,0 +1,52 @@
+import requests
+import json
+
+# ------------------------------
+# CONFIGURATION
+# ------------------------------
+API_KEY = "1234"         # Replace with your CMA CGM API key
+VOYAGE_NUMBER = "0DVIHS1MA"        # Replace with the voyage number you want to fetch
+BASE_URL = "https://apis.cma-cgm.net/vesseloperation/voyage/v2"
+
+# ------------------------------
+# HEADERS & PARAMETERS
+# ------------------------------
+headers = {
+    "KeyId": API_KEY,
+    "Accept": "application/json"
+}
+
+params = {
+    "voyageNumber": VOYAGE_NUMBER
+}
+
+# ------------------------------
+# SEND REQUEST
+# ------------------------------
+response = requests.get(BASE_URL, headers=headers, params=params)
+
+# ------------------------------
+# CHECK RESPONSE
+# ------------------------------
+print("Status Code:", response.status_code)
+print("Response Text:", response.text[:500])  # print first 500 chars for debugging
+
+if response.status_code == 200 and response.text:
+    try:
+        data = response.json()
+        print(json.dumps(data, indent=4))
+        
+        # Optional: Print port calls
+        if "calls" in data:
+            print("\n--- Port Calls ---")
+            for call in data["calls"]:
+                print(f"Port: {call.get('portName')} ({call.get('portCode')})")
+                print(f"ETA: {call.get('eta')}, ETD: {call.get('etd')}")
+                cutoffs = call.get("cutOffs", {})
+                for k, v in cutoffs.items():
+                    print(f"{k.capitalize()} Cut-off: {v}")
+                print("-" * 30)
+    except json.JSONDecodeError:
+        print("Response is not valid JSON")
+else:
+    print("Request failed or empty response")

@@ -1,0 +1,102 @@
+{% if messages %}
+<div id="toast-container">
+  {% for message in messages %}
+  <div class="toast {{ message.tags }}">
+    <span class="toast-icon">
+      {% if message.tags == 'success' %}✅{% endif %}
+      {% if message.tags == 'error' %}❌{% endif %}
+      {% if message.tags == 'warning' %}⚠{% endif %}
+      {% if message.tags == 'info' %}ℹ{% endif %}
+    </span>
+    <span class="toast-text">{{ message }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<style>
+  /* Toast container */
+  #toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    /* On the right */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    /* Stack upward */
+    gap: 10px;
+    align-items: flex-end;
+    /* Align right */
+  }
+
+  /* Toast style */
+  .toast {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 192, 203, 0.25);
+    /* light pink with transparency */
+    backdrop-filter: blur(8px);
+    /* glass effect */
+    -webkit-backdrop-filter: blur(8px);
+    /* Safari support */
+    color: #333;
+    padding: 10px 14px;
+    border-radius: 8px;
+    min-width: 220px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(20px);
+    animation: slideIn 0.4s forwards;
+    border: 1px solid rgba(255, 192, 203, 0.4);
+    /* subtle border */
+  }
+
+  /* Toast icon */
+  .toast-icon {
+    font-size: 18px;
+    margin-right: 8px;
+  }
+
+  /* Toast types */
+  .toast.success {
+    border-left: 5px solid #28a745;
+  }
+
+  .toast.error {
+    border-left: 5px solid #dc3545;
+    color: red;
+  }
+
+  .toast.warning {
+    border-left: 5px solid #ffc107;
+  }
+
+  .toast.info {
+    border-left: 5px solid #17a2b8;
+  }
+
+  /* Animation */
+  @keyframes slideIn {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Auto-hide after 7 seconds
+    setTimeout(function () {
+      document.querySelectorAll("#toast-container .toast").forEach(function (toast) {
+        toast.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(20px)"; // Slide out to right
+        setTimeout(() => toast.remove(), 500); // Remove after fade
+      });
+    }, 7000); // <-- Delay changed from 3000 to 7000 ms
+  });
+</script>

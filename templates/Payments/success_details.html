@@ -1,0 +1,39 @@
+{% load static %}
+<div class="container text-center mt-5">
+  <div class="card shadow-lg p-4" style="border-radius:15px; max-width:700px; margin:auto;
+      border:2px solid #28a745;">
+
+    <h1 class="font-weight-bold mb-3" style="color:#28a745;">
+      ⛓️ Blockchain Payment Status
+    </h1>
+    <p>&nbsp;</p>
+
+    <div class="mt-4 text-start">
+      <p><strong>Quote Request ID:</strong> <span class="fw-bold">{{ quote_request_id }}</span></p>
+      <p><strong>Transaction ID:</strong> <span class="fw-bold">{{ transaction_id }}</span></p>
+      <p><strong>Payment Type:</strong> <span class="fw-bold">{{ payment_type }}</span></p>
+      <p><strong>Payment Purpose:</strong> <span class="fw-bold">{{ amount_purpose }}</span></p>
+      <p><strong>Total Amout to be Paid (ETH):</strong> <span class="fw-bold">{{ total_charges }}</span></p>
+      <!-- <p><strong>Paid Amount (Wei):</strong> <span class="fw-bold">{{ amount_wei }}</span></p> -->
+      <p><strong>Paid Amount (ETH):</strong> <span class="fw-bold">{{ amount_eth }}</span></p>
+      <p><strong>Balance After Payment (ETH):</strong> <span class="fw-bold">{{ balance_after_payment }}</span></p>
+      <p><strong>Blockchain Gas Used:</strong> <span class="fw-bold">{{ blockchain_gas_eth }}</span></p>
+      <p><strong>Total Charges from Your Wallet:</strong> <span class="fw-bold">{{ your_wallet_was_charged }}</span></p>
+      <p><strong>Source Wallet:</strong> <span class="fw-bold">{{ source_wallet }}</span></p>
+      <p><strong>Status:</strong> <span class="fw-bold" style="color:#28a745;">
+          Successfully Completed</span></p>
+      <p><strong>Created At (Local Time):</strong> <span class="fw-bold">{{ created_at_dt }}</span></p>
+      <p><strong>Created By:</strong> <span class="fw-bold">{{ created_by }}</span></p>
+      <p><strong>Payment Email Sent:</strong> <span class="fw-bold">{{ payment_email_sent }}</span></p>
+      <p><strong>Transacted By:</strong> <span class="fw-bold">{{ transacted_by }}</span></p>
+      <!-- <p><strong>Transaction Hash:</strong> <span class="fw-bold">{{ transaction_hash }}</span></p> -->
+
+    </div>
+
+    <div class="mt-4 text-center">
+      <a href="{% url 'dashboard' %}" class="btn btn-success px-4 py-2" style="border-radius: 25px; font-size: 1.2em;">
+        ⬅️ Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>

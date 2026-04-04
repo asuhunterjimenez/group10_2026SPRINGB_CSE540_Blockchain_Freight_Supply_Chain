@@ -1,0 +1,121 @@
+<!-- Static Table Start -->
+
+<div class="data-table-area mg-b-15">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="sparkline13-list shadow-reset">
+                    <div class="sparkline13-hd">
+                        <div class="main-sparkline13-hd">
+                            <h4 class="text-warning">Pending <span class="table-project-n">Quotes</span> </h4>
+
+                            <!-- load Queries to be worked on -->
+                            <div class="view-mail-action view-mail-ov-d-n">
+                                <!-- only accessed by sales team and finance -->
+                                {% if book_cases_access %}
+                                <a href="#" data-toggle="modal" data-target="#book_cases_model"><i
+                                        class="fa fa-reply"></i> Book-Cases</a>
+                                {% else %}
+                                &nbsp;&nbsp;&nbsp;
+                                {% endif %}
+
+
+                                <a class="compose-draft-bt" href="javascript:window.print()"><i class="fa fa-print"></i>
+                                    Print</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+
+                            <div class="sparkline13-outline-icon">
+                                <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                                <span><i class="fa fa-wrench"></i></span>
+                                <span class="sparkline13-collapse-close"><i class="fa fa-times"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sparkline13-graph">
+                        <div class="datatable-dashv1-list custom-datatable-overright">
+                            <div id="toolbar">
+                                <select class="form-control">
+                                    <option value="">Export Basic</option>
+                                    <option value="all">Export All</option>
+                                    <option value="selected">Export Selected</option>
+                                </select>
+                            </div>
+                            <table id="table" data-toggle="table" data-pagination="true" data-search="true"
+                                data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
+                                data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
+                                data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true"
+                                data-toolbar="#toolbar">
+                                <thead>
+                                    <tr>
+
+                                        <th>Client Name</th>
+                                        <th>Date and Time Received</th>
+                                        <th>Request ID</th>
+                                        <th>Freight Type</th>
+                                        <th>Quote Status</th>
+                                        <th data-field="action">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in quotes %}
+                                    <tr>
+                                        <td>{{ item.first_name }} &nbsp;{{ item.last_name }}</td>
+                                        <td>{{ item.date_received }} &nbsp;{{ item.time_received }}</td>
+                                        <td>{{ item.request_id }}</td>
+                                        <td>{{ item.freight_type }}</td>
+                                        <td>
+                                            {% if item.request_status == 'Approved Quote' %}
+                                            <span class="text-success">✅{{ item.request_status }}</span>
+                                            {% elif item.request_status == 'Rejected Quote' %}
+                                            <span class="text-danger">❌{{ item.request_status }}</span>
+                                            {% elif item.request_status == 'Draft' %}
+                                            <span class="text-warning">⚠️ Pending</span>
+                                            {% else %}
+                                            <span class="text-warning">{{ item.request_status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+
+                                            {% if book_cases_access %}
+
+                                            <form method="POST" action="{% url 'lock_single_case' %}"
+                                                name='form_booked_queries'>
+                                                {% csrf_token %}
+                                                <input type="hidden" name="request_id" value="{{ item.request_id }}">
+                                                <input type="hidden" name="username_single" value="{{ user.username }}">
+
+                                                <button type="submit" class="btn btn-custon-rounded-two btn-warning"
+                                                    name="book_case"><span
+                                                        class="adminpro-icon adminpro-warning-danger"></span>
+                                                    Book-Case</button>
+                                            </form>
+
+                                            {% else %}
+                                            <a href="{% url 'client_view_quote' item.request_id %}"
+                                                class="btn btn-primary">View Details</a>
+                                            {% endif %}
+                                            <!--<a href="{% url 'quoting' %}" class="btn btn-danger">Delete</a>-->
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5">
+                                            <font color='red'>No freight records found.</font>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Static Table End -->

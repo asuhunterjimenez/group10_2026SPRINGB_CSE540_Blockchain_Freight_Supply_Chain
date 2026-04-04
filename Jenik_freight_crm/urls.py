@@ -1,0 +1,38 @@
+"""
+URL configuration for G10 Blockchain Freight project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/5.2/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+
+urlpatterns = [
+    path('', include('apps.Login.urls')),  # Include the login app URLs
+    path('admin/', admin.site.urls),
+    path('apps/Login/',include('apps.Login.urls')),
+    path('apps/Home/',include('apps.Home.urls')),
+    path('apps/Quotings/',include('apps.Quotings.urls')),
+    path('apps/Documentations/',include('apps.Documentations.urls')),
+    path('apps/Bookings/',include('apps.Bookings.urls')),
+    path('apps/Payments/',include('apps.Payments.urls')),
+    #path('apps/Shipments/',include('apps.Shipments.urls')),
+    #path('apps/Reports/',include('apps.Reports.urls')),
+    path('apps/Account_settings/',include('apps.Account_settings.urls')),
+      
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

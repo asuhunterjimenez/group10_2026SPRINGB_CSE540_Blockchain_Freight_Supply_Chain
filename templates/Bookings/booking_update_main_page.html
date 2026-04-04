@@ -1,0 +1,1081 @@
+{% load static %}
+<!-- loads user groups -->
+{% load group_tags %}
+
+
+{% block auto_css %}
+<!-- Address Auto Increment Start -->
+<link href="{% static 'auto_completion/address_auto_completion.css' %}" rel="stylesheet">
+<!-- Address Auto Increment End -->
+<!-- Table auto addition -->
+<link href="{% static 'auto_completion/table_auto_addition.css' %}" rel="stylesheet">
+{% endblock auto_css %} <!-- Breadcome End-->
+<style>
+  input[type="text"] {
+    width: 100%;
+  }
+
+  .touchspin1,
+  .touchspin2,
+  .touchspin3,
+  .touchspin4 {
+    width: 100%;
+    /* full width of parent */
+    height: 45px;
+    /* taller input */
+    font-size: 16px;
+    /* bigger text */
+    padding: 10px;
+    /* more padding inside */
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    /* wrapper takes full width of parent */
+  }
+
+  .autocomplete-results {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+    /* full width */
+    box-sizing: border-box;
+    /* include padding/border inside width */
+  }
+
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    /* full width */
+    padding: 8px;
+    box-sizing: border-box;
+    /* keep padding inside width */
+  }
+
+  .autocomplete-suggestions {
+    border: none;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: antiquewhite;
+    z-index: 9999;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: 2px;
+    /* space from input box */
+    border-radius: 4px;
+    /* rounded edges */
+  }
+
+  .suggestion {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .suggestion:hover {
+    background-color: #eee;
+  }
+
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+</style>
+<!------start form-->
+<form method="POST" action="{% url 'make_booking' request_id=request_id %}">
+  {% csrf_token %}
+  <!-- Basic Form Start -->
+  <div class="advanced-form-area mg-b-15">
+    <div class="container-fluid">
+      <div class="row">
+        <h1 class="text-info" align="center">Freight Booking</h1>
+        <div class="col-lg-6">
+          <div class="sparkline10-list shadow-reset mg-t-30">
+            <div class="sparkline10-hd">
+              <div class="main-sparkline10-hd">
+                <h4>Shipper's / Exporter Information</h4>
+                <div class="sparkline10-outline-icon">
+                  <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline10-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12 ">
+                    <div class="form-group">
+                      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                      <input type="hidden" name="request_id" value="{{ customer_details.request_id }}">
+                      <input type="hidden" name="service_type" value="{{ service_type }}">
+                      <label class="form-control-label">Company Name </label>
+                      <input type="text" class="form-control"
+                        value="{{customer_details.customer_registered_business_name}}" name="shipper_company_name"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Name </label>
+                      <input type="text" class="form-control" name="shipper_fullname"
+                        value="{{ user.first_name }} {{ user.last_name }}" placeholder="Shipper Full Name"
+                        data-validate="required,min(3),regex(^[A-Za-z\s]+$,Only letters allowed)"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Phone Number </label>
+                      <input type="text" class="form-control" name="telephone_number"
+                        value="{{ customer_details.telephone_number }}" placeholder="Telephone Name"
+                        data-validate="required,min(3),regex(^[0-9]+$,Only numbers allowed)"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Email </label>
+                      <input type="text" class="form-control" name="shipper_email"
+                        value="{{ customer_details.email_address }}" placeholder="Shipper Name"
+                        data-validate="required,email" style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipment Type </label>
+                      <input type="text" class="form-control" name="shipment_type" value="{{ service_type }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Export Number
+                      </label>
+                      <input type="text" class="form-control" name="shipper_export_number"
+                        value="{{ customer_details.shipper_export_number }}" placeholder="Shipper Export Number"
+                        data-validate="min(3)">
+                      <label class="form-control-label">Shipper Address</label>
+                      <input type="text" id="address1" class="form-control" name="shipper_address"
+                        value="{{ customer_details.service_address }}" autocomplete="off"
+                        data-validate="required,min(4)" style="background-color: antiquewhite;" readonly>
+                      <div class="autocomplete-suggestions" id="results1"></div>
+                      <!--end form-group-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline11-list shadow-reset mg-t-30">
+            <div class="sparkline11-hd">
+              <div class="main-sparkline11-hd">
+                <h4>Consignee / Receiver Information</h4>
+                <div class="sparkline11-outline-icon">
+                  <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <label class="form-control-label">Receiver Company Name</label>
+                    <input type="text" class="form-control" name="receiver_company_name"
+                      placeholder="Receiver Company Name"
+                      data-validate="required,min(3),regex(^[A-Za-z\s]+$,Only letters allowed)">
+                    <label class="form-control-label">Receiver Name<font class="text-danger">**</font></label>
+                    <input type="text" class="form-control" name="receiver_fullname" placeholder="Receiver Full Name"
+                      data-validate="required,min(3),regex(^[A-Za-z\s]+$,Only letters allowed)">
+                    <label class="form-control-label">Receiver Phone Number<font class="text-danger">**</font></label>
+                    <input type="text" class="form-control" name="receiver_phone_number"
+                      placeholder="Receiver Phone Number"
+                      data-validate="required,min(3),regex(^[0-9]+$,Only numbers allowed)">
+                    <label class="form-control-label">Receiver Email<font class="text-danger">**</font></label>
+                    <input type="text" class="form-control" name="receiver_email" placeholder="Receiver Email"
+                      data-validate="required,email">
+                    <label class="form-control-label">Receiver Tax Id <font color="red">(if Company)</font></label>
+                    <input type="text" class="form-control" name="receiver_tax_id" placeholder="Receiver Tax Id"
+                      data-validate="min(3)">
+                    <label class="form-control-label">Receiver Driver Lincence <font color="red">(if Individual)</font>
+                    </label>
+                    <input type="text" class="form-control" name="receiver_driver_lincence_number"
+                      placeholder="Receiver Driver Lincence" data-validate="min(5)">
+                    <label class="form-control-label">Receiver Passport No <font color="red">(if Individual)</font>
+                    </label>
+                    <input type="text" class="form-control" name="receiver_passport_no"
+                      placeholder="Receiver Passport No" data-validate="min(4)">
+                    <label class="form-control-label">Receiver Address<font class="text-danger">**</font></label>
+                    <input type="text" id="address2" class="form-control" placeholder="Receiver Address"
+                      name="receiver_address" autocomplete="off" data-validate="required,min(3)">
+                    <div class="autocomplete-suggestions" id="results2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="sparkline12-list shadow-reset mg-t-30">
+            <div class="sparkline12-hd">
+              <div class="main-sparkline12-hd">
+                <h4>
+                  <font color="red">{{service_type}} </font> Quoting Details
+                </h4>
+                <div class="sparkline12-outline-icon">
+                  <span class="sparkline12-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline12-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+
+                    <!-- Quote Reference -->
+                    <label class="form-control-label">Quote Reference</label>
+                    <input type="text" class="form-control" name="quote_request_id"
+                      value="{{ customer_quoting_details.request_id }}" style="background-color: antiquewhite;"
+                      readonly>
+
+                    {% if service_type == 'Ocean Freight' or service_type == 'Customs Brokerage' %}
+                    <!-- Place of Receipt -->
+                    <label class="form-control-label">Place of Receipt</label>
+                    <input type="text" class="form-control" name="place_of_receipt"
+                      value="{{ customer_quoting_details.place_of_receipt }}" style="background-color: antiquewhite;"
+                      readonly>
+
+                    <!-- Port of Loading -->
+                    <label class="form-control-label">Port of Loading</label>
+                    <input type="text" id="ocean_port-loading" name="port_of_loading"
+                      value="{{ customer_quoting_details.port_of_loading }}" readonly class="form-control"
+                      style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ customer_quoting_details.country_of_loading }}"
+                      style="background-color: bisque;" readonly>
+
+                    <!-- Port of Discharge -->
+                    <label class="form-control-label">Port of Discharge</label>
+                    <input type="text" class="form-control" name="port_of_discharge"
+                      value="{{ customer_quoting_details.port_of_discharge }}" style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ customer_quoting_details.country_of_discharge }}"
+                      style="background-color: bisque;" readonly>
+
+                    {% if user.is_authenticated and user|has_group:"sales_team" %}
+                    <!-- Sales Team Fields -->
+                    <label class="form-control-label">Container Number <font class="text-danger">**</font></label>
+                    <input type="text" class="form-control" name="container_number" placeholder="Container Number"
+                      data-validate="min(3),required">
+
+                    <label class="form-control-label">Vessel Number <font class="text-danger">**</font></label>
+                    <input type="text" class="form-control" name="vessel_number" placeholder="Vessel Number"
+                      data-validate="min(3),required">
+
+                    <label class="form-control-label">HS Code</label>
+                    <input type="text" class="form-control" name="hs_code" placeholder="HS Code"
+                      data-validate="min(3),required">
+
+                    <label class="form-control-label">CERS</label>
+                    <input type="text" class="form-control" name="cers" placeholder="CERS"
+                      data-validate="min(3),required">
+
+                    <label class="form-control-label">Desired Type of Release: <font class="text-danger">**</font>
+                    </label>
+                    <select class="form-control" name="desired_type_of_release" data-validate="required">
+                      <option value=" " selected>Select Desired Type of Release</option>
+                      <option value="Print at Destination">Print at Destination</option>
+                      <option value="Telex">Telex</option>
+                      <option value="Seaway bill">Seaway bill</option>
+                    </select>
+                    {% endif %}
+
+                    {% elif service_type == 'Air Freight' %}
+                    <!-- Air Freight Fields -->
+                    <label class="form-control-label">Departure</label>
+                    <input type="text" name="departure" value="{{ customer_quoting_details.departure }}" readonly
+                      class="form-control" style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ customer_quoting_details.country_of_departure }}"
+                      style="background-color: bisque;" readonly>
+
+                    <label class="form-control-label">Destination</label>
+                    <input type="text" class="form-control" name="destination"
+                      value="{{ customer_quoting_details.destination }}" style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ customer_quoting_details.country_of_destination }}"
+                      style="background-color: bisque;" readonly>
+
+                    {% elif service_type == 'RORO Freight' %}
+                    <!-- RORO Freight Fields -->
+                    <label class="form-control-label">Pick-Up Address</label>
+                    <input type="text" name="departure" value="{{ customer_quoting_details.vehicle_pickup_address }}"
+                      readonly class="form-control" style="background-color: antiquewhite;">
+
+                    <label class="form-control-label">Delivery Address</label>
+                    <input type="text" class="form-control" name="destination"
+                      value="{{ customer_quoting_details.vehicle_delivery_address }}"
+                      style="background-color: antiquewhite;">
+
+                    {% else %}
+                    No Service selected
+                    {% endif %}
+
+                  </div> <!-- col-lg-12 -->
+                </div> <!-- row -->
+              </div> <!-- input-knob-dial-wrap -->
+            </div> <!-- sparkline11-graph -->
+
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline13-list shadow-reset mg-t-30">
+            <div class="sparkline13-hd">
+              <div class="main-sparkline13-hd">
+                <h4>
+                  More On Quote
+                </h4>
+                <div class="sparkline13-outline-icon">
+                  <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline13-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline13-graph">
+              <div class="input-knob-dial-wrap">
+
+                <div class="row">
+                  <div class="chosen-select-single mg-b-20" align="left">
+                    <div class="tsbox">
+                      <!-- for Air freight -->
+                      {%if service_type == 'Air Freight' or service_type == 'RORO Freight'%}
+                      <label class="form-control-label"><b>Number of Units</b></label>
+                      <input type="text" value="{{customer_quoting_details.number_of_units}}"
+                        style="background-color: antiquewhite;" readonly>
+                      <!-- for ocean freights -->
+                      {%elif service_type == 'Ocean Freight' or service_type == 'Customs Brokerage' %}
+                      <label class="form-control-label"><b>Estimated date of shipment</b></label>
+                      <input type="text" value="{{customer_quoting_details.estimated_shipping_date}}"
+                        style="background-color: antiquewhite;" readonly>
+                      <br><br>
+                      {%elif service_type == 'Ocean Freight'%}
+                      <label class="form-control-label"><b>Equipment size</b></label>
+                      <input type="text" class="form-control" value="{{ customer_quoting_details.equipment_size }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <br>
+                      {%endif%}
+                      <label class="form-control-label"><b>Do you require Tracking?</b> </label>
+                      <input type="text" value="{{ customer_quoting_details.tracking }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <input type="text" value="Address: {{ customer_quoting_details.door_delivery_address }}"
+                        style="background-color: bisque;" readonly>
+                      <br>
+                      <label class="form-control-label"><b>Quote Expiry date</b> </label>
+                      <input type="text" value="{{ customer_quoting_details.validity_date }}"
+                        style="background-color: antiquewhite;" readonly>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- start commodity category and sub category -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h4 class="text-danger">
+                  Commodity
+                </h4>
+              </div>
+            </div>
+            <div class="sparkline15-graph">
+              <div class="row">
+                <!-- Main Category -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Commodity Type</label>
+                    <input type="text" class="commodity-select form-control"
+                      value="{{customer_quoting_details.commodity_cat}}" style="background-color: antiquewhite;"
+                      readonly>
+                  </div>
+                </div>
+                <!-- Sub Category -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner subCategory">
+                    <label>Commodity Name: </label>
+                    <input type="text" class="subDetails form-control"
+                      value="{{customer_quoting_details.commodity_sub}}" style="background-color: antiquewhite;"
+                      readonly></input>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Hazardous</label>
+                    <input type="text" class="form-control" name="hazardous"
+                      value="{{ customer_quoting_details.hazardous }}" style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end commodity category and sub category -->
+      {% if service_type == 'Air Freight' or service_type == 'RORO Freight'%}
+      <!-- measurements...Height,Width,Length,Weight -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h4 class="text-danger">
+                  Package Measurements
+                </h4>
+                <div class="sparkline15-outline-icon">
+                  <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline15-graph">
+              <div class="row">
+                <!-- Height -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Height in : &nbsp;<font color="red">
+                        {{customer_quoting_details.unit_of_measurement_L_W_H}}</font></label>
+                    <input class="form-control" type="number" value="{{customer_quoting_details.height}}"
+                      style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+                <!-- Width -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Width in : &nbsp;<font color="red">
+                        {{customer_quoting_details.unit_of_measurement_L_W_H}}</font></label>
+                    <input class="form-control" type="number" value="{{customer_quoting_details.width}}"
+                      style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+                <!-- Length -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Length in : &nbsp;<font color="red">
+                        {{customer_quoting_details.unit_of_measurement_L_W_H}}</font></label>
+                    <input class="form-control" type="number" value="{{customer_quoting_details.length}}"
+                      style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+                <!-- Weight -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Weight in : &nbsp;<font color="red">
+                        {{customer_quoting_details.unit_of_measurement_weight}}</font></label>
+                    <input class="form-control" type="number" value="{{customer_quoting_details.weight}}"
+                      style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end measurements...Height,Width,Length,Weight -->
+      {%endif%}
+
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="sparkline10-list shadow-reset mg-t-30">
+            <div class="sparkline10-hd">
+              <div class="main-sparkline10-hd">
+                <h4>
+                  <font color="red">Quote Response:</font>
+                  <font color="blue">Total: <b>{{customer_quoting_details.total_charges}}</b></font>
+                  in <font color="blue">{{customer_quoting_details.currency_type}}</font>
+                </h4>
+                Quotation Break-down
+                <div class="sparkline10-outline-icon">
+                  <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline10-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="chosen-select-single mg-b-20">
+                      <label>Currency Type</label>
+                      <input type="text" class="form-control" value="{{ customer_quoting_details.currency_type }}"
+                        style="background-color: antiquewhite;" readonly>
+                    </div>
+                    {%if service_type != 'Customs Brokerage' %}
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Freight Charges</label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.freight_charges }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+                    {%if service_type == 'Customs Brokerage' %}
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Brokerage Fee</label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.brokerage_fee }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+                    {%endif%}
+                    {%endif%}
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Quote Expire(Validity)</label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.validity_date }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline11-list shadow-reset mg-t-30">
+            <div class="sparkline11-hd">
+              <div class="main-sparkline11-hd">
+                <h4>
+                  <font color=red>Other charges (optional)</font>
+                </h4>
+                Quotation Break-down
+                <div class="sparkline11-outline-icon">
+                  <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+
+                    {%if service_type != 'Customs Brokerage' %}
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Fuel SurCharge(FSC) </label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.fuel_surcharge }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Customs Charges </label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.customs_charges }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+
+                    {%elif service_type == 'Customs Brokerage' %}
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Taxes </label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.taxes }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Customs Duties </label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.customs_duties }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+                    {%endif%}
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">Other Charges </label>
+                        <label class="color-group">
+                          <input type="text" class="form-control" value="{{ customer_quoting_details.other_charges }}"
+                            style="background-color: antiquewhite;" readonly>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- display for vehichles -->
+      {% if customer_quoting_details.commodity_sub == 'Vehicles' %}
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h4>
+                  <font class="text-danger">ENTER:</font> Cargo Description: Vehicles <font color="red">NOTE: For
+                    vehicles, the fuel tank must be
+                    empty, the
+                    battery disconnected and taped off.</font>
+                </h4>
+                <h5 class="text-danger"><b>Delete Unsed below text boxes</b></h5>
+                <div class="sparkline15-outline-icon">
+                  <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+
+            <!--for new vehicle  -->
+            <div class="sparkline15-graph">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="touchspin-inner mb-3">
+
+                    <!-- Wrapper -->
+                    <div id="vehicles-wrapper">
+
+                      <!-- 🔹 Add Vehicle Button -->
+                      <div class="d-flex justify-content-end mb-2">
+                        <button type="button" id="add-vehicle-btn" class="btn btn-sm btn-success">
+                          + Add Vehicle
+                        </button>
+                      </div>
+
+                      <!-- 🔹 Vehicle Rows Container -->
+                      <div id="vehicle-rows">
+                        <!-- Default Row (Cannot Remove) -->
+                        <div class="vehicle-row row align-items-end mb-3" data-index="1">
+                          <div class="col-md-2">
+                            <label class="form-label">Year</label>
+                            <input type="text" name="vehicle_year[]" class="form-control" placeholder="e.g., 1999"
+                              data-validate="required,min(4),max(4),regex(^[0-9]+$,Only numbers allowed)">
+                          </div>
+
+                          <div class="col-md-3">
+                            <label class="form-label">Make/Model</label>
+                            <input type="text" name="vehicle_make[]" class="form-control" placeholder="Make/Model"
+                              data-validate="required,min(3)">
+                          </div>
+
+                          <div class="col-md-3">
+                            <label class="form-label">VIN</label>
+                            <input type="text" name="vehicle_vin[]" class="form-control" placeholder="Vehicle VIN"
+                              data-validate="required,min(3)">
+                          </div>
+
+                          <div class="col-md-2">
+                            <label class="form-label">Cost (CAD)</label>
+                            <input type="text" name="vehicle_cost_in_CAD[]" class="form-control vehicle-cost"
+                              placeholder="e.g., 1,234.56"
+                              data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
+                          </div>
+
+                          <div class="col-md-2">
+                            <label class="form-label">Color</label>
+                            <input type="text" name="vehicle_color[]" class="form-control" placeholder="e.g., Blue"
+                              data-validate="required,min(3)">
+                          </div>
+
+                          <div class="col-md-2 remove-vehicle-container" style="display: none;">
+                            <button type="button" class="btn btn-sm btn-danger remove-vehicle-btn">− Remove</button>
+                          </div>
+
+                          <hr class="w-100 mt-3">
+                        </div>
+                      </div>
+
+                      <!-- 🔹 Total Vehicle Cost Box -->
+                      <div class="mb-3 p-3 bg-light border rounded" id="vehicle-total-box">
+                        <br>
+                        <strong>Total Vehicle Cost: CAD $<span id="vehicle-total"
+                            class="text-success">0.00</span></strong>
+                      </div>
+
+                    </div> <!-- vehicles-wrapper -->
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% else %}
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h4>
+                  <font class="text-danger">ENTER:</font> Cargo Description: <font color="red">Commodities</font>
+                </h4>
+                <h5 class="text-danger"><b>Delete Unsed text boxes</b></h5>
+                <div class="sparkline15-outline-icon">
+                  <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sparkline15-graph">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="touchspin-inner mb-3">
+
+                    <!-- Wrapper -->
+                    <div id="goods-wrapper">
+
+                      <!-- 🔹 Add Goods Button -->
+                      <div class="d-flex justify-content-end mb-2">
+                        <button type="button" id="add-goods-btn" class="btn btn-sm btn-success">
+                          + Add Goods
+                        </button>
+                      </div>
+
+                      <!-- 🔹 Goods Rows Container -->
+                      <div id="goods-rows">
+                        <!-- Default Row (Cannot Remove) -->
+                        <div class="goods-row row align-items-end mb-3" data-index="1">
+                          <div class="col-md-2">
+                            <label class="form-label">QTY</label>
+                            <input type="text" name="goods_qty[]" class="form-control" placeholder="e.g., 10"
+                              data-validate="required,min(1),max(5),regex(^[0-9]+$,Only numbers allowed)">
+                          </div>
+
+                          <div class="col-md-5">
+                            <label class="form-label">Description of Goods</label>
+                            <input type="text" name="goods_description[]" class="form-control"
+                              placeholder="Goods description" data-validate="required,min(3)">
+                          </div>
+
+                          <div class="col-md-3">
+                            <label class="form-label">Value (CAD)</label>
+                            <input type="text" name="goods_value_in_CAD[]" class="form-control goods-value"
+                              placeholder="e.g., 1,234.56"
+                              data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
+                          </div>
+
+                          <div class="col-md-2 remove-goods-container" style="display: none;">
+                            <button type="button" class="btn btn-sm btn-danger remove-goods-btn">− Remove</button>
+                          </div>
+
+                          <hr class="w-100 mt-3">
+                        </div>
+                      </div>
+
+                      <!-- Total Box -->
+                      <div class="mb-3 p-3 bg-light border rounded" id="goods-total-box">
+                        <br>
+                        <strong>Total Declared Value: CAD $<span id="goods-total" class="text-success">0.00</span>
+                        </strong>
+                      </div>
+
+                    </div> <!-- goods-wrapper -->
+                    {%endif%}
+                    <!-- Submit Button -->
+                    <p align="center">
+                      <button type="submit" class="forgot-password">Submit</button>
+                    </p>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+  <!-- Basic Form End-->
+</form>
+
+{% block address_auto_increment %}
+<!-- Table auto addition -->
+<script src="{% static 'auto_completion/table_auto_addition.js' %}"></script>
+
+<script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
+
+<!-- load float -->
+<!-- load ocean float/amount validator -->
+<script src="{% static 'js/js_form_validator/float_validator.js' %}"></script>
+
+
+{% endblock address_auto_increment %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const goodsRows = document.getElementById('goods-rows');
+    const addGoodsBtn = document.getElementById('add-goods-btn');
+    const totalDisplay = document.getElementById('goods-total');
+    let goodsIndex = 1;
+    const maxGoods = 10;
+
+    // -----------------------------
+    // Format input as currency
+    // -----------------------------
+    function formatCurrency(input) {
+      let value = input.value.replace(/,/g, ''); // remove commas
+      if (!isNaN(value) && value !== '') {
+        value = parseFloat(value).toFixed(2);
+        input.value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+      updateTotal();
+    }
+
+    // -----------------------------
+    // Update total declared value
+    // -----------------------------
+    function updateTotal() {
+      const values = document.querySelectorAll('.goods-value');
+      let total = 0;
+      values.forEach(input => {
+        let val = input.value.replace(/,/g, '');
+        if (!isNaN(val) && val !== '') {
+          total += parseFloat(val);
+        }
+      });
+      totalDisplay.textContent = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // -----------------------------
+    // Toggle remove buttons visibility
+    // -----------------------------
+    function toggleGoodsRemoveButtons() {
+      const rows = goodsRows.querySelectorAll('.goods-row');
+      rows.forEach(row => {
+        const removeBtnContainer = row.querySelector('.remove-goods-container');
+        if (removeBtnContainer) {
+          removeBtnContainer.style.display = (rows.length > 1) ? 'block' : 'none';
+        }
+      });
+    }
+
+    // -----------------------------
+    // Create new goods row dynamically
+    // -----------------------------
+    function createGoodsRow() {
+      goodsIndex++;
+      const row = document.createElement('div');
+      row.className = 'goods-row row align-items-end mb-3';
+      row.setAttribute('data-index', goodsIndex);
+
+      row.innerHTML = `
+      <div class="col-md-2">
+        <label class="form-label">QTY</label>
+        <input type="text" name="goods_qty[]" class="form-control" placeholder="e.g., 10"
+          data-validate="required,min(1),max(5),regex(^[0-9]+$,Only numbers allowed)">
+      </div>
+
+      <div class="col-md-5">
+        <label class="form-label">Description of Goods</label>
+        <input type="text" name="goods_description[]" class="form-control" placeholder="Goods description"
+          data-validate="required,min(3)">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Value (CAD)</label>
+        <input type="text" name="goods_value_in_CAD[]" class="form-control goods-value" placeholder="e.g., 1,234.56"
+          data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
+      </div>
+
+      <div class="col-md-2 remove-goods-container">
+        <button type="button" class="btn btn-sm btn-danger remove-goods-btn">− Remove</button>
+      </div>
+
+      <hr class="w-100 mt-3">
+    `;
+
+      // Attach remove button
+      row.querySelector('.remove-goods-btn').addEventListener('click', function () {
+        row.remove();
+        toggleGoodsRemoveButtons();
+        updateTotal();
+      });
+
+      // Attach currency formatting on input
+      row.querySelector('.goods-value').addEventListener('input', function () {
+        formatCurrency(this);
+      });
+
+      return row;
+    }
+
+    // -----------------------------
+    // Add new row on button click
+    // -----------------------------
+    addGoodsBtn.addEventListener('click', function () {
+      if (goodsIndex >= maxGoods) {
+        alert("Maximum " + maxGoods + " goods entries allowed.");
+        return;
+      }
+      const newRow = createGoodsRow();
+      goodsRows.appendChild(newRow);
+      toggleGoodsRemoveButtons();
+      newRow.querySelector('input[name="goods_qty[]"]').focus();
+    });
+
+    // -----------------------------
+    // Initialize first row formatting
+    // -----------------------------
+    const initialValueInput = goodsRows.querySelector('.goods-value');
+    initialValueInput.addEventListener('input', function () {
+      formatCurrency(this);
+    });
+
+    toggleGoodsRemoveButtons();
+    updateTotal();
+  });
+
+  // for vehicles
+  document.addEventListener('DOMContentLoaded', function () {
+    const vehicleRows = document.getElementById('vehicle-rows');
+    const addVehicleBtn = document.getElementById('add-vehicle-btn');
+    const totalDisplay = document.getElementById('vehicle-total');
+    let vehicleIndex = 1;
+    const maxVehicles = 10;
+
+    // ✅ Format currency input on the fly
+    function formatCurrency(input) {
+      let value = input.value.replace(/,/g, '');
+      if (!isNaN(value) && value !== '') {
+        value = parseFloat(value).toFixed(2);
+        input.value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+      updateTotal();
+    }
+
+    // ✅ Recalculate total after input change or row removal
+    function updateTotal() {
+      const values = document.querySelectorAll('.vehicle-cost');
+      let total = 0;
+      values.forEach(input => {
+        let val = input.value.replace(/,/g, '');
+        if (!isNaN(val) && val !== '') {
+          total += parseFloat(val);
+        }
+      });
+      totalDisplay.textContent = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // ✅ Show or hide remove buttons
+    function toggleVehicleRemoveButtons() {
+      const rows = vehicleRows.querySelectorAll('.vehicle-row');
+      rows.forEach(row => {
+        const removeBtnContainer = row.querySelector('.remove-vehicle-container');
+        if (removeBtnContainer) {
+          removeBtnContainer.style.display = (rows.length > 1) ? 'block' : 'none';
+        }
+      });
+    }
+
+    // ✅ Create a dynamic vehicle row
+    function createVehicleRow() {
+      vehicleIndex++;
+      const row = document.createElement('div');
+      row.className = 'vehicle-row row align-items-end mb-3';
+      row.setAttribute('data-index', vehicleIndex);
+
+      row.innerHTML = `
+        <div class="col-md-2">
+          <label class="form-label">Year</label>
+          <input type="text" name="vehicle_year[]" class="form-control" placeholder="e.g., 1999"
+            data-validate="required,min(4),max(4),regex(^[0-9]+$,Only numbers allowed)">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Make/Model</label>
+          <input type="text" name="vehicle_make[]" class="form-control" placeholder="Make/Model"
+            data-validate="required,min(3)">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">VIN</label>
+          <input type="text" name="vehicle_vin[]" class="form-control" placeholder="Vehicle VIN"
+            data-validate="required,min(3)">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Cost (CAD)</label>
+          <input type="text" name="vehicle_cost_in_CAD[]" class="form-control vehicle-cost" placeholder="e.g., 1,234.56"
+            data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Color</label>
+          <input type="text" name="vehicle_color[]" class="form-control" placeholder="e.g., Blue"
+            data-validate="required,min(3)">
+        </div>
+        <div class="col-md-2 remove-vehicle-container">
+          <button type="button" class="btn btn-sm btn-danger remove-vehicle-btn">− Remove</button>
+        </div>
+        <hr class="w-100 mt-3">
+      `;
+
+      // Attach remove button
+      row.querySelector('.remove-vehicle-btn').addEventListener('click', function () {
+        row.remove();
+        toggleVehicleRemoveButtons();
+        updateTotal();
+      });
+
+      // Attach currency formatting for new row
+      row.querySelector('.vehicle-cost').addEventListener('input', function () {
+        formatCurrency(this);
+      });
+
+      return row;
+    }
+
+    // ✅ Add vehicle button click
+    addVehicleBtn.addEventListener('click', function () {
+      if (vehicleIndex >= maxVehicles) {
+        alert("Maximum " + maxVehicles + " vehicle entries allowed.");
+        return;
+      }
+      const newRow = createVehicleRow();
+      vehicleRows.appendChild(newRow);
+      toggleVehicleRemoveButtons();
+      newRow.querySelector('input[name="vehicle_year[]"]').focus();
+    });
+
+    // ✅ Initial setup for first row formatting
+    const initialCostInput = vehicleRows.querySelector('.vehicle-cost');
+    initialCostInput.addEventListener('input', function () {
+      formatCurrency(this);
+    });
+
+    toggleVehicleRemoveButtons();
+    updateTotal();
+  });
+</script>

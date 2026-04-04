@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Deposit Initial Payment</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+
+<body>
+  <div class="container mt-5">
+    <center class="text-success">
+      <h2>Deposit Initial Payment (ETH)</h2>
+    </center>
+
+    <form id="payment-form">
+      {% csrf_token %}
+      <input type="hidden" name="booking_id" value="{{ booking_id }}">
+      <input type="hidden" name="quote_request_id" value="{{ quote_request }}">
+      <input type="hidden" name="total_charges" value="{{ total_charges }}">
+      <input type="hidden" id="wallet_address" name="wallet_address" value="">
+      <input type="hidden" id="transaction_hash" name="transaction_hash" value="">
+      <input type="hidden" id="transaction_id" name="transaction_id">
+      <input type="hidden" id="blockchain_gas_amount" name="blockchain_gas_amount">
+
+      <div style="max-width:500px; margin:0 auto;">
+        <div class="form-group mb-3">
+          <label>Initial Deposit (ETH)</label>
+          <input type="text" id="amount" name="amount" value="{{ initial_deposit|default:'0.5' }}" readonly
+            class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="pay-button">Pay with MetaMask</button>
+      </div>
+    </form>
+
+    <div id="status-msg" class="text-center mt-3"></div>
+  </div>
+
+  <script>
+
+    const contractAddress = "{{ contract_address|escapejs }}";
+    const contractABI = JSON.parse('{{ contract_abi_json|escapejs }}');
+
+    document.getElementById("payment-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const statusDiv = document.getElementById("status-msg");
+      if (!window.ethereum) { alert("MetaMask not installed!"); return; }
+
+      try {
+        const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+        const wallet = accounts[0];
+        document.getElementById("wallet_address").value = wallet;
+        statusDiv.innerText = "Wallet connected: " + wallet;
+
+        const web3 = new Web3(window.ethereum);
+        const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+        const amountEth = document.getElementById("amount").value;
+        const amountWei = web3.utils.toWei(amountEth, "ether");
+
+        const bookingId = document.querySelector('[name="booking_id"]').value;
+        const txId = `TXN-${bookingId}-${Math.floor(Date.now() / 1000)}`;
+        document.getElementById("transaction_id").value = txId;
+
+        const paymentStruct = {
+          quote_request_id: String(document.querySelector('[name="quote_request_id"]').value),
+          transaction_id: String(txId),
+          payment_type: "ETH",
+          amount: String(amountWei),
+          amount_purpose: "initial_deposit",
+          blockchain_gas_amount: "0",
+          source_wallet: wallet,
+          status: "completed",
+          created_at: String(Math.floor(Date.now() / 1000)),
+          created_by: String("{{ request.user.username }}"),
+          payment_email_sent: false,
+          user_id: String("{{ request.user.id }}"),
+          transaction_hash: "",
+          confirmed_at: "0"
+        };
+
+        // Single transaction: send ETH + call contract
+        const receipt = await contract.methods.createPayment(paymentStruct)
+          .send({ from: wallet, value: amountWei });
+
+        const gasUsed = BigInt(receipt.gasUsed);
+        const gasPrice = BigInt(receipt.effectiveGasPrice || 0);
+        const gasFeeWei = gasUsed * gasPrice;
+        document.getElementById("blockchain_gas_amount").value = gasFeeWei.toString();
+
+        statusDiv.innerText = `Payment successful! Gas fee: ${web3.utils.fromWei(gasFeeWei.toString(), "ether")} ETH`;
+
+        // Send to Django
+        const formData = new FormData(this);
+        const response = await fetch("{% url 'payments:create_blockchain_payment' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") },
+          body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.location.href = "{% url 'payments:success' %}?transaction_id=" + txId;
+        } else { alert("Payment logging failed: " + (data.error || "Unknown error")); }
+
+      } catch (err) {
+        console.error(err);
+        alert("Payment interrupted: " + err.message);
+        statusDiv.innerText = "Payment interrupted. Check console.";
+      }
+    });
+  </script>
+</body>
+
+</html>

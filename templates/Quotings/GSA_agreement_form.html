@@ -1,0 +1,406 @@
+{% extends "extended_base_tamplates/base.html" %}
+
+{% block upper_scripts %}
+<!--loading upper scripts-->
+{% include "extended_base_tamplates/upper_scripts.html" %}
+{% endblock upper_scripts %}
+
+{% block links_and_common_content %}
+<!-- Default content can go here -->
+{% include "extended_base_tamplates/links_and_common_content.html" %}
+{% endblock links_and_common_content %}
+
+<!--loading static files to support the main_content-->
+{% load static %}
+
+{% block main_content %}
+<!-- Main Content area start-->
+<style>
+  .touchspin1,
+  .touchspin2,
+  .touchspin3,
+  .touchspin4 {
+    width: 100%;
+    /* full width of parent */
+    height: 45px;
+    /* taller input */
+    font-size: 16px;
+    /* bigger text */
+    padding: 10px;
+    /* more padding inside */
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    /* wrapper takes full width of parent */
+  }
+
+  .autocomplete-results {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+    /* full width */
+    box-sizing: border-box;
+    /* include padding/border inside width */
+  }
+
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    /* full width */
+    padding: 8px;
+    box-sizing: border-box;
+    /* keep padding inside width */
+  }
+</style>
+
+<!-- Basic Form Start -->
+<form method="POST" action="{% url 'GSA_agreement' %}">
+  {% csrf_token %}
+
+  <div class="advanced-form-area mg-b-15">
+    <div class="container-fluid">
+
+      <center>
+        <h2><u>GENERAL SERVICE AGREEMENT</u></h2>
+      </center>
+      <p>
+        <font size='4'><b>Jenik Freight</b> offers its services to the Customer identified below on the following
+          general
+          terms:
+        </font>
+      </p>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="sparkline10-list shadow-reset mg-t-30">
+            <div class="sparkline10-hd">
+              <div class="main-sparkline10-hd">
+                <h4>
+                  <font color="red">Client GSA Form</font>
+                </h4>
+                <div class="sparkline10-outline-icon">
+                  <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline10-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">CUSTOMER REGISTERED BUSINESS NAME</label>
+                        <label class="color-group" for="customer_registered_business_name">
+                          <input type="text" placeholder="Customer Registered Business"
+                            name="customer_registered_business_name"
+                            data-validate="required,min(4),regex(^[A-Za-z ]+$,Only letters allowed)">
+                        </label>
+                      </div>
+
+                      <div class="colorpicker-inner ts-forms mg-b-23">
+                        <div class="tsbox">
+                          <label class="label">CORPORATE JURISDICTION AND NUMBER</label>
+                          <label class="color-group" for="corp_jur_number">
+                            <input type="text" placeholder="Corporate Jurisdiction and number" name="corp_jur_number"
+                              data-validate="required,min(4)">
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="colorpicker-inner ts-forms mg-b-23">
+                        <div class="tsbox">
+                          <label class="label">SERVICE ADDRESS</label>
+                          <label class="color-group" for="service_address">
+                            <input type="text" placeholder="Service Address" name="service_address"
+                              data-validate="required,min(5)" id="address1" autocomplete="off">
+                            <div class="autocomplete-results1" id="results1"></div>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="colorpicker-inner ts-forms mg-b-23">
+                        <div class="tsbox">
+                          <label class="label">BILLING ADDRESS <font color="red">(if different)</font></label>
+                          <label class="color-group" for="billing_address">
+                            <input type="text" placeholder="Billing Address" name="billing_address"
+                              data-validate="required,min(5)" id="address2">
+                            <div class="autocomplete-results2" id="results2"></div>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="colorpicker-inner ts-forms mg-b-23">
+                        <div class="tsbox">
+                          <label class="label">GST/HST <font color="red">Registration number</font></label>
+                          <label class="color-group" for="GST">
+                            <input type="text" placeholder="GST/HST Registration number" name="GST_HST"
+                              data-validate="required,min(3)">
+                          </label>
+                        </div>
+                      </div>
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline11-list shadow-reset mg-t-30">
+            <div class="sparkline11-hd">
+              <div class="main-sparkline11-hd">
+                <h1>Select 2</h1>
+                <div class="sparkline11-outline-icon">
+                  <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="chosen-select-single mg-b-20">
+                      <label>BUSINESS FORM</label>
+                      <select class="select2_demo_3 form-control" name="business_form" data-validate="required,min(5)">
+                        <option value="">Select One</option>
+                        <option value="Corporation">Corporation</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Sole proprietor">Sole proprietor</option>
+                      </select>
+                    </div>
+
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">AUTHORIZED CONTACT NUMBER</label>
+                        <label class="color-group" for="auth_contact_number">
+                          <input type="text" placeholder="Authorized Contact Name" name="auth_contact_number"
+                            data-validate="required,minLength(6),regex(^[0-9]+$,Only numbers allowed)">
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">TELEPHONE NUMBER</label>
+                        <label class="color-group" for="telephone_number">
+                          <input type="text" placeholder="Telephone Number" name="telephone_number"
+                            data-validate="required,minLength(6),regex(^[0-9]+$,Only numbers allowed)">
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">FAX NUMBER</label>
+                        <label class="color-group" for="fax_number">
+                          <input type="text" placeholder="Fax Number" name="fax_number">
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="colorpicker-inner ts-forms mg-b-23">
+                      <div class="tsbox">
+                        <label class="label">EMAIL ADDRESS</label>
+                        <label class="color-group" for="email_address">
+                          <input type="text" placeholder="Email Address" name="email_address"
+                            data-validate="required,email">
+                        </label>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h1>Bank Details</h1>
+                <div class="sparkline15-outline-icon">
+                  <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline15-graph">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="touchspin-inner">
+                    <label>BANK NAME</label>
+                    <input class="touchspin1" type="text" name="bank_name" placeholder="Bank Name"
+                      data-validate="required,min(3),regex(^[A-Za-z ]+$,Only letters allowed)">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="touchspin-inner">
+                    <label>BRANCH ID</label>
+                    <input class="touchspin2" type="text" name="branch_id" placeholder="Branch ID"
+                      data-validate="required,min(3),regex(^[A-Za-z0-9]+$)">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="touchspin-inner">
+                    <label>ACCOUNT NUMBER</label>
+                    <input class="touchspin3" type="text" name="account_number" placeholder="Account Number"
+                      data-validate="required,minLength(3),regex(^[0-9]+$,Only numbers allowed)">
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="touchspin-inner">
+                    <label>BRANCH ADDRESS</label>
+                    <input class="touchspin4" type="text" name="branch_address" placeholder="Branch Address"
+                      data-validate="required,minLength(6)" id="address3">
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  <div class="touchspin-inner">
+                    <p>&nbsp;</p>
+                    <b>By Submitting this form</b>,I authorize the Bank identified above to provide the Forwarder, on
+                    request,
+                    with Service Provider
+                    Information regarding the accounts and credit facilities of the Customer, such authority not
+                    expiring unless withdrawn in writing.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- text columns -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h1>Read agreement</h1>
+                <div class="sparkline15-outline-icon">
+                  <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline15-graph">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="touchspin-inner">
+                    <b>Agency:</b> The Forwarder acts as agent only unless otherwise specified in writing, and Customer
+                    authorizes the Forwarder to make agreements with third party service providers as required to carry
+                    out the Customer’s mandates on their usual
+                    commercial terms on the Customer's behalf, and Customer has all rights and is bound by all
+                    obligations
+                    as principal to such agreements with any
+                    performing party, whether or not the agency is disclosed.
+                    <br>&nbsp;<br>
+                    <b>Payment:</b> Customer agrees to pay the Forwarder's invoices when due without set-off or
+                    deferment
+                    for any alleged claim or counterclaim. Accounts past due more than 30 days shall be subject to
+                    interest of ___% per month. The Forwarder will
+                    be entitled to full indemnity for any and all fees and expenses incurred in obtaining payment for
+                    past
+                    due amounts, including legal fees. The
+                    Forwarder retains the right to modify these payment terms at any time in its sole discretion on
+                    written notice to the Customer.
+                    <br>&nbsp;<br>
+                    <b>Power of Attorney for Customs:</b> I hereby authorize the Forwarder to act as my forwarding agent
+                    for export control and customs purposes with full authority to prepare any document and to make any
+                    declaration and/or filing required by law in
+                    carrying out the Customer's mandates.Notwithstanding the foregoing, the Forwarder does not offer
+                    customs advice unless so agreed in writing
+                    for remuneration.
+                    <br>&nbsp;<br>
+                    <b>All Business is conducted in accordance with the Standard Trading Conditions of the Canadian
+                      International Freight Forwarders' Association (the CIFFA STCs), </b>which set out rights and
+                    responsibilities of the
+                    parties; govern the manner of bringing claims; and limit the Forwarder's liability; receipt and
+                    acceptance of which are hereby acknowledged:
+                    <br>&nbsp;<br>
+                    <b>Complete and Accurate:</b> Customer warrants the completeness and accuracy of all information
+                    provided and acknowledges
+                    Customer's absolute and unlimited liability for any misdeclaration.
+                    <br>&nbsp;<br>
+                    <b>I warrant that</b> I am the duly authorized representative of the Customer with full authority to
+                    bind the organization to this agreement:
+                    <P>&nbsp;</P>
+                    <div class="col-lg-6">
+                      <label>
+                        TITLE
+                      </label>
+                      <select class="touchspin2" name="title" data-validate="required,minLength(2)">
+                        <option value='' selected>------Select Title---------</option>
+                        <option value="Mr">Mr.</option>
+                        <option value="Mrs">Mrs.</option>
+                        <option value="Ms">Ms.</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Engineer">Engineer</option>
+                        <option value="CEO">CEO</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Managing Director">Managing Director</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p>&nbsp;</p>
+              <input button type="submit" class="forgot-password" value="Submit GSA Form">
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- Basic Form End-->
+  </div>
+</form>
+
+
+
+
+
+
+
+<!-- main content area end-->
+{% endblock main_content %}
+
+<!--loading footer-->
+{% block footer %}
+{% include "extended_base_tamplates/footer.html" %}
+{% endblock footer %}
+<!--footer area end-->
+<!--loading bottom scripts-->
+{% block bottom_script %}
+{% include "extended_base_tamplates/bottom_script.html" %}
+{% endblock bottom_script %}
+<!--bottom script end-->

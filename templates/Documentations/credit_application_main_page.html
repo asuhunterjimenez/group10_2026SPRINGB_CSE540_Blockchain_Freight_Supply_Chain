@@ -1,0 +1,765 @@
+<!--loading static files to support the main_content-->
+{% load static %}
+
+
+<script>
+  $(document).ready(function () {
+    $('#datepicker').datepicker({
+      format: 'mm/dd/yyyy',
+      autoclose: true,
+      todayHighlight: true
+    });
+  });
+
+</script>
+<!-- =================================== -->
+<!-- hide div until selected option is chosen as per the requirement
+custom JavaScript to show/hide the "Other Commodity" input field
+for quoting request form module
+This code listens for changes on the commodity dropdown and shows/hides the "Other Commodity" -->
+{% load static %}
+<script src="{% static 'js/jenik/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/jenik/div_show_hide.js' %}"></script>
+<!-- =========================================== -->
+<script>
+  // for setting today's date in the input field 
+  document.addEventListener("DOMContentLoaded", function () {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+    const formattedToday = dd + "/" + mm + "/" + yyyy;
+
+    // List of input IDs
+    const inputs = ["today_date", "date_2", "date_3", "date_4"];
+
+    // Set today's date for all inputs
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = formattedToday;
+      }
+    });
+  });
+  // disable past dates in the date picker
+  $(document).ready(function () {
+    let today = new Date();
+    let minDate = new Date();
+    minDate.setDate(today.getDate() + 0); // disable past + next 0 days
+
+    // Initialize datepicker for all inputs
+    $('#today_date, #date_2, #date_3, #date_4').datepicker({
+      format: 'dd/mm/yyyy',
+      startDate: minDate,
+      autoclose: true
+    });
+  });
+</script>
+<style>
+  .touchspin1,
+  .touchspin2,
+  .touchspin3,
+  .touchspin4 {
+    width: 100%;
+    /* full width of parent */
+    height: 45px;
+    /* taller input */
+    font-size: 16px;
+    /* bigger text */
+    padding: 10px;
+    /* more padding inside */
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    /* wrapper takes full width of parent */
+  }
+
+  .autocomplete-results {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+    /* full width */
+    box-sizing: border-box;
+    /* include padding/border inside width */
+  }
+
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    /* full width */
+    padding: 8px;
+    box-sizing: border-box;
+    /* keep padding inside width */
+  }
+
+  .autocomplete-suggestions {
+    border: none;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: antiquewhite;
+    z-index: 9999;
+    width: 300px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: 2px;
+    /* space from input box */
+    border-radius: 4px;
+    /* rounded edges */
+  }
+
+  .suggestion {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .suggestion:hover {
+    background-color: #eee;
+  }
+
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+</style>
+<script>
+  window.ADDRESS_API_KEY = "{{ API_KEY }}";
+</script>
+<!-- works here -->
+<script src="{% static 'auto_completion/auto2/comp.js' %}"></script>
+<link rel="stylesheet" href="{% static 'auto_completion/auto2/comp1.css' %}">
+
+
+
+<div class="advanced-form-area mg-b-15">
+  <div class="container-fluid">
+
+    <!-- Basic Form Start -->
+    <span align="center" class="text-info">
+      <h3>CONFIDENTIAL CREDIT APPLICATION</h3>
+      <h5>(This form must be completed in full in order to be processed) Legal trading name:</h5>
+    </span>
+    <div id="credit_application">
+
+      <form method="POST" action="{% url 'credit_application_form' %}">
+        {% csrf_token %}
+        <div class="sparkline15-list shadow-reset mg-t-30">
+          <div class="sparkline15-hd">
+            <div class="main-spark">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="sparkline10-list shadow-reset mg-t-30">
+                    <div class="sparkline10-hd">
+                      <div class="main-sparkline10-hd">
+                        <h4>
+                          <font color="red">Credit Information</font>
+                        </h4>
+                        <div class="sparkline10-outline-icon">
+                          <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline10-graph">
+                      <div class="input-knob-dial-wrap">
+                        <div class="row">
+                          <div class="col-lg-12">
+
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Legal trading name <font color="red">**</font></label>
+                                <label class="color-group" for="Legal trading name">
+                                  <input type="text" placeholder="Legal trading name" name="legal_trading_name"
+                                    data-validate="required,min(5)">
+                                </label>
+                              </div>
+                            </div>
+
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">(and/or) Operating as<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" name="operating_as" data-validate="required,min(3)"
+                                    placeholder="Operating as">
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Business Location <font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" id="address1" name="business_location"
+                                    data-validate="required,min(5)" placeholder="Business Location" autocomplete="off">
+                                  <div id="results1" class="autocomplete-suggestions" style="width: 100%;"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Telephone<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" name="telephone"
+                                    data-validate="required,min(7),regex(^[0-9]+$,Only numbers allowed)"
+                                    placeholder="Telephone">
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">How long in business<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <select class="color-group" style="background-color:darkslategrey;"
+                                    name="length_in_business" data-validate="required">
+                                    <option value="">--------------- Select Option ---------------</option>
+                                    <option value="Less than 1 Year">Less than 1 Year</option>
+                                    <option value="2 Years">2 Years</option>
+                                    <option value="3 Years">3 Years</option>
+                                    <option value="4 Years">4 Years</option>
+                                    <option value="5 Years">5 Years</option>
+                                    <option value="More than 5 Years">More than 5 Years</option>
+                                  </select>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Type of Business<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <select class="color-group" style="background-color:darkslategrey;"
+                                    name="type_of_business" data-validate="required">
+                                    <option value="">--------------- Select Option ---------------</option>
+                                    <option value="Sole Proprietorship">Sole Proprietorship</option>
+                                    <option value="Partnership">Partnership</option>
+                                    <option value="Corporation">Corporation</option>
+                                    <option value="Limited Liability Company (LLC)">Limited Liability Company (LLC)
+                                    </option>
+                                    <option value="Cooperative">Cooperative</option>
+                                    <option value="Non-Profit Organization">Non-Profit Organization</option>
+                                    <option value="Franchise">Franchise</option>
+                                    <option value="Government Agency">Government Agency</option>
+                                    <option value="Publicly Traded Company">Publicly Traded Company</option>
+                                    <option value="Other">Other</option>
+                                  </select>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="sparkline11-list shadow-reset mg-t-30">
+                    <div class="sparkline11-hd">
+                      <div class="main-sparkline11-hd">
+                        <h4>
+                          <font color=red>Bank details</font>
+                        </h4>
+                        <div class="sparkline11-outline-icon">
+                          <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                          <span><i class="fa fa-wrench"></i></span>
+                          <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sparkline11-graph">
+                      <div class="input-knob-dial-wrap">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Bank Name<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" name="bank_name" data-validate="required,min(3)"
+                                    placeholder="Bank Name">
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Account Number<font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" name="account_number"
+                                    data-validate="required,min(7),regex(^[0-9]+$,Only numbers allowed)"
+                                    placeholder="Account Number">
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Bank Address <font color="red">**</font></label>
+                                <label class="color-group">
+                                  <input type="text" id="address2" name="bank_address" data-validate="required,min(5)"
+                                    placeholder="Bank Address" autocomplete="off">
+                                  <div id="results2" class="autocomplete-suggestions" style="width: 100%;"></div>
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Bank Fax</label>
+                                <label class="color-group">
+                                  <input type="text" name="bank_fax"
+                                    data-validate="min(7),regex(^[0-9]+$,Only numbers allowed)" placeholder="Bank Fax">
+                                </label>
+                              </div>
+                            </div>
+                            <div class="colorpicker-inner ts-forms mg-b-23">
+                              <div class="tsbox">
+                                <label class="label">Importer</label>
+                                <label class="color-group">
+                                  <input type="text" name="importer" data-validate="min(3)" placeholder="Importer#">
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- start credit reference form -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="sparkline15-list shadow-reset mg-t-30">
+              <div class="sparkline15-hd">
+                <div class="main-sparkline15-hd">
+                  <h4 class="text-danger">Credit References:</h4>
+                </div>
+              </div>
+              <div class="sparkline15-graph">
+                <div class="row">
+                  <!-- Main Category -->
+                  <div class="col-lg-12">
+                    <div class="touchspin-inner">
+
+                      <!-- Add/Subtract credit references form -->
+                      <div id="credit-references-wrapper">
+
+                        <!-- Button row -->
+                        <div class="d-flex justify-content-end mb-2">
+                          <button type="button" id="add-credit-btn" class="btn btn-sm btn-success"
+                            aria-label="Add credit reference">
+                            + Add Reference
+                          </button>
+                        </div>
+                        <!-- Container for dynamic rows -->
+                        <div id="credit-rows">
+                          <!-- One default row (will be submitted as arrays) -->
+                          <div class="credit-row row align-items-end mb-3">
+                            <div class="col-md-4">
+                              <label class="form-label">Name</label>
+                              <input type="text" name="referee_name[]" class="form-control" placeholder="Reference name"
+                                data-validate="min(3),required">
+                            </div>
+                            <div class="col-md-5">
+                              <label class="form-label">Address</label>
+                              <input id="address3" type="text" name="referee_address[]" class="form-control"
+                                placeholder="Address" data-validate="min(4),required">
+                              <div id="results3" class="autocomplete-suggestions" style="width: 100%;"></div>
+                            </div>
+                            <div class="col-md-3">
+                              <label class="form-label">Phone Number</label>
+                              <input type="tel" name="referee_phone[]" class="form-control" placeholder="Phone number"
+                                data-validate="min(7),regex(^[0-9]+$,Only numbers allowed),required">
+                            </div>
+                            <!-- <div class="col-12 mt-2">
+                              <button type="button" class="btn btn-sm btn-danger remove-credit-btn"
+                                style="display:none;">−
+                                Remove</button>
+                            </div> -->
+                            <p>&nbsp;</p>
+                            <hr class="w-100 mt-3">
+                          </div>
+                        </div>
+                      </div> <!-- #credit-references-wrapper -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end credit reference form -->
+
+        <!-- start name and address of  owner(s) officer(s)-->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="sparkline15-list shadow-reset mg-t-30">
+              <div class="sparkline15-hd">
+                <div class="main-sparkline15-hd">
+                  <h4 class="text-danger">Name and Address of owner(s) officer(s)</h4>
+                  <div class="sparkline15-outline-icon">
+                    <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                    <span><i class="fa fa-wrench"></i></span>
+                    <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="sparkline15-graph">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="touchspin-inner mb-3">
+                      <!-- Add/Subtract owner/officer form -->
+                      <div id="owner-wrapper">
+
+                        <!-- Button row -->
+                        <div class="d-flex justify-content-end mb-2">
+                          <button type="button" id="add-owner-btn" class="btn btn-sm btn-success">
+                            + Add Owner/Officer
+                          </button>
+                        </div>
+
+                        <!-- Container for dynamic rows -->
+                        <div id="owner-rows">
+                          <!-- One default row (cannot remove) -->
+                          <div class="owner-row row align-items-end mb-3" data-index="7">
+                            <div class="col-md-3">
+                              <label class="form-label">Name</label>
+                              <input type="text" name="owner_name[]" class="form-control" placeholder="Name"
+                                data-validate="min(3),required">
+                            </div>
+                            <div class="col-md-2">
+                              <label class="form-label">Title</label>
+                              <select name="owner_title[]" class="form-control" data-validate="required"
+                                style="background-color:darkslategrey; color:white;">
+                                <option value="">-- Select Title --</option>
+                                <option value="Owner">Owner</option>
+                                <option value="Partner">Partner</option>
+                                <option value="Director">Director</option>
+                                <option value="President">President</option>
+                                <option value="Vice President">Vice President</option>
+                                <option value="CEO">Chief Executive Officer (CEO)</option>
+                                <option value="CFO">Chief Financial Officer (CFO)</option>
+                                <option value="COO">Chief Operating Officer (COO)</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Secretary">Secretary</option>
+                                <option value="Treasurer">Treasurer</option>
+                                <option value="Member">Member</option>
+                                <option value="Agent">Agent</option>
+                                <option value="Other">Other</option>
+                              </select>
+                            </div>
+
+                            <div class="col-md-4">
+                              <label class="form-label">Address</label>
+                              <input id="address7" type="text" name="owner_address[]" class="form-control"
+                                placeholder="Address" data-validate="min(4),required">
+                              <div id="results7" class="autocomplete-suggestions" style="width: 100%;"></div>
+                            </div>
+                            <div class="col-md-3">
+                              <label class="form-label">Phone Number</label>
+                              <input type="tel" name="owner_phone[]" class="form-control" placeholder="Phone"
+                                data-validate="min(7),regex(^[0-9]+$,Only numbers allowed),required">
+                            </div>
+                            <p>&nbsp;</p>
+                            <hr class="w-100 mt-3">
+                          </div>
+                        </div>
+                      </div> <!-- #owner-wrapper -->
+
+                    </div>
+                  </div>
+                  <p align="left" class="form-label">
+                    In the event that credit information cannot be obtained through normal channels, the undersigned
+                    authorizes G10 Blockchain Freight
+                    Services Inc. To contact their financial institution and hereby authorize them to release the
+                    information required to
+                    establish the necessary credit. The undersigned covenants and agrees to pay G10 Blockchain Freight
+                    Services.
+                    Interest on the overdue
+                    amount outstanding to G10 Blockchain Freight Services Inc. Of twenty four (24%) per annum. The
+                    undersigned shall pay
+                    all costs incurred
+                    by G10 Blockchain Freight Services Inc. In the collection of monies owing to G10 Blockchain Freight
+                    Services Inc. I/We hereby consent
+                    to the
+                    aforementioned being made or, being caused to be made, by G10 Blockchain Freight Services Inc. In
+                    connection with my
+                    application or my
+                    continuing credit.
+
+                  </p>
+                  <p>&nbsp;</p>
+                  <input button type="submit" class="forgot-password" value="Submit Credit Application">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </form>
+  </div>
+
+  <style>
+    .credit-row {
+      position: relative;
+    }
+
+    .credit-row hr {
+      border-top: 1px solid #e9ecef;
+    }
+
+    .remove-credit-btn {
+      margin-left: 0.5rem;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const creditRows = document.getElementById('credit-rows');
+      const addBtn = document.getElementById('add-credit-btn');
+      let currentIndex = 3; // start index for IDs
+
+      // 🔹 Autocomplete function
+      function attachAutocomplete(addressId, resultsId) {
+        const input = document.getElementById(addressId);
+        const results = document.getElementById(resultsId);
+        if (!input || !results) return;
+
+        input.addEventListener('input', async function () {
+          const query = input.value.trim();
+          results.innerHTML = '';
+          if (query.length < 3) return;
+
+          try {
+            const resp = await fetch(`/apps/autocomplete_address/?q=${encodeURIComponent(query)}`);
+            const suggestions = await resp.json();
+            suggestions.forEach(item => {
+              const div = document.createElement('div');
+              div.className = 'suggestion-item';
+              div.style.cssText = 'padding:4px;cursor:pointer;';
+              div.textContent = item.label || item;
+              results.appendChild(div);
+            });
+          } catch (err) { console.error("Autocomplete error:", err); }
+        });
+
+        // Event delegation for clicks
+        results.addEventListener('click', function (e) {
+          if (e.target && e.target.classList.contains('suggestion-item')) {
+            input.value = e.target.textContent;
+            results.innerHTML = '';
+          }
+        });
+      }
+
+      // Attach autocomplete for default row
+      attachAutocomplete('address3', 'results3');
+
+      // Toggle remove button visibility
+      function toggleRemoveButtons() {
+        const rows = creditRows.querySelectorAll('.credit-row');
+        rows.forEach(row => {
+          const btn = row.querySelector('.remove-credit-btn');
+          if (btn) btn.style.display = (rows.length > 1) ? 'inline-block' : 'none';
+        });
+      }
+      toggleRemoveButtons();
+
+      // Create new credit row
+      function createCreditRow() {
+        currentIndex++;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'credit-row row align-items-end mb-3';
+        wrapper.setAttribute('data-index', currentIndex);
+
+        wrapper.innerHTML = `
+      <div class="col-md-4">
+        <label class="form-label">Name</label>
+        <input type="text" name="referee_name[]" class="form-control" placeholder="Reference name" data-validate="min(3),required">
+      </div>
+      <div class="col-md-5">
+        <label class="form-label">Address</label>
+        <input id="address${currentIndex}" type="text" name="referee_address[]" class="form-control" placeholder="Address" data-validate="min(4),required">
+        <div id="results${currentIndex}" class="autocomplete-suggestions" style="width:100%;"></div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" name="referee_phone[]" class="form-control" placeholder="Phone number" data-validate="min(7),regex(^[0-9]+$,Only numbers allowed),required">
+      </div>
+      <div class="col-12 mt-2">
+        <button type="button" class="btn btn-sm btn-danger remove-credit-btn">− Remove</button>
+      </div>
+      <hr class="w-100 mt-3">
+    `;
+
+        // Attach remove button
+        wrapper.querySelector('.remove-credit-btn').addEventListener('click', function () {
+          wrapper.remove();
+          toggleRemoveButtons();
+        });
+
+        // Attach autocomplete for new row
+        attachAutocomplete(`address${currentIndex}`, `results${currentIndex}`);
+
+        return wrapper;
+      }
+
+      // Add row on button click
+      addBtn.addEventListener('click', function () {
+        if (currentIndex >= 6) { alert("Maximum 6 credit references allowed."); return; }
+        const newRow = createCreditRow();
+        creditRows.appendChild(newRow);
+        toggleRemoveButtons();
+        newRow.querySelector('input[name="referee_name[]"]').focus();
+      });
+    });
+  </script>
+
+  <style>
+    .owner-row hr {
+      border-top: 1px solid #e9ecef;
+    }
+
+    .remove-owner-btn {
+      margin-left: 0.5rem;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const ownerRows = document.getElementById('owner-rows');
+      const addOwnerBtn = document.getElementById('add-owner-btn');
+      let currentOwnerIndex = 7;
+
+      // Attach autocomplete function
+      function attachOwnerAutocomplete(addressId, resultsId) {
+        const addressInput = document.getElementById(addressId);
+        const resultsDiv = document.getElementById(resultsId);
+        if (!addressInput || !resultsDiv) return;
+
+        addressInput.addEventListener("input", async function () {
+          const query = this.value.trim();
+          resultsDiv.innerHTML = "";
+          if (query.length < 3) return;
+
+          try {
+            const response = await fetch(`/apps/autocomplete_address/?q=${encodeURIComponent(query)}`);
+            const suggestions = await response.json();
+
+            resultsDiv.innerHTML = suggestions
+              .map(item => `<div class="suggestion-item" style="padding:4px;cursor:pointer;">${item}</div>`)
+              .join("");
+
+            resultsDiv.querySelectorAll(".suggestion-item").forEach(el => {
+              el.addEventListener("click", () => {
+                addressInput.value = el.textContent;
+                resultsDiv.innerHTML = "";
+              });
+            });
+          } catch (err) {
+            console.error("Autocomplete error:", err);
+          }
+        });
+      }
+
+      // Attach autocomplete to default row
+      attachOwnerAutocomplete("address7", "results7");
+
+      // Create new owner row dynamically
+      function createOwnerRow() {
+        currentOwnerIndex++;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'owner-row row align-items-end mb-3';
+        wrapper.setAttribute('data-index', currentOwnerIndex);
+
+        wrapper.innerHTML = `
+        <div class="col-md-3">
+          <label class="form-label">Name</label>
+          <input type="text" name="owner_name[]" class="form-control" placeholder="Name" data-validate="min(3),required">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Title</label>
+            <select name="owner_title[]" class="form-control" data-validate="required"
+              style="background-color:darkslategrey; color:white;">
+              <option value="">-- Select Title --</option>
+              <option value="Owner">Owner</option>
+              <option value="Partner">Partner</option>
+              <option value="Director">Director</option>
+              <option value="President">President</option>
+              <option value="Vice President">Vice President</option>
+              <option value="CEO">Chief Executive Officer (CEO)</option>
+              <option value="CFO">Chief Financial Officer (CFO)</option>
+              <option value="COO">Chief Operating Officer (COO)</option>
+              <option value="Manager">Manager</option>
+              <option value="Secretary">Secretary</option>
+              <option value="Treasurer">Treasurer</option>
+              <option value="Member">Member</option>
+              <option value="Agent">Agent</option>
+              <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Address</label>
+          <input id="address${currentOwnerIndex}" type="text" name="owner_address[]" class="form-control" placeholder="Address" data-validate="min(4),required">
+          <div id="results${currentOwnerIndex}" class="autocomplete-suggestions" style="width: 100%;"></div>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" name="owner_phone[]" class="form-control" placeholder="Phone" data-validate="min(7),regex(^[0-9]+$,Only numbers allowed),required">
+        </div>
+        <div class="col-12 mt-2">
+          <button type="button" class="btn btn-sm btn-danger remove-owner-btn">− Remove</button>
+        </div>
+        <hr class="w-100 mt-3">
+      `;
+
+        // Attach remove handler
+        const removeBtn = wrapper.querySelector('.remove-owner-btn');
+        removeBtn.addEventListener('click', function () {
+          wrapper.remove();
+          toggleRemoveButtons();
+        });
+
+        // Attach autocomplete for new row
+        attachOwnerAutocomplete(`address${currentOwnerIndex}`, `results${currentOwnerIndex}`);
+
+        return wrapper;
+      }
+
+      function toggleRemoveButtons() {
+        const rows = ownerRows.querySelectorAll('.owner-row');
+        rows.forEach((r, index) => {
+          const btn = r.querySelector('.remove-owner-btn');
+          if (btn) btn.style.display = (index === 0) ? 'none' : 'inline-block'; // Hide for first row
+        });
+      }
+
+      toggleRemoveButtons();
+
+      addOwnerBtn.addEventListener('click', function () {
+        if (currentOwnerIndex >= 9) {
+          alert("Maximum 3 owner/officer entries allowed (7-9).");
+          return;
+        }
+        const newRow = createOwnerRow();
+        ownerRows.appendChild(newRow);
+        toggleRemoveButtons();
+
+        const input = newRow.querySelector('input[name="owner_name[]"]');
+        if (input) input.focus();
+      });
+    });
+  </script>

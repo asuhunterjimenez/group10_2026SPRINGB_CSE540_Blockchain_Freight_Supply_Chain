@@ -1,0 +1,94 @@
+<div class="left-custom-menu-adp-wrap">
+  <ul class="nav navbar-nav left-sidebar-menu-pro">
+    <li class="nav-item">
+      <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle"><i
+          class="fa big-icon fa-home"></i> <span class="mini-dn">Home</span> <span
+          class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <a href="{% url 'dashboard' %}" class="dropdown-item">Dashboard</a>
+      </div>
+    </li>
+
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa big-icon fa-envelope"></i> <span class="mini-dn">Quoting</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <!-- <a href="#" class="dropdown-item">On-Boarding</a>
+        <a href="#" class="dropdown-item">New Quote</a> -->
+        <a href="{% url 'quoting' %}" class="dropdown-item">Quoting Details</a>
+      </div>
+    </li>
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa big-icon fa-envelope"></i> <span
+          class="mini-dn">Documentations</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <a href="#" class="dropdown-item">Request Documentations</a>
+        <a href="{% url 'documentation_details' %}" class="dropdown-item">Documentations
+          Details</a>
+      </div>
+    </li>
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa big-icon fa-envelope"></i> <span class="mini-dn">Bookings</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <a href="#" class="dropdown-item">New Booking</a>
+        <a href="#" class="dropdown-item">Unassigned</a>
+        <a href="#" class="dropdown-item">In Progress</a>
+        <a href="#" class="dropdown-item">Completed</a>
+      </div>
+    </li>
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa big-icon fa-credit-card"></i> <span
+          class="mini-dn">Payments</span> <span class="indicator-right-menu mini-dn"><i
+            class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <a href="#" class="dropdown-item">Debit/Credit</a>
+        <a href="#" class="dropdown-item">PayPal</a>
+        <a href="#" class="dropdown-item">Bank Details</a>
+        <a href="#" class="dropdown-item">E-Transfer</a>
+      </div>
+    </li>
+    <li class="nav-item"><a href="#" role="button" aria-expanded="false"><i class="fa big-icon fa-truck"></i>
+        <span class="mini-dn">Shipment Tracker</span></a>
+    </li>
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa big-icon fa-truck"></i> <span class="mini-dn">Shipments</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown chart-left-menu-std animated flipInX">
+        <a href="#" class="dropdown-item">History</a>
+        <a href="#" class="dropdown-item">Tracking</a>
+        <a href="#" class="dropdown-item">View Released Request</a>
+
+      </div>
+    </li>
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa fa-bar-chart"></i> <span class="mini-dn">Reports</span> <span
+          class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <a href="#" class="dropdown-item">Quoting Reports</a>
+        <a href="#" class="dropdown-item">Booking Reports</a>
+        <a href="#" class="dropdown-item">Shipping Reports</a>
+        <a href="#" class="dropdown-item">Payment Reports</a>
+      </div>
+    </li>
+    <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle"><i class="fa big-icon fa-user"></i> <span class="mini-dn">Account
+          settings</span> <span class="indicator-right-menu mini-dn"><i
+            class="fa indicator-mn fa-angle-left"></i></span></a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown form-left-menu-std animated flipInX">
+        <a href="{% url 'update_user_password' %}" class="dropdown-item">password Reset</a>
+        <a href="#" class="dropdown-item">User details</a>
+
+      </div>
+    </li>
+
+    <li class="nav-item"><a href="{% url 'logout' %}" role="button" aria-expanded="false"
+        class="nav-link dropdown-toggle">
+        <i class="fa big-icon fa-sign-out"></i> <span class="mini-dn">Log Out</span></a>
+
+
+    </li>
+
+  </ul>
+</div>

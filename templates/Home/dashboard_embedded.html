@@ -1,0 +1,74 @@
+{%load static%}
+
+<link rel="stylesheet" href="{% static 'css/dashboard_embedded/style.css' %}">
+
+<!-- partial:index.partial.html -->
+{% if onboarding1 == 0 %}
+<a href="{% url 'GSA_agreement' %}" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  NEW QUOTE
+</a>
+
+<br>
+{% elif onboarding1 == 1 %}
+<a href="#" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  NEW QUOTE
+</a>
+
+<br>
+<a href="#" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  NEW BOOKINGS
+</a>
+
+<a href="#" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  NEW SHIPPING
+</a>
+<br>
+<a href="{% url 'quoting' %}" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  QUOTE HISTORY
+</a>
+
+<a href="#" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  TRACKING DETAILS
+</a>
+
+<a href="#" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  REPORTS
+</a>
+<br>
+{% endif %}
+<a href="{% url 'logout' %}" class="animated-button1">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  Log-OUT
+</a>
+<!-- partial -->

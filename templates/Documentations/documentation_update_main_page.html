@@ -1,0 +1,358 @@
+{% load static %}
+
+{% block auto_css %}
+<!-- Address Auto Increment Start -->
+<link href="{% static 'auto_completion/address_auto_completion.css' %}" rel="stylesheet">
+<!-- Address Auto Increment End -->
+<!-- Table auto addition -->
+<link href="{% static 'auto_completion/table_auto_addition.css' %}" rel="stylesheet">
+{% endblock auto_css %} <!-- Breadcome End-->
+<style>
+  input[type="text"] {
+    width: 100%;
+  }
+</style>
+<!-- Basic Form Start -->
+<div class="advanced-form-area mg-b-15">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="sparkline10-list shadow-reset mg-t-30">
+          <div class="sparkline10-hd">
+            <div class="main-sparkline10-hd">
+              <h1>Shipper's / Exporter Information</h1>
+              <div class="sparkline10-outline-icon">
+                <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                <span><i class="fa fa-wrench"></i></span>
+                <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="sparkline10-graph">
+            <div class="input-knob-dial-wrap">
+              <div class="row">
+                <div class="col-lg-12 ">
+                  <!------tttttt-->
+                  <form method="POST" action="{% url 'documentation_update' documentation.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                      <input type="hidden" name="id" value="{{ documentation.id }}">
+                      <label class="form-control-label">Request Id</label>
+                      <input type="text" class="form-control" value="{{ documentation.request_id }}" name="request_id"
+                        placeholder="Request Id" readonly>
+                      <label class="form-control-label">Shipper Company Name</label>
+                      <input type="text" class="form-control" value="{{ documentation.shipper_company_name }}"
+                        name="shipper_company_name" placeholder="Shipper Company Name">
+                      <label class="form-control-label">Shipper Name</label>
+                      <input type="text" class="form-control" name="shipper_fullname"
+                        value="{{ documentation.shipper_fullname }}" placeholder="Shipper Name">
+                      <label class="form-control-label">Shipper Phone Number</label>
+                      <input type="text" class="form-control" name="shipper_phone_number"
+                        value="{{ documentation.shipper_phone_number }}" placeholder="Shipper Name">
+                      <label class="form-control-label">Shipper Email</label>
+                      <input type="text" class="form-control" name="shipper_email"
+                        value="{{ documentation.shipper_email }}" placeholder="Shipper Name">
+                      <label class="form-control-label">Shipment Type</label>
+                      <input type="text" class="form-control" name="shipment_type"
+                        value="{{ documentation.shipment_type }}" placeholder="Shipment Type">
+                      <label class="form-control-label">Shipper Export Number</label>
+                      <input type="text" class="form-control" name="shipper_export_number"
+                        value="{{ documentation.shipper_export_number }}" placeholder="Shipper Export Number">
+                      <label class="form-control-label">Shipper Address</label>
+                      <input type="text" id="address1" class="form-control" name="shipper_address"
+                        value="{{ documentation.shipper_address }}" placeholder="Shipper Address" autocomplete="off">
+                      <div class="autocomplete-results" id="results1"></div>
+                      <!--end form-group-->
+                    </div><!--end form-->
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="sparkline11-list shadow-reset mg-t-30">
+          <div class="sparkline11-hd">
+            <div class="main-sparkline11-hd">
+              <h1>Consignee / Receiver Information</h1>
+              <div class="sparkline11-outline-icon">
+                <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                <span><i class="fa fa-wrench"></i></span>
+                <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="sparkline11-graph">
+            <div class="input-knob-dial-wrap">
+              <div class="row">
+                <div class="col-lg-12">
+                  <label class="form-control-label">Receiver Company Name</label>
+                  <input type="text" class="form-control" name="receiver_company_name"
+                    value="{{ documentation.receiver_company_name }}" placeholder="Receiver Company Name">
+                  <label class="form-control-label">Receiver Name</label>
+                  <input type="text" class="form-control" name="receiver_fullname"
+                    value="{{ documentation.receiver_fullname }}" placeholder="Receiver Name">
+                  <label class="form-control-label">Receiver Phone Number</label>
+                  <input type="text" class="form-control" name="receiver_phone_number"
+                    value="{{ documentation.receiver_phone_number }}" placeholder="Receiver Phone Number">
+                  <label class="form-control-label">Receiver Email</label>
+                  <input type="text" class="form-control" name="receiver_email"
+                    value="{{ documentation.receiver_email }}" placeholder="Receiver Email">
+                  <label class="form-control-label">Receiver Tax Id <font color="red">(if Company)</font></label>
+                  <input type="text" class="form-control" name="receiver_tax_id"
+                    value="{{ documentation.receiver_tax_id }}" placeholder="Receiver Tax Id">
+                  <label class="form-control-label">Receiver Driver Lincence <font color="red">(if Individual)</font>
+                  </label>
+                  <input type="text" class="form-control" name="receiver_driver_lincence"
+                    value="{{ documentation.receiver_driver_lincence }}" placeholder="Receiver Driver Lincence">
+                  <label class="form-control-label">Receiver Passport No <font color="red">(if Individual)</font>
+                  </label>
+                  <input type="text" class="form-control" name="receiver_passport_no"
+                    value="{{ documentation.receiver_passport_no }}" placeholder="Receiver Passport No">
+                  <label class="form-control-label">Receiver Address</label>
+                  <input type="text" id="address2" class="form-control" name="receiver_address"
+                    value="{{ documentation.receiver_address }}" placeholder="Receiver Address" autocomplete="off">
+                  <div class="autocomplete-results2" id="results2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="sparkline12-list shadow-reset mg-t-30">
+          <div class="sparkline12-hd">
+            <div class="main-sparkline12-hd">
+              <h1>Additional Information for Sea Freight</h1>
+              <div class="sparkline12-outline-icon">
+                <span class="sparkline12-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                <span><i class="fa fa-wrench"></i></span>
+                <span class="sparkline12-collapse-close"><i class="fa fa-times"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="sparkline11-graph">
+            <div class="input-knob-dial-wrap">
+              <div class="row">
+                <div class="col-lg-12">
+                  <label class="form-control-label">Booking Reference</label>
+                  <input type="text" class="form-control" name="booking_ref" value="{{ sea_info.booking_ref_id }}"
+                    placeholder="Booking Reference" readonly>
+                  <label class="form-control-label">Place of Receipt</label>
+                  <input type="text" class="form-control" name="place_of_receipt"
+                    value="{{ sea_info.place_of_receipt }}" placeholder="Place of Receipt">
+                  <label class="form-control-label">Port of Loading</label>
+                  <input type="text" class="form-control" name="port_of_loading" value="{{ sea_info.port_of_loading }}"
+                    placeholder="Port of Loading">
+                  <label class="form-control-label">Seal Number</label>
+                  <input type="text" class="form-control" name="seal_number" value="{{ sea_info.seal_number }}"
+                    placeholder="Seal Number">
+                  <label class="form-control-label">Container Number</label>
+                  <input type="text" class="form-control" name="container_number"
+                    value="{{ sea_info.container_number }}" placeholder="Container Number">
+                  <label class="form-control-label">Vessel Number</label>
+                  <input type="text" class="form-control" name="vessel_number" value="{{ sea_info.vessel_number }}"
+                    placeholder="Vessel Number">
+
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="sparkline13-list shadow-reset mg-t-30">
+          <div class="sparkline13-hd">
+            <div class="main-sparkline13-hd">
+              <h1>
+                <font color="red">More: </font>Additional Information for Sea Freight
+              </h1>
+              <div class="sparkline13-outline-icon">
+                <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                <span><i class="fa fa-wrench"></i></span>
+                <span class="sparkline13-collapse-close"><i class="fa fa-times"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="sparkline13-graph">
+            <div class="input-knob-dial-wrap">
+
+              <div class="row">
+                <div class="col-lg-12" align="left">
+                  <label class="form-control-label">Port of Discharge</label>
+                  <input type="text" class="form-control" name="port_of_discharge"
+                    value="{{ sea_info.port_of_discharge }}" placeholder="Port of Discharge">
+                  <label class="form-control-label">Cargo Weight</label>
+                  <input type="text" class="form-control" name="cargo_weight" value="{{ sea_info.cargo_weight }}"
+                    placeholder="Cargo Weight">
+                  <label class="form-control-label">Desired Type of Release: <font color="red">Print at Destination or
+                      Telex or Seaway bill</font></label>
+                  <input type="text" class="form-control" name="desired_type_of_release"
+                    value="{{ sea_info.desired_type_of_release }}" placeholder="Desired Type of Release">
+                  <label class="form-control-label">HS Code</label>
+                  <input type="text" class="form-control" name="hs_code" value="{{ sea_info.hs_code }}"
+                    placeholder="HS Code">
+                  <label class="form-control-label">CERS</label>
+                  <input type="text" class="form-control" name="cers" value="{{ sea_info.cers }}" placeholder="CERS">
+                  <p>&nbsp;</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="sparkline15-list shadow-reset mg-t-30">
+          <div class="sparkline15-hd">
+            <div class="main-sparkline15-hd">
+              <h1>Cargo Description: Vehicles <font color="red">NOTE: For vehicles, the fuel tank must be empty, the
+                  battery disconnected and taped off.</font>
+              </h1>
+              <div class="sparkline15-outline-icon">
+                <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                <span><i class="fa fa-wrench"></i></span>
+                <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="sparkline15-graph">
+            <div class="row">
+              <!--loading Cargo Description: Vehicles- Auto table text box addition-->
+              <table id="vehicleTable">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Make/Model</th>
+                    <th>VIN</th>
+                    <th>Cost</th>
+                    <th>Color</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input name="vehicle_year[]" required></td>
+                    <td><input name="vehicle_make[]" required></td>
+                    <td><input name="vehicle_vin[]" required></td>
+                    <td><input name="vehicle_cost[]" required></td>
+                    <td><input name="vehicle_color[]" required></td>
+                    <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+                  </tr>
+                  <tr>
+                    <td><input name="vehicle_year[]" required></td>
+                    <td><input name="vehicle_make[]" required></td>
+                    <td><input name="vehicle_vin[]" required></td>
+                    <td><input name="vehicle_cost[]" required></td>
+                    <td><input name="vehicle_color[]" required></td>
+                    <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+                  </tr>
+
+                  <tr>
+                    <td><input name="vehicle_year[]" required></td>
+                    <td><input name="vehicle_make[]" required></td>
+                    <td><input name="vehicle_vin[]" required></td>
+                    <td><input name="vehicle_cost[]" required></td>
+                    <td><input name="vehicle_color[]" required></td>
+                    <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+                  </tr>
+
+                </tbody>
+              </table>
+              <div id="vehicleTable"></div>
+              <button onclick="addVehicleRow()" type="button">Add Vehicle</button>
+              <!---end loading Cargo Description: Vehicles- Auto table text box addition-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="sparkline15-list shadow-reset mg-t-30">
+          <div class="sparkline15-hd">
+            <div class="main-sparkline15-hd">
+              <h1>Cargo Description: <font color="red">Commodities</font>
+              </h1>
+              <div class="sparkline15-outline-icon">
+                <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                <span><i class="fa fa-wrench"></i></span>
+                <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="sparkline15-graph">
+            <div class="row">
+              <!--loading Cargo Description: Commodities- Auto table text box addition-->
+              <table id="goodsTable">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>QTY</th>
+                    <th>Description of Goods</th>
+                    <th>Value ($)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><input name="goods_qty[]" required></td>
+                    <td><input name="goods_description[]" required></td>
+                    <td><input name="goods_value[]" required></td>
+                    <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><input name="goods_qty[]" required></td>
+                    <td><input name="goods_description[]" required></td>
+                    <td><input name="goods_value[]" required></td>
+                    <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>3</td>
+                    <td><input name="goods_qty[]" required></td>
+                    <td><input name="goods_description[]" required></td>
+                    <td><input name="goods_value[]" required></td>
+                    <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+                  </tr>
+
+                </tbody>
+              </table>
+              <button onclick="addGoodsRow()" type="button">Add Goods</button>
+
+              <!---end loading Cargo Description: Commodities- Auto table text box addition-->
+              <button type="submit" class="btn btn-primary">Submit</button>
+              </form> <!-- End of form -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+<!-- Basic Form End-->
+
+{% block address_auto_increment %}
+<!-- Table auto addition -->
+<script src="{% static 'auto_completion/table_auto_addition.js' %}"></script>
+
+<script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
+
+
+{% endblock address_auto_increment %}

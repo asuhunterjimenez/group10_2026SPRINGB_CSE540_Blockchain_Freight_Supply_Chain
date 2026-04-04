@@ -1,0 +1,383 @@
+{%load static%}
+
+<!-- partial:index.partial.html -->
+{% if onboarding1 == 0 %}
+<link rel="stylesheet" href="{% static 'css/dashboard_embedded/style.css' %}">
+
+<a href="{% url 'GSA_agreement' %}" class="animated-button1">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    NEW QUOTE
+</a>
+<br>
+
+<a href="{% url 'logout' %}" class="animated-button1">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    Log-OUT
+</a>
+
+<br>
+{% elif onboarding1 == 1 %}
+<!-- show dashboard -->
+<!-- Breadcome start-->
+<div class="breadcome-area mg-b-30 small-dn">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcome-list map-mg-t-40-gl shadow-reset">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="breadcome-heading">
+                                <form role="search" class="">
+                                    <input type="text" placeholder="Search..." class="form-control">
+                                    <a href=""><i class="fa fa-search"></i></a>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul class="breadcome-menu">
+                                <li><a href="#">Home</a> <span class="bread-slash">/</span>
+                                </li>
+                                <li><span class="bread-blod">Analytics</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- income order visit user Start -->
+<div class="income-order-visit-user-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="income-dashone-total shadow-reset nt-mg-b-30">
+                    <div class="income-title">
+                        <div class="main-income-head">
+                            <h4>New Quotes</h4>
+
+                            <div class="main-income-phara">
+                                <p>{{ now|date:"F Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="income-dashone-pro">
+                        <div class="income-rate-total">
+                            <div class="price-adminpro-rate">
+                                <h3><span class="counter">{{total_pending }}</span><span>&nbsp;Cases</span></h3>
+                            </div>
+
+                            <div class="price-graph">
+                                <span id="sparkline1"></span>
+                            </div>
+                        </div>
+                        <div class="income-range">
+                            <p>Total Cases</p>
+                            <span class="income-percentange"><span class="counter">98</span>% <i class="fa fa-bolt"></i>
+                            </span>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="income-dashone-total shadow-reset nt-mg-b-30">
+                    <div class="income-title">
+                        <div class="main-income-head">
+                            <h4>Accepted</h4>
+                            <div class="main-income-phara order-cl">
+                                <p>{{ now|date:"F Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="income-dashone-pro">
+                        <div class="income-rate-total">
+                            <div class="price-adminpro-rate">
+                                <h3><span class="counter">{{total_accepted_monthly}}</span></h3>
+                            </div>
+                            <div class="price-graph">
+                                <span id="sparkline6"></span>
+                            </div>
+                        </div>
+                        <div class="income-range order-cl">
+                            <p>Monthly Accepted Quotes</p>
+                            <span class="income-percentange"><span class="counter">66</span>% <i
+                                    class="fa fa-level-up"></i>
+                            </span>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="income-dashone-total shadow-reset nt-mg-b-30">
+                    <div class="income-title">
+                        <div class="main-income-head">
+                            <h4>Total Bookings</h4>
+                            <div class="main-income-phara visitor-cl">
+                                <p>Today</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="income-dashone-pro">
+                        <div class="income-rate-total">
+                            <div class="price-adminpro-rate">
+                                <h3><span class="counter">0</span></h3>
+                            </div>
+                            <div class="price-graph">
+                                <span id="sparkline2"></span>
+                            </div>
+                        </div>
+                        <div class="income-range visitor-cl">
+                            <p>Monthly Bookings</p>
+                            <span class="income-percentange"><span class="counter">55</span>% <i
+                                    class="fa fa-level-up"></i>
+                            </span>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="income-dashone-total shadow-reset nt-mg-b-30">
+                    <div class="income-title">
+                        <div class="main-income-head">
+                            <h4>Rejected</h4>
+                            <div class="main-income-phara low-value-cl">
+                                <p>{{ now|date:"F Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="income-dashone-pro">
+                        <div class="income-rate-total">
+                            <div class="price-adminpro-rate">
+                                <h3><span class="counter">{{total_rejected_monthly}}</span></h3>
+                            </div>
+                            <div class="price-graph">
+                                <span id="sparkline5"></span>
+                            </div>
+                        </div>
+                        <div class="income-range low-value-cl">
+                            <p>Monthly Rejected Quotes</p>
+                            <span class="income-percentange"><span class="counter">33</span>% <i
+                                    class="fa fa-level-down"></i>
+                            </span>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- income order visit user End -->
+<div class="dashtwo-order-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-adminpro-wrap ant-res-b-30 shadow-reset">
+                    <div class="skill-content-3 analytics-adminpro">
+                        <div class="skill">
+                            <div class="progress">
+                                <div class="lead-content">
+                                    <h3><span class="counter">{{ocean_count_monthly}}</span>&nbsp;Cases</h3>
+                                    <p>Ocean Freight</p>
+                                </div>
+                                <div class="progress-bar wow fadeInLeft" data-progress="95%" style="width: 95%;"
+                                    data-wow-duration="1.5s" data-wow-delay="1.2s"> <span>{{ now|date:"F Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-adminpro-wrap ant-res-b-30 shadow-reset">
+                    <div class="skill-content-3 analytics-adminpro analytics-adminpro4">
+                        <div class="skill">
+                            <div class="progress">
+                                <div class="lead-content">
+                                    <h3>{{air_count_monthly}} &nbsp;Cases</h3>
+                                    <p>Air Freight</p>
+                                </div>
+                                <div class="progress-bar wow fadeInLeft" data-progress="85%" style="width: 85%;"
+                                    data-wow-duration="1.5s" data-wow-delay="1.2s"><span>{{ now|date:"F Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-adminpro-wrap ant-res-b-30 ant-res-b-nt-30 shadow-reset">
+                    <div class="skill-content-3 analytics-adminpro analytics-adminpro3">
+                        <div class="skill">
+                            <div class="progress progress-bt">
+                                <div class="lead-content">
+                                    <h3>{{roro_count_monthly}} &nbsp;Cases</h3>
+                                    <p>Customs Brokerage</p>
+                                </div>
+                                <div class="progress-bar wow fadeInLeft" data-progress="100%" style="width: 100%;"
+                                    data-wow-duration="1.5s" data-wow-delay="1.2s"><span>{{ now|date:"F Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-adminpro-wrap shadow-reset">
+                    <div class="skill-content-3 analytics-adminpro analytics-adminpro2">
+                        <div class="skill">
+                            <div class="progress progress-bt">
+                                <div class="lead-content">
+                                    <h3>{{customs_count_monthly}} &nbsp;Cases</h3>
+                                    <p>RORO Cases</p>
+                                </div>
+                                <div class="progress-bar wow fadeInLeft" data-progress="93%" style="width: 93%;"
+                                    data-wow-duration="1.5s" data-wow-delay="1.2s"><span>{{ now|date:"F Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="analytics-sparkle-area mg-tb-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-sparkle-line ant-res-b-30 shadow-reset">
+                    <div class="analytics-content">
+                        <font color="red">
+                            <h5>Ocean Freight Cases</h5>
+                        </font>
+                        {% for row in ocean_data %}
+                        <h5>{{ row.month|date:"F Y" }}</h5>
+                        <h2 class="counter">
+                            {{ row.count }}
+                        </h2>
+                        {% empty %}
+                        {% endfor %}
+                        <div id="sparkline22"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-sparkle-line ant-res-b-30 shadow-reset">
+                    <div class="analytics-content">
+                        <font color="red">
+                            <h5>Air Freight: Monthly Cases</h5>
+                        </font>
+                        {% for row in air_data %}
+                        <h5>{{ row.month|date:"F Y" }}</h5>
+                        <h2 class="counter">
+                            {{ row.count }}
+                        </h2>
+                        {% empty %}
+                        {% endfor %}
+                        <div id="sparkline23"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-sparkle-line ant-res-b-30 ant-res-b-nt-30 shadow-reset">
+                    <div class="analytics-content">
+                        <font color="red">
+                            <h5>RORO Freight: Monthly Cases</h5>
+                        </font>
+                        {% for row in roro_data %}
+                        <h5>{{ row.month|date:"F Y" }}</h5>
+                        <h2 class="counter">
+                            {{ row.count }}
+                        </h2>
+                        {% empty %}
+                        {% endfor %}
+                        <div id="sparkline24"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-sparkle-line shadow-reset">
+                    <div class="analytics-content">
+                        <font color="red">
+                            <h5>Customs Brokerage: Monthly Cases</h5>
+                        </font>
+                        {% for row in customs_data %}
+                        <h5>{{ row.month|date:"F Y" }}</h5>
+                        <h2 class="counter">
+                            {{ row.count }}
+                        </h2>
+                        {% empty %}
+                        {% endfor %}
+                        <div id="sparkline25"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="analysis-rounded-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-rounded ant-res-b-30 shadow-reset">
+                    <div class="analytics-rounded-content">
+                        <h5>Ocean Freight %age distribution</h5>
+                        <h2><span class="counter">2</span>/20</h2>
+                        <div class="text-center">
+                            <div id="sparkline51" width="80" height="80"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-rounded ant-res-b-30 shadow-reset">
+                    <div class="analytics-rounded-content">
+                        <h5>Percentage division</h5>
+                        <h2><span class="counter">20</span>/<span class="counter">0</span></h2>
+                        <div class="text-center">
+                            <div id="sparkline52"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-rounded ant-res-b-30 ant-res-b2-30 shadow-reset">
+                    <div class="analytics-rounded-content">
+                        <h5>Percentage Counting</h5>
+                        <h2>0/20</h2>
+                        <div class="text-center">
+                            <div id="sparkline53"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="analytics-rounded shadow-reset">
+                    <div class="analytics-rounded-content">
+                        <h5>Percentage Sequence</h5>
+                        <h2>0/0</h2>
+                        <div class="text-center">
+                            <div id="sparkline54"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p>&nbsp;</p>
+</div>
+</div>
+{% endif %}

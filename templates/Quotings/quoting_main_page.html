@@ -1,0 +1,117 @@
+<!-- tabs start-->
+<div class="admintab-area">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="admintab-wrap mg-b-40">
+                    <ul class="nav nav-tabs custom-menu-wrap custon-tab-menu-style1">
+                        <li class="active"><a data-toggle="tab" href="#pending_quotes"><span
+                                    class="adminpro-icon adminpro-analytics tab-custon-ic"></span>Pending Quotes</a>
+                        </li>
+                        {% if book_cases_access %}
+                        <li><a data-toggle="tab" href="#inbox_queries"><span
+                                    class="adminpro-icon adminpro-analytics-arrow tab-custon-ic"></span>
+                                Inbox Quotes
+                            </a>
+                        </li>
+                        {% else %}
+                        <!-- access for clients Only -->
+                        <li><a data-toggle="tab" href="#my_inbox"><span
+                                    class="adminpro-icon adminpro-analytics-bridge tab-custon-ic"></span>My
+                                Inbox</a>
+                        </li>
+                        <li><a data-toggle="tab" href="#client_completed_quotes"><span
+                                    class="adminpro-icon adminpro-analytics-bridge tab-custon-ic"></span>
+                                Completed Quotes</a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                    <div class="tab-content">
+                        <div id="pending_quotes" class="tab-pane in active animated flipInX custon-tab-style1">
+                            <br>
+                            {%block pending_qoutes%}
+                            {%include "Quotings/quotes_pending.html" %}
+                            {%endblock pending_qoutes%}
+                        </div>
+                        {% if book_cases_access %}
+                        <div id="inbox_queries" class="tab-pane animated flipInX custon-tab-style1">
+                            <br>
+                            {%block inbox_qoutes%}
+                            {%include "Quotings/inbox_quotes.html" %}
+                            {%endblock inbox_qoutes%}
+
+                        </div>
+                        {% else %}
+                        <!--  access for clients -->
+                        <div id="my_inbox" class="tab-pane animated flipInX custon-tab-style1">
+                            <br>
+                            {%include "Quotings/inbox_clients_quotes.html" %}
+                        </div>
+                        <div id="client_completed_quotes" class="tab-pane animated flipInX custon-tab-style1">
+                            <br>
+                            {%include "Quotings/client_completed_quotes.html" %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- tabs End-->
+
+<!--model starts here-->
+<!--model starts here-->
+<!-- loading quotes_pending model -->
+<!--book cases model starts here-->
+<div id="book_cases_model" class="modal modal-adminpro-general FullColor-popup-DangerModal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header header-color-modal bg-color-1">
+                <h4 class="modal-title">Book Queries</h4>
+                <div class="modal-close-area modal-close-df">
+                    <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p>Book Cases in your personel inbox to be worked on</p>
+                <p>&nbsp;</p>
+                <div class="form-group-inner">
+                    <form method="POST" action="{% url 'quoting' %}" name='form_booked_queries'>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label class="login2 pull-right pull-right-pro">Select</label>
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="form-select-list">
+                                    <select class="form-control custom-select-value" name="book_queries_limit"
+                                        data-validate="required">
+                                        <option value='' default> Select Number of Cases to be booked</option>
+                                        <option value='5'>5</option>
+                                        <option value='10'>10</option>
+                                        <option value='20'>20</option>
+                                        <option value='30'>30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- <input type='hidden' value='sale1' name='username'> -->
+                <button class="btn btn-sm btn-primary login-submit-cs" type="submit" value='Save Changes'>Save
+                    Changes</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a data-dismiss="modal" href="#">Cancel</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--book cases model ends here-->

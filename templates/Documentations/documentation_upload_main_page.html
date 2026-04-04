@@ -1,0 +1,259 @@
+{% load static %}
+<style>
+  .dz-remove {
+    color: red;
+    cursor: pointer;
+  }
+</style>
+
+<!-- Dropzone and minimal styling -->
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/dropzone.css' %}">
+<link rel="stylesheet" href="{% static 'style.css' %}">
+
+<script src="{% static 'js/vendor/modernizr-2.8.3.min.js' %}"></script>
+</head>
+
+<body class="materialdesign">
+
+  <!-- Multi Upload Start-->
+  <div class="multi-uploaded-area mg-b-15">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="dropzone-pro shadow-reset">
+          <div id="dropzone">
+            <form method="POST" action="{% url 'upload_file' %}" id="demo-upload" enctype="multipart/form-data"
+              class="dropzone dropzone-custom needsclick">
+              {% csrf_token %}
+              <!-- <input type="hidden" name="request_id" value="{{ documentation.request_id }}"> -->
+              <input type="hidden" name="username" value="{{ user.username }}">
+              <div class="dz-message needsclick download-custom">
+                <h2>Drop files here or click to upload.</h2>
+                <p><span class="note needsclick">(Dropped files will be automatically <strong>uploaded</strong>
+                    but still you can <strong>delete</strong>.)</span></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Multi Upload End-->
+  <!-- show files uploaded by user -->
+  <div class="mt-3" style="background:#f9f9fb;padding:15px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <h4 style="font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+      📁 <span style="color:#333;">Manage Uploaded Files</span>
+    </h4>
+
+    <ul id="uploaded-files-list" style="list-style:none;padding-left:0; margin:0;">
+      <!-- Example file item -->
+      <li>
+        <span class="file-name">example_file.pdf</span>
+        <button class="delete-btn" title="Delete File">🗑️</button>
+      </li>
+    </ul>
+  </div>
+
+  <style>
+    #uploaded-files-list li {
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      /* vertical alignment */
+      gap: 10px;
+      /* space between file name and delete icon */
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      transition: 0.2s;
+    }
+
+    #uploaded-files-list li:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-name {
+      font-weight: 500;
+      color: #555;
+      word-break: break-all;
+    }
+
+    .delete-btn {
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: none;
+      background: #ff4d4d;
+      color: white;
+      transition: 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #e04343;
+    }
+  </style>
+
+  <!-- Footer End-->
+
+  <!-- Required Scripts Only -->
+  <script src="{% static 'js/vendor/jquery-1.11.3.min.js' %}"></script>
+  <script src="{% static 'js/dropzone.js' %}"></script>
+  <script>
+    Dropzone.autoDiscover = false;
+
+    $(document).ready(function () {
+      const myDropzone = new Dropzone("#demo-upload", {
+        paramName: "file",
+        maxFilesize: 10, // in MB
+        acceptedFiles: ".pdf,.doc,.docx,.jpg,.jpeg,.png",
+        addRemoveLinks: true,
+        dictRemoveFile: "🗑️ Delete",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+
+        init: function () {
+          const dz = this;
+
+          dz.on("success", function (file, response) {
+            // ✅ Expecting response.file_name and response.file_url
+            file.serverFileName = response.file_name;
+
+            const link = document.createElement("a");
+            link.href = response.file_url;
+            link.target = "_blank";
+            link.textContent = "View";
+            link.style.marginLeft = "10px";
+
+            const deleteIcon = document.createElement("span");
+            deleteIcon.innerHTML = "🗑️";
+            deleteIcon.style.cursor = "pointer";
+            deleteIcon.style.color = "red";
+            deleteIcon.style.marginLeft = "10px";
+            deleteIcon.title = "Delete file";
+
+            deleteIcon.addEventListener("click", function () {
+              dz.removeFile(file); // Will trigger "removedfile" event
+            });
+
+            const dzDetails = file.previewElement.querySelector(".dz-details");
+            if (dzDetails) {
+              dzDetails.appendChild(link);
+              dzDetails.appendChild(deleteIcon);
+            } else {
+              file.previewElement.appendChild(link);
+              file.previewElement.appendChild(deleteIcon);
+            }
+          });
+
+          dz.on("removedfile", function (file) {
+            if (file.serverFileName) {
+              $.ajax({
+                url: "{% url 'delete_file' %}",
+                type: "POST",
+                data: {
+                  file_name: file.serverFileName,
+                  request_id: "{{ documentation.request_id }}",
+                  username: "{{ user.username }}",
+                  csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                success: function () {
+                  console.log("File deleted successfully.");
+                },
+                error: function (xhr) {
+                  console.error("Delete error:", xhr.responseText);
+                  alert("Error deleting file.");
+                }
+              });
+            }
+          });
+        },
+
+        error: function (file, errorMessage, xhr) {
+          console.error("Upload error:", xhr?.responseText || errorMessage);
+          this.removeFile(file);
+          alert("Upload failed: " + (xhr?.responseText || errorMessage));
+        }
+      });
+    });
+  </script>
+  <!--aftersubmiting a form-->
+  {% if messages %}
+  {% for message in messages %}
+  <div>
+    <div class="alert alert-success">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <strong>{{ message }}
+      </strong>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- Auto-hide alerts after 5 seconds -->
+  <script>
+    setTimeout(function () {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function (alert) {
+        alert.classList.remove('show');
+        alert.classList.add('fade');
+        setTimeout(() => alert.remove(), 500); // remove from DOM after fade
+      });
+    }, 5000); // 5 seconds
+  </script>
+
+  <!-- show uploaded files -->
+  <script>
+    $(document).ready(function () {
+
+      // ✅ Fetch user's existing files
+      $.ajax({
+        url: "{% url 'get_user_files' %}",  // <-- Django URL for listing files
+        type: "GET",
+        success: function (response) {
+          $("#uploaded-files-list").empty(); // Clear previous data
+
+          if (response.files.length > 0) {
+            response.files.forEach(file => {
+              $("#uploaded-files-list").append(
+                `<li>
+                  <a href="${file.url}" target="_blank">${file.name}</a>
+                  <span class="delete-existing-file" data-file="${file.name}" style="color:red;cursor:pointer;margin-left:10px;">🗑️</span>
+                </li>`
+              );
+            });
+          } else {
+            $("#uploaded-files-list").append("<li>No files uploaded yet.</li>");
+          }
+        }
+      });
+
+      // ✅ DELETE uploaded file when clicking 🗑️
+      $(document).on("click", ".delete-existing-file", function () {
+        const fileName = $(this).data("file");
+
+        $.ajax({
+          url: "{% url 'delete_file' %}", // <-- Reuse same delete view as Dropzone!
+          type: "POST",
+          data: {
+            file_name: fileName,
+            username: "{{ user.username }}",
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function () {
+            alert("File deleted!");
+            location.reload(); // Optional: Refresh to update list
+          },
+          error: function () {
+            alert("Error deleting file.");
+          }
+        });
+      });
+
+    });
+  </script>
