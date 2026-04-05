@@ -7,6 +7,8 @@ from django.conf import settings
 from .models import blockchain_payment
 from django.utils import timezone
 from decimal import Decimal
+from django.core.mail import send_mail
+from apps.Helpers.decorators import send_quote_email
 
 # Connect to Ganache
 w3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
@@ -17,7 +19,7 @@ contract_abi = settings.PAYMENT_CONTRACT_ABI
 contract = w3.eth.contract(address=contract_address, abi=contract_abi)
 
 # Destination account where ETH will be sent
-DESTINATION_ACCOUNT = Web3.to_checksum_address("0x097F7110a60eBaB1F239f53fD732e026e3b7E558")
+DESTINATION_ACCOUNT = settings.COMPANY_MAIN_WALLET  #ganache account 2
 
 
 @login_required
@@ -60,11 +62,6 @@ def create_blockchain_payment(request):
             paid_amount=amount,
             balance=balance_after_payment,
             blockchain_gas_fees=gas_fee_eth,
-            # wallet_address=wallet_address,
-            # transaction_hash=transaction_hash,
-            # payment_type="ETH",
-            # amount_purpose="initial_deposit",
-            # status="completed",
             date_created=timezone.now()
         )
 
@@ -113,6 +110,16 @@ def payment_success(request):
             "created_at_dt": latest_payment.date_created,
             "transacted_by": request.user.get_full_name()
         }
+        
+        # Send email notification
+        send_quote_email(
+            record,
+            service_type,
+            request_id,
+            first_hidden.capitalize(),
+            user_email_hidden,
+            company_email_hidden
+        )
 
         return render(request, "Payments/success.html", payment_data)
 

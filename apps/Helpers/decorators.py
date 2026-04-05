@@ -73,7 +73,7 @@ def make_header_footer(service_type):
         canvas_obj.rect(0, height-header_height, width, header_height, fill=1)
 
         # Logo
-        logo_path = os.path.join(settings.BASE_DIR, "apps", "dependencies", "static", "img", "logo", "logo_pdf.png")
+        logo_path = os.path.join(settings.BASE_DIR, "static", "img", "logo", "logo_pdf.png")
         if os.path.exists(logo_path):
             pil_logo = PILImage.open(logo_path)
             logo_width, logo_height = pil_logo.size
@@ -86,7 +86,7 @@ def make_header_footer(service_type):
         # Header text
         canvas_obj.setFillColor(colors.HexColor("#003366"))
         canvas_obj.setFont("Helvetica-Bold", 16)
-        canvas_obj.drawCentredString(width/2, height-35, f"Jenik - {service_type} Quote")
+        canvas_obj.drawCentredString(width/2, height-35, f"G10 Blockchain Freight - {service_type} Quote")
 
         # Footer
         footer_height = 50
@@ -95,7 +95,7 @@ def make_header_footer(service_type):
         canvas_obj.setFillColor(colors.HexColor("#003366"))
         canvas_obj.setFont("Helvetica", 10)
         canvas_obj.drawCentredString(width/2, 20,
-                                     "Jenik Freight - 3571 52nd Street SE, Level 1, Calgary, Alberta T2B 3R3, Canada")
+                                     "G10 Blockchain Freight - 3571 52nd Street SE, Level 1, Calgary, Alberta T2B 3R3, Canada")
     return _header_footer
 
 # --- PDF Generation ---
@@ -226,7 +226,7 @@ def generate_quote_pdf(record, service_type, request_id, client_name):
     # Thank You Message
     thank_style = ParagraphStyle('thank', fontSize=16, textColor=colors.HexColor("#003366"),
                                  alignment=1, spaceBefore=20, spaceAfter=20, italic=True)
-    elements.append(Paragraph("Thank you for choosing Jenik Freight!", thank_style))
+    elements.append(Paragraph("Thank you for choosing G10 Blockchain Freight!", thank_style))
 
     # Build PDF
     doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=40, leftMargin=40, topMargin=80, bottomMargin=80)
@@ -238,14 +238,14 @@ def generate_quote_pdf(record, service_type, request_id, client_name):
 
 def send_quote_email(record, service_type, request_id, client_name, user_email, company_email):
     pdf_buffer = generate_quote_pdf(record, service_type, request_id, client_name)
-    subject = f"Jenik Freight: Your {service_type} Quote has been updated"
+    subject = f"G10 Blockchain Freight: Your {service_type} Quote has been updated"
     recipients = [user_email, company_email]
 
     html_message = f"""
         <p>Dear {client_name},</p>
         <p>Your {service_type} Quote has been updated.</p>
         <p>Request ID: <b>{request_id}</b><br>CRM URL: <a href="{settings.APP_URL}">Click Here</a></p>
-        <p>Thank you for choosing Jenik Freight.</p>
+        <p>Thank you for choosing G10 Blockchain Freight.</p>
     """
     email = EmailMessage(subject, html_message, settings.EMAIL_HOST_USER, recipients)
     email.content_subtype = "html"

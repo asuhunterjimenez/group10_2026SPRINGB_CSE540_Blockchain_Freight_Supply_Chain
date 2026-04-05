@@ -18,14 +18,15 @@ load_dotenv()  # load from .env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+from web3 import Web3
 
 #change in production
 #Ganache,remix,MetaMask details
 GANACHE_URL = os.getenv('GANACHE_URL')
 
+COMPANY_MAIN_WALLET = Web3.to_checksum_address("0x381340d14a8d304FFaD95970636E046a61236396") #ganache account 2
 # PAYMENT_CONTRACT_ADDRESS = "0x8b564427D5F1AA731E51FcE3637cE291D284cfc8"
-PAYMENT_CONTRACT_ADDRESS="0x766Af7A3c6Aaf8F5DC9f99542da58aB15621b393"
+PAYMENT_CONTRACT_ADDRESS="0x495b93504F0Aa82b3AD3B9A7A525719E1E72Af29" #ganache remix deployment
 
 
 
@@ -113,7 +114,7 @@ PAYMENT_CONTRACT_ABI =[
 		],
 		"name": "createPayment",
 		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -130,7 +131,13 @@ PAYMENT_CONTRACT_ABI =[
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_destination",
+				"type": "address"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -209,6 +216,26 @@ PAYMENT_CONTRACT_ABI =[
 		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "destination",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -335,7 +362,6 @@ PAYMENT_CONTRACT_ABI =[
 		"type": "function"
 	}
 ]
-
 
 
 
