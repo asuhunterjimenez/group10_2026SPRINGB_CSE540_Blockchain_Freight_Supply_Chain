@@ -8,7 +8,7 @@ from .models import blockchain_payment
 from django.utils import timezone
 from decimal import Decimal
 from django.core.mail import send_mail
-from apps.Helpers.decorators import send_quote_email
+from apps.Helpers.payment_email import send_payment_email
 
 # Connect to Ganache
 w3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
@@ -32,6 +32,8 @@ def create_blockchain_payment(request):
 
     try:
         # Extract data from POST
+        service_type = request.POST.get("service_type")
+        company_email_hidden = request.POST.get("customer_email")
         booking_id = request.POST.get("booking_id")
         quote_request_id = request.POST.get("quote_request_id")
         total_payment = Decimal(request.POST.get("total_charges", "0"))
@@ -54,7 +56,7 @@ def create_blockchain_payment(request):
         #Save off-chain safely in DB
         balance_after_payment = total_payment - amount
 
-        blockchain_payment.objects.create(
+        payment_record = blockchain_payment.objects.create(
             user=request.user.username,
             quote_request_id=quote_request_id,
             transaction_id=transaction_id,
@@ -63,6 +65,18 @@ def create_blockchain_payment(request):
             balance=balance_after_payment,
             blockchain_gas_fees=gas_fee_eth,
             date_created=timezone.now()
+        )
+
+        # Send email notification
+        user_email_hidden = request.user.email
+        client_name= request.user.get_full_name()
+        send_payment_email(
+            payment_record,
+            service_type,
+            client_name.capitalize(),
+            user_email_hidden,
+            company_email_hidden
+        
         )
 
         return JsonResponse({
@@ -111,15 +125,7 @@ def payment_success(request):
             "transacted_by": request.user.get_full_name()
         }
         
-        # Send email notification
-        send_quote_email(
-            record,
-            service_type,
-            request_id,
-            first_hidden.capitalize(),
-            user_email_hidden,
-            company_email_hidden
-        )
+        
 
         return render(request, "Payments/success.html", payment_data)
 

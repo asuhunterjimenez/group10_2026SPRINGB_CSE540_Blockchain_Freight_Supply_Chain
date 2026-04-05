@@ -17,6 +17,8 @@
 
     <form id="payment-form">
       {% csrf_token %}
+      <input type="hidden" name="service_type" value="{{ service_type }}">
+      <input type="hidden" name="customer_email" value="{{ customer_email }}">
       <input type="hidden" name="booking_id" value="{{ booking_id }}">
       <input type="hidden" name="quote_request_id" value="{{ quote_request }}">
       <input type="hidden" name="total_charges" value="{{ total_charges }}">
@@ -75,7 +77,7 @@
           status: "completed",
           created_at: String(Math.floor(Date.now() / 1000)),
           created_by: String("{{ request.user.username }}"),
-          payment_email_sent: false,
+          payment_email_sent: true,
           user_id: String("{{ request.user.id }}"),
           transaction_hash: "",
           confirmed_at: "0"

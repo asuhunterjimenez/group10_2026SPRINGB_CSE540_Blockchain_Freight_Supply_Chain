@@ -202,6 +202,7 @@ class BookingsView:
                 continue
 
         return render(request, 'Payments/payments_booking.html', {
+            'service_type': booking.service_type,
             'customer_email': request.user.email,
             'quote_request': booking.quote_reference_number,
             'booking_reference_number': booking.booking_reference_number,
