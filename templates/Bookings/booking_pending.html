@@ -1,4 +1,19 @@
+<style>
+    /* Blinking Effect */
+    .blink {
+        animation: blink 1s infinite;
+        color: red;
+        font-weight: bold;
+    }
+
+    @keyframes blink {
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
 <!-- Static Table Start -->
+
 <div class="data-table-area mg-b-15">
     <div class="container-fluid">
         <div class="row">
@@ -6,7 +21,19 @@
                 <div class="sparkline13-list shadow-reset">
                     <div class="sparkline13-hd">
                         <div class="main-sparkline13-hd">
-                            <h1>Pending <span class="table-project-n">Documentations</span> </h1>
+                            <h4 class="text-warning">Pending <span class="table-project-n">Bookings</span></h4>
+                            <h4 class="text-muted"><span class="blink">👉</span> NB: Initial deposit has been paid</h4>
+
+                            <!-- load Queries to be worked on -->
+                            <div class="view-mail-action view-mail-ov-d-n">
+
+                                <a class="compose-draft-bt" href="javascript:window.print()"><i class="fa fa-print"></i>
+                                    Print</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+
                             <div class="sparkline13-outline-icon">
                                 <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
                                 <span><i class="fa fa-wrench"></i></span>
@@ -31,34 +58,58 @@
                                 <thead>
                                     <tr>
 
-                                        <th data-field="date_received">Date Received</th>
-                                        <th data-field="request_id" data-editable="true">Request Id</th>
-                                        <th data-field="sender_fullname" data-editable="true">Sender Full name</th>
-                                        <th data-field="shipment_date" data-editable="true">Expected Shipment Date</th>
-                                        <th data-field="shipment_weight" data-editable="true">Shipment Weight</th>
-                                        <th data-field="shipment_type" data-editable="true">Shipment Type</th>
-                                        <th data-field="message" data-editable="true">Shipment Description</th>
-                                        <th data-field="action">Action</th>
+                                        <th>Receiver Company Name</th>
+                                        <th>Date and Time Received</th>
+                                        <th>Quote Reference Number</th>
+                                        <th>Freight Type</th>
+                                        <th>Booking Status</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for documentation in documentations %}
+                                    {% for item in bookings %}
                                     <tr>
-                                        <td>{{documentation.date_received}}</td>
-                                        <td>{{documentation.request_id}}</td>
-                                        <td>{{documentation.shipper_fullname}}</td>
-                                        <td>{{documentation.shipment_date}}</td>
-                                        <td>{{documentation.shipment_weight}}</td>
-                                        <td>{{documentation.shipment_type}}</td>
-                                        <td>{{documentation.message}}</td>
+                                        <td>{{ item.receiver_company_name }}</td>
+                                        <td>{{ item.date_received }} &nbsp;{{ item.time_received }}</td>
+                                        <td>{{ item.quote_reference_number }}</td>
+                                        <td>{{ item.service_type }}</td>
                                         <td>
-                                            <a href="{% url 'documentation_view' documentation.id %}"
-                                                class="btn btn-primary">View</a>
-                                            <a href="{% url 'documentation_update' documentation.id %}"
-                                                class="btn btn-success">Update</a>
+                                            {% if item.request_status == 'Approved Quote' %}
+                                            <span class="text-success">✅{{ item.request_status }}</span>
+                                            {% elif item.request_status == 'Rejected Quote' %}
+                                            <span class="text-danger">❌{{ item.request_status }}</span>
+                                            {% elif item.request_status == 'Pending' %}
+                                            <span class="text-warning">⚠️ Pending Approval: Please Upload your ID</span>
+                                            {% else %}
+                                            <span class="text-warning">{{ item.request_status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <!-- <td>
 
+                                            {% if book_cases_access %}
+
+
+
+                                            {% else %}
+                                            {% if item.request_id %}
+                                            <a href="{% url 'view_booking' item.request_id %}" class="btn btn-primary">
+                                                View Details
+                                            </a>
+                                            {% else %}
+                                            <span class="btn btn-secondary disabled">No Request ID</span>
+                                            {% endif %}
+                                            {% endif %}
+                                            <!--<a href="{% url 'quoting' %}" class="btn btn-danger">Delete</a>-->
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5">
+                                            <font color='red'>No freight records found.</font>
+                                        </td>
                                     </tr>
                                     {% endfor %}
+
                                 </tbody>
                             </table>
                         </div>
@@ -68,4 +119,5 @@
         </div>
     </div>
 </div>
+
 <!-- Static Table End -->

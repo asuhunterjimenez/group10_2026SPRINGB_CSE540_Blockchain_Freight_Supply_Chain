@@ -6,35 +6,28 @@
             <div class="col-lg-12">
                 <div class="admintab-wrap mg-b-40">
                     <ul class="nav nav-tabs custom-menu-wrap custon-tab-menu-style1">
-                        <li class="active"><a data-toggle="tab" href="#pending_documentations"><span
+                        <li class="active"><a data-toggle="tab" href="#pending_bookings"><span
                                     class="adminpro-icon adminpro-analytics tab-custon-ic"></span>Pending
-                                Documentations</a>
+                                Bookings</a>
                         </li>
-                        <li><a data-toggle="tab" href="#more_documentations"><span
-                                    class="adminpro-icon adminpro-analytics-arrow tab-custon-ic"></span>Upload More
-                                Documentations</a>
-                        </li>
-                        <li><a data-toggle="tab" href="#closed_documentations"><span
+
+                        <!-- <li><a data-toggle="tab" href="#closed_bookings"><span
                                     class="adminpro-icon adminpro-analytics-bridge tab-custon-ic"></span>Closed
-                                Documentations</a>
-                        </li>
+                                Bookings</a>
+                        </li> -->
                     </ul>
                     <div class="tab-content">
-                        <div id="pending_documentations" class="tab-pane in active animated flipInX custon-tab-style1">
-                            {%block pending_documentations%}
-                            {%include "Documentations/documentation_pending.html" %}
-                            {%endblock pending_documentations%}
+                        <div id="pending_bookings" class="tab-pane in active animated flipInX custon-tab-style1">
+                            {%block pending_bookings%}
+                            {%include "Bookings/booking_pending.html" %}
+                            {%endblock pending_bookings%}
                         </div>
-                        <div id="more_documentations" class="tab-pane animated flipInX custon-tab-style1">
-                            <p><b>
-                                    <h1>Work In Progress </h1>
-                                </b></p>
-                        </div>
-                        <div id="closed_documentations" class="tab-pane animated flipInX custon-tab-style1">
+
+                        <!-- <div id="closed_bookings" class="tab-pane animated flipInX custon-tab-style1">
                             <p><b>
                                     <h1>Not Yet Activated </h1>
                                 </b></p>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

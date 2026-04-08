@@ -14,6 +14,7 @@ from apps.Login.models import (
     customs_brokerage_tbl
 )
 from apps.Bookings.models import booking_freight_tbl, vehicle, goods
+from apps.Payments.models import blockchain_payment
 from django.contrib.contenttypes.models import ContentType
 import json
 import datetime
@@ -213,4 +214,70 @@ class BookingsView:
             # REQUIRED FOR METAMASK
             'contract_address': settings.PAYMENT_CONTRACT_ADDRESS,
             'contract_abi_json': json.dumps(settings.PAYMENT_CONTRACT_ABI),
+        })
+    
+    # This view is for displaying booking details, it will be linked to the booking details page in the clients team dashboard
+    # @staticmethod
+    # @login_required
+    # @group_required(['clients_team','finance_team','sales_team'])
+    # def booking_details(request):
+    #     user = request.user
+    #     username = user.username
+    #     user_email = user.email
+    #     user_fullname = f"{user.first_name} {user.last_name}"
+
+    #     gsa_user_id = GSA_agreement_form_tbl.objects.get(username=request.user).id
+    #     bookings = booking_freight_tbl.objects.filter(gsa_id_ref_id=gsa_user_id,updated_by=0 and request_status=="Pending")
+
+    #     return render(request, 'Bookings/booking_details.html', {
+    #         'bookings': bookings,
+    #         'request_id': booking_freight_tbl.id,
+    #         "receiver_company_name": booking_freight_tbl.receiver_company_name,
+    #         "receiver_fullname": booking_freight_tbl.receiver_fullname,
+    #         "date_received": booking_freight_tbl.date_received,
+    #         "time_received": booking_freight_tbl.time_received,
+    #         "service_type": booking_freight_tbl.service_type,
+    #         "quote_reference_number": booking_freight_tbl.quote_reference_number,
+    #         "request_status": booking_freight_tbl.request_status,
+
+    #     })
+
+    #List all bookings for the logged in user, this will be used in the clients team dashboard to display all bookings for the logged in user, with a link to view booking details and make payment if booking is pending
+    @staticmethod
+    @login_required
+    @group_required(['clients_team','finance_team','sales_team'])
+    def booking_details(request):
+        gsa_user_id = GSA_agreement_form_tbl.objects.get(
+            username=request.user
+        ).id
+
+        bookings = (
+            booking_freight_tbl.objects
+            .filter(
+                gsa_id_ref_id=gsa_user_id,
+                request_status="Pending",
+                quote_reference_number__in=blockchain_payment.objects.filter(
+                    paid_amount__isnull=False
+                ).values_list("quote_request_id", flat=True)
+            )
+            .order_by('-date_received', '-time_received')
+        )
+
+        return render(request, 'Bookings/booking_details.html', {
+            'bookings': bookings
+        })
+        if not booking:
+            messages.error(request, "Booking not found.")
+            return redirect('Bookings/booking_details')
+
+        return render(request, 'Bookings/booking_details.html', {
+            'booking': booking,
+            'request_id': booking.id,
+            "receiver_company_name": booking.receiver_company_name,
+            "receiver_fullname": booking.receiver_fullname,
+            "date_received": booking.date_received,
+            "time_received": booking.time_received,
+            "service_type": booking.service_type,
+            "quote_reference_number": booking.quote_reference_number,
+            "request_status": booking.request_status,
         })
