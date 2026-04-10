@@ -96,7 +96,7 @@
     }
 </style>
 <!------start form-->
-<form method="POST" action="{% url 'make_booking' request_id=request_id %}">
+<form method="POST" action="{% url 'convert_booking_to_shipment' request_id=request_id %}">
     {% csrf_token %}
     <!-- Basic Form Start -->
     <div class="advanced-form-area mg-b-15">
@@ -207,10 +207,10 @@
                                         <input type="text" class="form-control" name="receiver_tax_id"
                                             value="{{ receiver_tax_id }}" style="background-color: antiquewhite;"
                                             readonly>
-                                        <label class="form-control-label">Receiver Driver Lincence <font color="red">(if
+                                        <label class="form-control-label">Receiver Driver Licence <font color="red">(if
                                                 Individual)</font>
                                         </label>
-                                        <input type="text" class="form-control" name="receiver_driver_lincence_number"
+                                        <input type="text" class="form-control" name="receiver_driver_licence_number"
                                             value="{{ receiver_driver_lincence_number }}"
                                             style="background-color: antiquewhite;" readonly>
                                         <label class="form-control-label">Receiver Passport No <font color="red">(if
@@ -221,7 +221,7 @@
                                             readonly>
                                         <label class="form-control-label">Receiver Address<font class="text-danger">**
                                             </font></label>
-                                        <input type="text" id="address2" class="form-control" name="reciever_address"
+                                        <input type="text" id="address2" class="form-control" name="receiver_address"
                                             value="{{ receiver_address }}" style="background-color: antiquewhite;"
                                             readonly>
                                     </div>
@@ -795,195 +795,138 @@
             </div>
             <!-- End blockchain payment details -->
 
-            <!-- display for vehichles -->
-            {% if customer_quoting_details.commodity_sub == 'Vehicles' %}
+            <!-- display for Images -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="sparkline15-list shadow-reset mg-t-30">
                         <div class="sparkline15-hd">
                             <div class="main-sparkline15-hd">
-                                <h4>
-                                    <font class="text-danger">ENTER:</font> Cargo Description: Vehicles <font
-                                        color="red">NOTE: For
-                                        vehicles, the fuel tank must be
-                                        empty, the
-                                        battery disconnected and taped off.</font>
+                                <h4 class="text-danger">
+                                    Uploaded Ids, Images, Documents for the Quote
                                 </h4>
-                                <h5 class="text-danger"><b>Delete Unsed below text boxes</b></h5>
-                                <div class="sparkline15-outline-icon">
-                                    <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
-                                    <span><i class="fa fa-wrench"></i></span>
-                                    <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
-                                </div>
                             </div>
                         </div>
+                        <!-- Start id or photos Listing -->
+                        <div id="fileContainer">
+                            {% for file in files %}
+                            <div style="display:inline-block; margin:10px; text-align:center;">
+                                <p>{{ file.name }}</p>
 
-                        <!--for new vehicle  -->
-                        <div class="sparkline15-graph">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="touchspin-inner mb-3">
-
-                                        <!-- Wrapper -->
-                                        <div id="vehicles-wrapper">
-
-                                            <!-- 🔹 Add Vehicle Button -->
-                                            <div class="d-flex justify-content-end mb-2">
-                                                <button type="button" id="add-vehicle-btn"
-                                                    class="btn btn-sm btn-success">
-                                                    + Add Vehicle
-                                                </button>
-                                            </div>
-
-                                            <!-- 🔹 Vehicle Rows Container -->
-                                            <div id="vehicle-rows">
-                                                <!-- Default Row (Cannot Remove) -->
-                                                <div class="vehicle-row row align-items-end mb-3" data-index="1">
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Year</label>
-                                                        <input type="text" name="vehicle_year[]" class="form-control"
-                                                            placeholder="e.g., 1999"
-                                                            data-validate="required,min(4),max(4),regex(^[0-9]+$,Only numbers allowed)">
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <label class="form-label">Make/Model</label>
-                                                        <input type="text" name="vehicle_make[]" class="form-control"
-                                                            placeholder="Make/Model" data-validate="required,min(3)">
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <label class="form-label">VIN</label>
-                                                        <input type="text" name="vehicle_vin[]" class="form-control"
-                                                            placeholder="Vehicle VIN" data-validate="required,min(3)">
-                                                    </div>
-
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Cost (CAD)</label>
-                                                        <input type="text" name="vehicle_cost_in_CAD[]"
-                                                            class="form-control vehicle-cost"
-                                                            placeholder="e.g., 1,234.56"
-                                                            data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
-                                                    </div>
-
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Color</label>
-                                                        <input type="text" name="vehicle_color[]" class="form-control"
-                                                            placeholder="e.g., Blue" data-validate="required,min(3)">
-                                                    </div>
-
-                                                    <div class="col-md-2 remove-vehicle-container"
-                                                        style="display: none;">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-danger remove-vehicle-btn">−
-                                                            Remove</button>
-                                                    </div>
-
-                                                    <hr class="w-100 mt-3">
-                                                </div>
-                                            </div>
-
-                                            <!-- 🔹 Total Vehicle Cost Box -->
-                                            <div class="mb-3 p-3 bg-light border rounded" id="vehicle-total-box">
-                                                <br>
-                                                <strong>Total Vehicle Cost: CAD $<span id="vehicle-total"
-                                                        class="text-success">0.00</span></strong>
-                                            </div>
-
-                                        </div> <!-- vehicles-wrapper -->
-
-                                    </div>
-                                </div>
+                                <img src="{{ file.url }}" width="200" style="cursor:pointer; border-radius:8px;"
+                                    onclick="openModal(this.src)" />
                             </div>
+                            {% endfor %}
                         </div>
+
 
                     </div>
                 </div>
             </div>
-            {% else %}
 
+            <!--end display for Images -->
+
+            <!-- display for vehichles -->
+            <!-- for goods or vehicles -->
+            <!-- Cargo Details Table -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="sparkline15-list shadow-reset mg-t-30">
                         <div class="sparkline15-hd">
                             <div class="main-sparkline15-hd">
                                 <h4>
-                                    <font class="text-danger">ENTER:</font> Cargo Description: <font color="red">
-                                        Commodities</font>
+                                    <font class="text-danger">Cargo Details</font>
                                 </h4>
-                                <h5 class="text-danger"><b>Delete Unsed text boxes</b></h5>
-                                <div class="sparkline15-outline-icon">
-                                    <span class="sparkline15-collapse-link"><i class="fa fa-chevron-up"></i></span>
-                                    <span><i class="fa fa-wrench"></i></span>
-                                    <span class="sparkline15-collapse-close"><i class="fa fa-times"></i></span>
-                                </div>
                             </div>
                         </div>
 
+                        <div class="sparkline15-graph">
+                            <div class="table-responsive">
+
+                                {% if customer_quoting_details.commodity_sub == 'Vehicles' %}
+
+                                <!-- Vehicles Table -->
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Year</th>
+                                            <th>Make / Model</th>
+                                            <th>VIN</th>
+                                            <th>Cost (CAD)</th>
+                                            <th>Color</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for vehicle in vehicles %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ vehicle.vehicle_year }}</td>
+                                            <td>{{ vehicle.vehicle_make }}</td>
+                                            <td>{{ vehicle.vehicle_vin }}</td>
+                                            <td>{{ vehicle.vehicle_cost_in_CAD|floatformat:2 }}</td>
+                                            <td>{{ vehicle.vehicle_color }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-danger">
+                                                No vehicles found
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                {% else %}
+
+                                <!-- Goods Table -->
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>QTY</th>
+                                            <th>Description</th>
+                                            <th>Declared Value (CAD)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in goods %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ item.goods_quantity }}</td>
+                                            <td>{{ item.goods_description }}</td>
+                                            <td>{{ item.goods_value_in_CAD|floatformat:2 }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center text-danger">
+                                                No goods found
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end goods or vehicles -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="sparkline15-list shadow-reset mg-t-30">
                         <div class="sparkline15-graph">
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="touchspin-inner mb-3">
 
-                                        <!-- Wrapper -->
-                                        <div id="goods-wrapper">
 
-                                            <!-- 🔹 Add Goods Button -->
-                                            <div class="d-flex justify-content-end mb-2">
-                                                <button type="button" id="add-goods-btn" class="btn btn-sm btn-success">
-                                                    + Add Goods
-                                                </button>
-                                            </div>
-
-                                            <!-- 🔹 Goods Rows Container -->
-                                            <div id="goods-rows">
-                                                <!-- Default Row (Cannot Remove) -->
-                                                <div class="goods-row row align-items-end mb-3" data-index="1">
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">QTY</label>
-                                                        <input type="text" name="goods_qty[]" class="form-control"
-                                                            placeholder="e.g., 10"
-                                                            data-validate="required,min(1),max(5),regex(^[0-9]+$,Only numbers allowed)">
-                                                    </div>
-
-                                                    <div class="col-md-5">
-                                                        <label class="form-label">Description of Goods</label>
-                                                        <input type="text" name="goods_description[]"
-                                                            class="form-control" placeholder="Goods description"
-                                                            data-validate="required,min(3)">
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <label class="form-label">Value (CAD)</label>
-                                                        <input type="text" name="goods_value_in_CAD[]"
-                                                            class="form-control goods-value"
-                                                            placeholder="e.g., 1,234.56"
-                                                            data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
-                                                    </div>
-
-                                                    <div class="col-md-2 remove-goods-container" style="display: none;">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-danger remove-goods-btn">−
-                                                            Remove</button>
-                                                    </div>
-
-                                                    <hr class="w-100 mt-3">
-                                                </div>
-                                            </div>
-
-                                            <!-- Total Box -->
-                                            <div class="mb-3 p-3 bg-light border rounded" id="goods-total-box">
-                                                <br>
-                                                <strong>Total Declared Value: CAD $<span id="goods-total"
-                                                        class="text-success">0.00</span>
-                                                </strong>
-                                            </div>
-
-                                        </div> <!-- goods-wrapper -->
-                                        {%endif%}
                                         <!-- Submit Button -->
                                         <p align="center">
-                                            <button type="submit" class="forgot-password">Submit</button>
+                                            <button type="submit" class="forgot-password">Convert to Shipment</button>
                                         </p>
 
                                     </div>
@@ -1002,258 +945,46 @@
     <!-- Basic Form End-->
 </form>
 
-{% block address_auto_increment %}
+
 <!-- Table auto addition -->
 <script src="{% static 'auto_completion/table_auto_addition.js' %}"></script>
 
 <script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
 
-<!-- load float -->
-<!-- load ocean float/amount validator -->
-<script src="{% static 'js/js_form_validator/float_validator.js' %}"></script>
 
 
-{% endblock address_auto_increment %}
+<!-- Image Modal -->
+<div id="imageModal" style="display:none;
+            position:fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.8);
+            justify-content:center;
+            align-items:center;
+            z-index:9999;">
+
+    <span onclick="closeModal()" style="position:absolute;
+                 top:20px;
+                 right:30px;
+                 font-size:40px;
+                 color:white;
+                 cursor:pointer;">
+        &times;
+    </span>
+
+    <img id="modalImage" style="max-width:90%;
+                max-height:90%;
+                border-radius:10px;
+                box-shadow:0 0 20px black;" />
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const goodsRows = document.getElementById('goods-rows');
-        const addGoodsBtn = document.getElementById('add-goods-btn');
-        const totalDisplay = document.getElementById('goods-total');
-        let goodsIndex = 1;
-        const maxGoods = 10;
+    function openModal(imageSrc) {
+        document.getElementById("imageModal").style.display = "flex";
+        document.getElementById("modalImage").src = imageSrc;
+    }
 
-        // -----------------------------
-        // Format input as currency
-        // -----------------------------
-        function formatCurrency(input) {
-            let value = input.value.replace(/,/g, ''); // remove commas
-            if (!isNaN(value) && value !== '') {
-                value = parseFloat(value).toFixed(2);
-                input.value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            }
-            updateTotal();
-        }
-
-        // -----------------------------
-        // Update total declared value
-        // -----------------------------
-        function updateTotal() {
-            const values = document.querySelectorAll('.goods-value');
-            let total = 0;
-            values.forEach(input => {
-                let val = input.value.replace(/,/g, '');
-                if (!isNaN(val) && val !== '') {
-                    total += parseFloat(val);
-                }
-            });
-            totalDisplay.textContent = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        // -----------------------------
-        // Toggle remove buttons visibility
-        // -----------------------------
-        function toggleGoodsRemoveButtons() {
-            const rows = goodsRows.querySelectorAll('.goods-row');
-            rows.forEach(row => {
-                const removeBtnContainer = row.querySelector('.remove-goods-container');
-                if (removeBtnContainer) {
-                    removeBtnContainer.style.display = (rows.length > 1) ? 'block' : 'none';
-                }
-            });
-        }
-
-        // -----------------------------
-        // Create new goods row dynamically
-        // -----------------------------
-        function createGoodsRow() {
-            goodsIndex++;
-            const row = document.createElement('div');
-            row.className = 'goods-row row align-items-end mb-3';
-            row.setAttribute('data-index', goodsIndex);
-
-            row.innerHTML = `
-      <div class="col-md-2">
-        <label class="form-label">QTY</label>
-        <input type="text" name="goods_qty[]" class="form-control" placeholder="e.g., 10"
-          data-validate="required,min(1),max(5),regex(^[0-9]+$,Only numbers allowed)">
-      </div>
-
-      <div class="col-md-5">
-        <label class="form-label">Description of Goods</label>
-        <input type="text" name="goods_description[]" class="form-control" placeholder="Goods description"
-          data-validate="required,min(3)">
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Value (CAD)</label>
-        <input type="text" name="goods_value_in_CAD[]" class="form-control goods-value" placeholder="e.g., 1,234.56"
-          data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
-      </div>
-
-      <div class="col-md-2 remove-goods-container">
-        <button type="button" class="btn btn-sm btn-danger remove-goods-btn">− Remove</button>
-      </div>
-
-      <hr class="w-100 mt-3">
-    `;
-
-            // Attach remove button
-            row.querySelector('.remove-goods-btn').addEventListener('click', function () {
-                row.remove();
-                toggleGoodsRemoveButtons();
-                updateTotal();
-            });
-
-            // Attach currency formatting on input
-            row.querySelector('.goods-value').addEventListener('input', function () {
-                formatCurrency(this);
-            });
-
-            return row;
-        }
-
-        // -----------------------------
-        // Add new row on button click
-        // -----------------------------
-        addGoodsBtn.addEventListener('click', function () {
-            if (goodsIndex >= maxGoods) {
-                alert("Maximum " + maxGoods + " goods entries allowed.");
-                return;
-            }
-            const newRow = createGoodsRow();
-            goodsRows.appendChild(newRow);
-            toggleGoodsRemoveButtons();
-            newRow.querySelector('input[name="goods_qty[]"]').focus();
-        });
-
-        // -----------------------------
-        // Initialize first row formatting
-        // -----------------------------
-        const initialValueInput = goodsRows.querySelector('.goods-value');
-        initialValueInput.addEventListener('input', function () {
-            formatCurrency(this);
-        });
-
-        toggleGoodsRemoveButtons();
-        updateTotal();
-    });
-
-    // for vehicles
-    document.addEventListener('DOMContentLoaded', function () {
-        const vehicleRows = document.getElementById('vehicle-rows');
-        const addVehicleBtn = document.getElementById('add-vehicle-btn');
-        const totalDisplay = document.getElementById('vehicle-total');
-        let vehicleIndex = 1;
-        const maxVehicles = 10;
-
-        // ✅ Format currency input on the fly
-        function formatCurrency(input) {
-            let value = input.value.replace(/,/g, '');
-            if (!isNaN(value) && value !== '') {
-                value = parseFloat(value).toFixed(2);
-                input.value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            }
-            updateTotal();
-        }
-
-        // ✅ Recalculate total after input change or row removal
-        function updateTotal() {
-            const values = document.querySelectorAll('.vehicle-cost');
-            let total = 0;
-            values.forEach(input => {
-                let val = input.value.replace(/,/g, '');
-                if (!isNaN(val) && val !== '') {
-                    total += parseFloat(val);
-                }
-            });
-            totalDisplay.textContent = total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        // ✅ Show or hide remove buttons
-        function toggleVehicleRemoveButtons() {
-            const rows = vehicleRows.querySelectorAll('.vehicle-row');
-            rows.forEach(row => {
-                const removeBtnContainer = row.querySelector('.remove-vehicle-container');
-                if (removeBtnContainer) {
-                    removeBtnContainer.style.display = (rows.length > 1) ? 'block' : 'none';
-                }
-            });
-        }
-
-        // ✅ Create a dynamic vehicle row
-        function createVehicleRow() {
-            vehicleIndex++;
-            const row = document.createElement('div');
-            row.className = 'vehicle-row row align-items-end mb-3';
-            row.setAttribute('data-index', vehicleIndex);
-
-            row.innerHTML = `
-        <div class="col-md-2">
-          <label class="form-label">Year</label>
-          <input type="text" name="vehicle_year[]" class="form-control" placeholder="e.g., 1999"
-            data-validate="required,min(4),max(4),regex(^[0-9]+$,Only numbers allowed)">
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">Make/Model</label>
-          <input type="text" name="vehicle_make[]" class="form-control" placeholder="Make/Model"
-            data-validate="required,min(3)">
-        </div>
-        <div class="col-md-3">
-          <label class="form-label">VIN</label>
-          <input type="text" name="vehicle_vin[]" class="form-control" placeholder="Vehicle VIN"
-            data-validate="required,min(3)">
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Cost (CAD)</label>
-          <input type="text" name="vehicle_cost_in_CAD[]" class="form-control vehicle-cost" placeholder="e.g., 1,234.56"
-            data-validate="required,min(2),regex(^[0-9,\\.]+$,Only numbers, comma and period allowed)">
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Color</label>
-          <input type="text" name="vehicle_color[]" class="form-control" placeholder="e.g., Blue"
-            data-validate="required,min(3)">
-        </div>
-        <div class="col-md-2 remove-vehicle-container">
-          <button type="button" class="btn btn-sm btn-danger remove-vehicle-btn">− Remove</button>
-        </div>
-        <hr class="w-100 mt-3">
-      `;
-
-            // Attach remove button
-            row.querySelector('.remove-vehicle-btn').addEventListener('click', function () {
-                row.remove();
-                toggleVehicleRemoveButtons();
-                updateTotal();
-            });
-
-            // Attach currency formatting for new row
-            row.querySelector('.vehicle-cost').addEventListener('input', function () {
-                formatCurrency(this);
-            });
-
-            return row;
-        }
-
-        // ✅ Add vehicle button click
-        addVehicleBtn.addEventListener('click', function () {
-            if (vehicleIndex >= maxVehicles) {
-                alert("Maximum " + maxVehicles + " vehicle entries allowed.");
-                return;
-            }
-            const newRow = createVehicleRow();
-            vehicleRows.appendChild(newRow);
-            toggleVehicleRemoveButtons();
-            newRow.querySelector('input[name="vehicle_year[]"]').focus();
-        });
-
-        // ✅ Initial setup for first row formatting
-        const initialCostInput = vehicleRows.querySelector('.vehicle-cost');
-        initialCostInput.addEventListener('input', function () {
-            formatCurrency(this);
-        });
-
-        toggleVehicleRemoveButtons();
-        updateTotal();
-    });
+    function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
+    }
 </script>

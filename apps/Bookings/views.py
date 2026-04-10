@@ -19,6 +19,12 @@ from apps.Payments.models import blockchain_payment
 from django.contrib.contenttypes.models import ContentType
 import json
 import datetime
+from web3 import Web3
+
+#for image access
+import os
+from django.http import JsonResponse
+
 
 class BookingsView:
 
@@ -339,6 +345,21 @@ class BookingsView:
         customer_quoting_details = air or ocean or roro or customs or None
         #selecting from blockchain_payment table
         blockchain_payment_details = blockchain_payment.objects.filter(quote_request_id=booking.quote_reference_number).first()
+        # for image access in the views to temlate
+        username=booking.gsa_id_ref.username
+        folder_path = os.path.join(settings.MEDIA_ROOT, "uploads", username)
+        files = []
+
+        if os.path.exists(folder_path):
+            for filename in os.listdir(folder_path):
+                file_url = f"{settings.MEDIA_URL}uploads/{username}/{filename}"
+                files.append({
+                    "name": filename,
+                    "url": file_url
+                })
+        #selecting goods or vehicles based on the commodity type in the quote request
+        vehicles = vehicle.objects.filter(booking_id_ref=booking.id)
+        goods_list = goods.objects.filter(booking_id_ref=booking.id)
 
         return render(request, 'Bookings/change_from_bookings_to_Shipment.html', {
             'booking': booking,
@@ -377,32 +398,142 @@ class BookingsView:
             "customs": customs,
             "customer_quoting_details": customer_quoting_details,
             #blockchain payment details:
-            "blockchain_payment_details": blockchain_payment_details
+            "blockchain_payment_details": blockchain_payment_details,
+            #files for image access
+            "files": files,
+            #goods and vehicles
+            "vehicles": vehicles,
+            "goods": goods_list
            
         })
 
-    @staticmethod
     @login_required
     @group_required(['sales_team'])
-    def convert_booking_to_shipment(request, id):
+    @staticmethod
+    def convert_booking_to_shipment(request, request_id):
+
+        if request.method != "POST":
+            messages.error(request, "Invalid request method.")
+            return redirect('booking_approvals')
+
         try:
-            booking = booking_freight_tbl.objects.get(id=id)
-            # Here you would add logic to convert the booking to a shipment, such as creating a new shipment object and copying relevant data from the booking
-            # For example:
-            # shipment = Shipment.objects.create(
-            #     booking_reference_number=booking.booking_reference_number,
-            #     receiver_company_name=booking.receiver_company_name,
-            #     receiver_fullname=booking.receiver_fullname,
-            #     date_received=booking.date_received,
-            #     time_received=booking.time_received,
-            #     service_type=booking.service_type,
-            #     quote_reference_number=booking.quote_reference_number,
-            #     request_status='Converted to Shipment'
-            # )
-            booking.request_status = 'Converted to Shipment'
+            # 1. GET BOOKING DETAILS
+            booking = booking_freight_tbl.objects.get(id=request_id)
+            service_type = request.POST.get("service_type")
+
+            # 2. CONNECT TO GANACHE 
+            w3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+
+            if not w3.is_connected():
+                messages.error(request, "Ganache not connected.")
+                return redirect('booking_approvals')
+
+            account = w3.eth.accounts[0]
+
+            # 3. LOAD CONTRACT ABI
+            shipment_abi_path = os.path.join(
+                settings.BASE_DIR,
+                "blockchain",
+                "abi",
+                "ShipmentABI.json"
+            )
+
+            with open(shipment_abi_path, "r") as abi_file:
+                shipment_abi = json.load(abi_file)
+
+            contract_address = Web3.to_checksum_address(
+                settings.SHIPMENT_CONTRACT_ADDRESS
+            )
+
+            contract = w3.eth.contract(
+                address=contract_address,
+                abi=shipment_abi
+            )
+
+            # 4. EXTRACT COMMON DATA
+            shipper_name = request.POST.get("shipper_fullname")
+            receiver_name = request.POST.get("receiver_fullname")
+            quote_ref = request.POST.get("quote_reference_number")
+
+            # 5. ROUTE LOGIC
+            route = ""
+
+            if service_type == "Air Freight":
+                route = f"{request.POST.get('departure')} -> {request.POST.get('destination')}"
+
+            elif service_type == "Ocean Freight":
+                route = f"{request.POST.get('port_of_loading')} -> {request.POST.get('port_of_discharge')}"
+
+            elif service_type == "RORO Freight":
+                route = f"{request.POST.get('departure')} -> {request.POST.get('destination')}"
+
+            elif service_type == "Customs Brokerage":
+                route = f"{request.POST.get('port_of_loading')} -> {request.POST.get('port_of_discharge')}"
+
+            else:
+                route = "Unknown"
+
+            # 6. DETERMINE CARGO TYPE
+            cargo_type = "GOODS"
+
+            if request.POST.get("commodity_sub") == "Vehicles":
+                cargo_type = "VEHICLE"
+
+            # 7. SEND TO BLOCKCHAIN
+
+            shipper = (
+                request.POST.get("shipper_company_name", ""),
+                request.POST.get("shipper_fullname", ""),
+                request.POST.get("shipper_telephone_number", ""),
+                request.POST.get("shipper_email", ""),
+                request.POST.get("shipper_address", "")
+            )
+
+            receiver = (
+                request.POST.get("receiver_company_name", ""),
+                request.POST.get("receiver_fullname", ""),
+                request.POST.get("receiver_phone_number", ""),
+                request.POST.get("receiver_email", ""),
+                request.POST.get("receiver_address", "")
+            )
+
+            paid_amount = request.POST.get("paid_amount", "0")
+            paid_amount_wei = w3.to_wei(float(paid_amount), "ether")
+
+            gas_fee_wei = 0
+            tx_hash_placeholder = "PENDING"
+
+            tx = contract.functions.createShipment(
+                booking.id,
+                quote_ref,
+                service_type,
+                route,
+                tx_hash_placeholder,
+                paid_amount_wei,
+                gas_fee_wei,
+                shipper,
+                receiver
+            ).transact({
+                "from": account,
+                "gas": 3000000
+            })
+
+            tx_receipt = w3.eth.wait_for_transaction_receipt(tx)
+            # Update booking with shipment details in postgree
+            booking.updated_by = request.user.username
+            booking.booking_reference_number = booking.quote_reference_number
+            #add more fields
             booking.save()
-            messages.success(request, "Booking has been converted to shipment successfully.")
+            #Add email notification with shipment details to the customer and Tracking link to the shipment on the blockchain explorer
+            messages.success(
+                request,
+                f"Shipment created successfully. TX: {tx_receipt.transactionHash.hex()}"
+            )
+
         except booking_freight_tbl.DoesNotExist:
             messages.error(request, "Booking not found.")
-        
+
+        except Exception as e:
+            messages.error(request, f"Error: {str(e)}")
+
         return redirect('booking_approvals')

@@ -1,108 +1,129 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+/// @title Freight Shipment Smart Contract
+/// @author Geoffrey
+/// @notice Stores shipment, shipper, receiver, cargo, payment, and gas fee data on blockchain
+/// @dev Designed for Django + Ganache + Remix integration
+contract FreightShipment {
 
-/// @title Shipment Contract
-/// @notice Handles creation, tracking, and status updates of shipments
-contract Shipment is Ownable {
-
-    /// @notice Constructor sets the deployer as the contract owner
-    constructor() Ownable(msg.sender) {}  // Pass deployer as owner
-
-    /// @notice Structure to store shipment details
-    struct ShipmentRecord {
-        string shipmentId;          // Unique ID for the shipment
-        string quoteRequestId;      // Related quote request ID
-        string origin;              // Shipment origin location
-        string destination;         // Shipment destination location
-        string containerType;       // Type of container (e.g., 20ft, 40ft)
-        uint256 weight;             // Shipment weight in kg
-        string status;              // Current shipment status (e.g., pending, in-transit, delivered)
-        uint256 createdAt;          // Timestamp of shipment creation
-        uint256 lastUpdatedAt;      // Timestamp of last status update
-        bool deliveryConfirmed;     // Flag for delivery confirmation
-        string carrierName;         // Name of shipping carrier
+    /// @notice Stores shipper or receiver details
+    struct Party {
+        string companyName;   // Company name
+        string fullName;      // Contact person full name
+        string phone;         // Phone number
+        string email;         // Email address
+        string addressInfo;   // Full address
     }
 
-    /// @notice Mapping to store ShipmentRecord by shipmentId
-    mapping(string => ShipmentRecord) private shipments;
-
-    /// @notice Event emitted when a new shipment is created
-    event ShipmentCreated(string indexed shipmentId, string status);
-
-    /// @notice Event emitted when a shipment status is updated
-    event ShipmentStatusUpdated(string indexed shipmentId, string newStatus);
-
-    /// @notice Event emitted when a shipment delivery is confirmed
-    event DeliveryConfirmed(string indexed shipmentId);
-
-    /// @notice Create a new shipment record
-    /// @param _shipment The ShipmentRecord object containing shipment details
-    /// @dev Only callable by the contract owner
-    function createShipment(ShipmentRecord memory _shipment) external onlyOwner {
-        require(bytes(_shipment.shipmentId).length > 0, "Shipment ID required");   // Validate shipmentId
-        require(bytes(_shipment.origin).length > 0, "Origin required");             // Validate origin
-        require(bytes(_shipment.destination).length > 0, "Destination required");   // Validate destination
-
-        ShipmentRecord storage s = shipments[_shipment.shipmentId];  // Store shipment in mapping
-
-        // Copy fields from input ShipmentRecord
-        s.shipmentId = _shipment.shipmentId;
-        s.quoteRequestId = _shipment.quoteRequestId;
-        s.origin = _shipment.origin;
-        s.destination = _shipment.destination;
-        s.containerType = _shipment.containerType;
-        s.weight = _shipment.weight;
-        s.status = _shipment.status;
-        s.createdAt = block.timestamp;
-        s.lastUpdatedAt = block.timestamp;
-        s.deliveryConfirmed = false;  // Initialize delivery as not confirmed
-        s.carrierName = _shipment.carrierName;
-
-        emit ShipmentCreated(_shipment.shipmentId, _shipment.status); // Emit creation event
+    /// @notice Stores vehicle or goods details
+    struct CargoItem {
+        string itemType;          // Vehicle or Goods
+        string description;       // Cargo description
+        string vinOrQty;          // VIN for vehicles OR quantity for goods
+        uint256 declaredValueWei; // Declared cargo value in Wei
     }
 
-    /// @notice Retrieve a shipment record by shipmentId
-    /// @param _shipmentId Unique ID of the shipment
-    /// @return ShipmentRecord associated with the shipmentId
-    /// @dev Reverts if shipment does not exist
-    function getShipment(string memory _shipmentId) external view returns (ShipmentRecord memory) {
-        ShipmentRecord memory s = shipments[_shipmentId];
-        require(bytes(s.shipmentId).length > 0, "Shipment does not exist");
-        return s;
+    /// @notice Stores core shipment information
+    struct Shipment {
+        uint256 bookingId;        // Internal booking ID from Django
+        string quoteReference;    // Freight quotation reference
+        string freightType;       // Air, Ocean, RoRo, Brokerage, etc.
+        string freightRoute;      // Example: Vancouver -> Dubai
+        string status;            // Current shipment status
+        uint256 paidAmountWei;    // Payment made by customer
+        uint256 gasFeeWei;        // Blockchain gas used
+        uint256 createdAt;        // Timestamp
+        string txHash;            // Blockchain transaction hash
     }
 
-    /// @notice Update the status of a shipment
-    /// @param _shipmentId Unique shipment ID
-    /// @param _newStatus New status string (e.g., in-transit, delivered)
-    /// @dev Only callable by the contract owner
-    function updateShipmentStatus(string memory _shipmentId, string memory _newStatus) external onlyOwner {
-        ShipmentRecord storage s = shipments[_shipmentId];
-        require(bytes(s.shipmentId).length > 0, "Shipment does not exist");
-        s.status = _newStatus;
-        s.lastUpdatedAt = block.timestamp;
-
-        emit ShipmentStatusUpdated(_shipmentId, _newStatus); // Emit status update event
+    /// Reduce stack depth by grouping shipper + receiver
+    struct ShipmentParties {
+        Party shipper;
+        Party receiver;
     }
 
-    /// @notice Confirm delivery of a shipment
-    /// @param _shipmentId Unique shipment ID
-    /// @dev Only callable by the contract owner
-    function confirmDelivery(string memory _shipmentId) external onlyOwner {
-        ShipmentRecord storage s = shipments[_shipmentId];
-        require(bytes(s.shipmentId).length > 0, "Shipment does not exist");
-        s.deliveryConfirmed = true;
-        s.status = "delivered";
-        s.lastUpdatedAt = block.timestamp;
+    /// @notice Stores shipment details by booking ID
+    mapping(uint256 => Shipment) public shipments;
 
-        emit DeliveryConfirmed(_shipmentId); // Emit delivery confirmation event
+    /// @notice Stores parties (shipper + receiver) by booking ID
+    mapping(uint256 => ShipmentParties) public parties;
+
+    /// @notice Stores all cargo items linked to a booking ID
+    mapping(uint256 => CargoItem[]) public cargo;
+
+    /// @notice Triggered whenever a shipment is created
+    event ShipmentCreated(
+        uint256 bookingId,
+        string freightType,
+        string status
+    );
+
+    /// @notice Creates a new shipment booking on blockchain
+    function createShipment(
+        uint256 bookingId,
+        string memory quoteReference,
+        string memory freightType,
+        string memory freightRoute,
+        string memory txHash,
+        uint256 paidAmountWei,
+        uint256 gasFeeWei,
+
+        /// Shipper
+        Party memory shipper,
+
+        /// Receiver
+        Party memory receiver
+    ) public {
+
+        // Save shipment record
+        shipments[bookingId] = Shipment(
+            bookingId,
+            quoteReference,
+            freightType,
+            freightRoute,
+            "Shipment",
+            paidAmountWei,
+            gasFeeWei,
+            block.timestamp,
+            txHash
+        );
+
+        // Save shipper + receiver together
+        parties[bookingId] = ShipmentParties(shipper, receiver);
+
+        // Emit blockchain event log
+        emit ShipmentCreated(
+            bookingId,
+            freightType,
+            "Shipment"
+        );
     }
 
-    /// @notice Check if a shipment exists
-    /// @param _shipmentId Unique shipment ID
-    /// @return True if shipment exists, false otherwise
-    function shipmentExists(string memory _shipmentId) external view returns (bool) {
-        return bytes(shipments[_shipmentId].shipmentId).length > 0;
+    /// @notice Adds cargo item to an existing shipment
+    function addCargo(
+        uint256 bookingId,
+        string memory itemType,
+        string memory description,
+        string memory vinOrQty,
+        uint256 declaredValueWei
+    ) public {
+        cargo[bookingId].push(
+            CargoItem(
+                itemType,
+                description,
+                vinOrQty,
+                declaredValueWei
+            )
+        );
+    }
+
+    /// @notice Returns number of cargo items in a shipment
+    function getCargoCount(uint256 bookingId)
+        public
+        view
+        returns (uint256)
+    {
+        return cargo[bookingId].length;
     }
 }

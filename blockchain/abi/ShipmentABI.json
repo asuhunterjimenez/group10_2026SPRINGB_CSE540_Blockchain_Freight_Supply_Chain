@@ -1,0 +1,362 @@
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "bookingId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "freightType",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "status",
+				"type": "string"
+			}
+		],
+		"name": "ShipmentCreated",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "bookingId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "itemType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "vinOrQty",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "declaredValueWei",
+				"type": "uint256"
+			}
+		],
+		"name": "addCargo",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "cargo",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "itemType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "vinOrQty",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "declaredValueWei",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "bookingId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "quoteReference",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "freightType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "freightRoute",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "txHash",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "paidAmountWei",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "gasFeeWei",
+				"type": "uint256"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "companyName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "fullName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addressInfo",
+						"type": "string"
+					}
+				],
+				"internalType": "struct FreightShipment.Party",
+				"name": "shipper",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "companyName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "fullName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addressInfo",
+						"type": "string"
+					}
+				],
+				"internalType": "struct FreightShipment.Party",
+				"name": "receiver",
+				"type": "tuple"
+			}
+		],
+		"name": "createShipment",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "bookingId",
+				"type": "uint256"
+			}
+		],
+		"name": "getCargoCount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "parties",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "companyName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "fullName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addressInfo",
+						"type": "string"
+					}
+				],
+				"internalType": "struct FreightShipment.Party",
+				"name": "shipper",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "companyName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "fullName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addressInfo",
+						"type": "string"
+					}
+				],
+				"internalType": "struct FreightShipment.Party",
+				"name": "receiver",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "shipments",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "bookingId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "quoteReference",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "freightType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "freightRoute",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "status",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "paidAmountWei",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "gasFeeWei",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "createdAt",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "txHash",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
