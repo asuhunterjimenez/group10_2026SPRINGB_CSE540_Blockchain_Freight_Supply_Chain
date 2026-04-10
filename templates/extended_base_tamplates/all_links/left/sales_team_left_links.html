@@ -32,10 +32,7 @@
         class="nav-link dropdown-toggle"><i class="fa big-icon fa-envelope"></i> <span class="mini-dn">Bookings</span>
         <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>
       <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
-        <a href="#" class="dropdown-item">New Booking</a>
-        <a href="#" class="dropdown-item">Unassigned</a>
-        <a href="#" class="dropdown-item">In Progress</a>
-        <a href="#" class="dropdown-item">Completed</a>
+        <a href="{% url 'booking_approvals' %}" class="dropdown-item">Approve Booking</a>
       </div>
     </li>
     <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
@@ -43,15 +40,13 @@
           class="mini-dn">Payments</span> <span class="indicator-right-menu mini-dn"><i
             class="fa indicator-mn fa-angle-left"></i></span></a>
       <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
-        <a href="#" class="dropdown-item">Debit/Credit</a>
-        <a href="#" class="dropdown-item">PayPal</a>
-        <a href="#" class="dropdown-item">Bank Details</a>
-        <a href="#" class="dropdown-item">E-Transfer</a>
+        <a href="#" class="dropdown-item">Ethers</a>
+        <a href="#" class="dropdown-item">Bit-Coins</a>
       </div>
     </li>
-    <li class="nav-item"><a href="#" role="button" aria-expanded="false"><i class="fa big-icon fa-truck"></i>
+    <!-- <li class="nav-item"><a href="#" role="button" aria-expanded="false"><i class="fa big-icon fa-truck"></i>
         <span class="mini-dn">Shipment Tracker</span></a>
-    </li>
+    </li> -->
     <li class="nav-item"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false"
         class="nav-link dropdown-toggle"><i class="fa big-icon fa-truck"></i> <span class="mini-dn">Shipments</span>
         <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span></a>

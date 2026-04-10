@@ -11,7 +11,8 @@ from apps.Login.models import (
     ocean_freight_tbl,
     air_freight_tbl,
     roro_tbl,
-    customs_brokerage_tbl
+    customs_brokerage_tbl,
+    new_quotings
 )
 from apps.Bookings.models import booking_freight_tbl, vehicle, goods
 from apps.Payments.models import blockchain_payment
@@ -281,3 +282,127 @@ class BookingsView:
             "quote_reference_number": booking.quote_reference_number,
             "request_status": booking.request_status,
         })
+    
+    @staticmethod
+    @login_required
+    @group_required(['finance_team','sales_team'])
+    def booking_approvals(request):
+       
+        bookings = (
+            booking_freight_tbl.objects
+            .filter(
+                request_status="Pending",
+                quote_reference_number__in=blockchain_payment.objects.filter(
+                    paid_amount__isnull=False
+                ).values_list("quote_request_id", flat=True)
+            )
+            .order_by('-date_received', '-time_received')
+        )
+
+        return render(request, 'Bookings/booking_approvals_details.html', {
+            'bookings': bookings
+        })
+        if not booking:
+            messages.error(request, "Booking not found.")
+            return redirect('Bookings/booking_approvals_details')
+
+        return render(request, 'Bookings/booking_approvals_details.html', {
+            'booking': booking,
+            'request_id': booking.id,
+            "receiver_company_name": booking.receiver_company_name,
+            "receiver_fullname": booking.receiver_fullname,
+            "date_received": booking.date_received,
+            "time_received": booking.time_received,
+            "service_type": booking.service_type,
+            "quote_reference_number": booking.quote_reference_number,
+            "request_status": booking.request_status,
+        })
+    #sales team accesses and converts Bookings to shipments
+    @staticmethod
+    @login_required
+    @group_required(['sales_team'])
+    def booking_approvals_details(request, id):
+        try:
+            booking = booking_freight_tbl.objects.get(id=id)
+        except booking_freight_tbl.DoesNotExist:
+            messages.error(request, "Booking not found.")
+            return redirect('booking_approvals')
+        # Get shipper details from GSA agreement using the foreign key relationship
+        shipper_details = booking.gsa_id_ref   # direct FK object
+        shipper_fullname = shipper_details.user_id_ref.get_full_name()
+        # get quote Id for different freight modes using content type and object id
+        air=air_freight_tbl.objects.filter(request_id=booking.quote_reference_number).first() if booking.content_type.model == 'air_freight_tbl' else None
+        ocean=ocean_freight_tbl.objects.filter(request_id=booking.quote_reference_number).first() if booking.content_type.model == 'ocean_freight_tbl' else None
+        roro=roro_tbl.objects.filter(request_id=booking.quote_reference_number).first() if booking.content_type.model == 'roro_tbl' else None
+        customs=customs_brokerage_tbl.objects.filter(quote_request_id=booking.quote_reference_number).first() if booking.content_type.model == 'customs_brokerage_tbl' else None
+        #for all selected fields but select one
+        customer_quoting_details = air or ocean or roro or customs or None
+        #selecting from blockchain_payment table
+        blockchain_payment_details = blockchain_payment.objects.filter(quote_request_id=booking.quote_reference_number).first()
+
+        return render(request, 'Bookings/change_from_bookings_to_Shipment.html', {
+            'booking': booking,
+            'request_id': booking.id,
+            'shipper_details': shipper_details,
+            'blockchain_payment_details': blockchain_payment_details,
+
+            # shipper details
+            "shipper_company_name": shipper_details.customer_registered_business_name,
+            "shipper_fullname": shipper_fullname,
+            "shipper_address": shipper_details.service_address,
+            "shipper_export_number": shipper_details.corp_jur_number,
+            "shipper_phone_number": shipper_details.telephone_number,
+            "shipper_email": shipper_details.email_address,
+
+            # receiver details
+            "receiver_company_name": booking.receiver_company_name,
+            "receiver_fullname": booking.receiver_fullname,
+            "date_received": booking.date_received,
+            "time_received": booking.time_received,
+            "receiver_phone_number": booking.receiver_phone_number,
+            "receiver_email": booking.receiver_email,
+            "receiver_tax_id": booking.receiver_tax_id,
+            "receiver_driver_lincence_number": booking.receiver_driver_lincence_number,
+            "receiver_passport_no": booking.receiver_passport_no,
+            "receiver_address": booking.receiver_address,
+            "service_type": booking.service_type,
+            "model_name": booking.service_type,
+            "quote_reference_number": booking.quote_reference_number,
+            "request_status": booking.request_status,
+            #the below style prevents too much code clustering
+            # bookings details for freight modes
+            "air": air,
+            "ocean": ocean,
+            "roro": roro,
+            "customs": customs,
+            "customer_quoting_details": customer_quoting_details,
+            #blockchain payment details:
+            "blockchain_payment_details": blockchain_payment_details
+           
+        })
+
+    @staticmethod
+    @login_required
+    @group_required(['sales_team'])
+    def convert_booking_to_shipment(request, id):
+        try:
+            booking = booking_freight_tbl.objects.get(id=id)
+            # Here you would add logic to convert the booking to a shipment, such as creating a new shipment object and copying relevant data from the booking
+            # For example:
+            # shipment = Shipment.objects.create(
+            #     booking_reference_number=booking.booking_reference_number,
+            #     receiver_company_name=booking.receiver_company_name,
+            #     receiver_fullname=booking.receiver_fullname,
+            #     date_received=booking.date_received,
+            #     time_received=booking.time_received,
+            #     service_type=booking.service_type,
+            #     quote_reference_number=booking.quote_reference_number,
+            #     request_status='Converted to Shipment'
+            # )
+            booking.request_status = 'Converted to Shipment'
+            booking.save()
+            messages.success(request, "Booking has been converted to shipment successfully.")
+        except booking_freight_tbl.DoesNotExist:
+            messages.error(request, "Booking not found.")
+        
+        return redirect('booking_approvals')
