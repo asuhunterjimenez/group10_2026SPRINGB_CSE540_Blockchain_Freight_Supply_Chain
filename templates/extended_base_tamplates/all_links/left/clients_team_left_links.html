@@ -71,10 +71,9 @@
         <span class="mini-dn">Shipments</span>
         <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span>
       </a>
-      <div role="menu" class="dropdown-menu left-menu-dropdown chart-left-menu-std animated flipInX">
-        <a href="#" class="dropdown-item">History</a>
-        <a href="#" class="dropdown-item">Tracking</a>
-        <a href="#" class="dropdown-item">Release Request</a>
+
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+        <a href="{% url 'shipment_list' %}" class="dropdown-item">Shipment History</a>
       </div>
     </li>
 

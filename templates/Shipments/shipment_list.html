@@ -1,0 +1,32 @@
+{% extends "extended_base_tamplates/base.html" %}
+
+{% block upper_scripts %}
+<!--loading upper scripts-->
+{% include "extended_base_tamplates/upper_scripts.html" %}
+{% endblock upper_scripts %}
+
+{% block links_and_common_content %}
+<!-- Default content can go here -->
+{% include "extended_base_tamplates/links_and_common_content.html" %}
+{% endblock links_and_common_content %}
+
+<!--loading static files to support the main_content-->
+{% load static %}
+
+{% block main_content %}
+<!-- Main Content area start-->
+{% include "Shipments/shipment_main_page.html" %}
+
+<!-- main content area end-->
+{% endblock main_content %}
+
+<!--loading footer-->
+{% block footer %}
+{% include "extended_base_tamplates/footer.html" %}
+{% endblock footer %}
+<!--footer area end-->
+<!--loading bottom scripts-->
+{% block bottom_script %}
+{% include "extended_base_tamplates/bottom_script.html" %}
+{% endblock bottom_script %}
+<!--bottom script end-->

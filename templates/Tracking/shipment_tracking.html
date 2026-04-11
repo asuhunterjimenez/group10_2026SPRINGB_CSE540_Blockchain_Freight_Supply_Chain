@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Shipment Tracker</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f1f5f9;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #38bdf8;
+    }
+
+    h2 {
+      color: #a5f3fc;
+    }
+
+    h3 {
+      color: #cbd5e1;
+    }
+
+    .card {
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #38bdf8;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 5px;
+    }
+
+    p {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    strong {
+      color: #93c5fd;
+    }
+
+    /* TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #0b1220;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #1e3a8a;
+      color: white;
+      padding: 12px;
+      text-align: left;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    tr:hover {
+      background: #111827;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: #2563eb;
+      color: white;
+    }
+
+    .hash {
+      word-break: break-all;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>G10 Shippers System</h1>
+    <h2>Shipment Tracker</h2>
+    <h3>Blockchain Data Extraction</h3>
+
+    <!-- SHIPMENT DETAILS -->
+    <div class="card">
+      <div class="section-title">Shipment Details</div>
+
+      <p><strong>Booking ID:</strong> {{ shipment_data.0 }}</p>
+      <p><strong>Booking Ref:</strong> {{ shipment_data.1 }}</p>
+      <p><strong>Freight Type:</strong> {{ shipment_data.2 }}</p>
+      <p><strong>Route:</strong> <span class="badge" style="background: #f59e0b;">{{ shipment_data.3 }}</span></p>
+      <p><strong>Status:</strong>
+
+        {% if shipment_data.4 == 'Shipment' %}
+        <span class="badge" style="background: #2563eb;">Shipment Created</span>
+        {% elif shipment_data.4 == 'Processing' %}
+        <span class="badge" style="background: #f59e0b;">Processing</span>
+        {% elif shipment_data.4 == 'In Transit' %}
+        <span class="badge" style="background: #10b981;">In Transit</span>
+        {% elif shipment_data.4 == 'Delivered' %}
+        <span class="badge" style="background: #16a34a;">Delivered</span>
+        {% else %}
+        <span class="badge" style="background: #6b7280;">Unknown</span>
+        {% endif %}
+      </p>
+      <p><strong>Paid (Wei):</strong> {{ shipment_data.5 }}</p>
+      <p><strong>Gas Fee:</strong> {{ shipment_data.6 }}</p>
+      <p><strong>Created:</strong> {{ date_time }}</p>
+      <p><strong>Tx Hash:</strong> <span class="hash">{{ txt_hash }}</span></p>
+      <p><strong>Cargo Type:</strong> {{ cargo_type }}</p>
+    </div>
+
+    <!-- SHIPPER -->
+    <div class="card">
+      <div class="section-title">Shipper Information</div>
+
+      <p><strong>Company:</strong> {{ party_data.0.0 }}</p>
+      <p><strong>Full Name:</strong> {{ party_data.0.1 }}</p>
+      <p><strong>Phone:</strong> {{ party_data.0.2 }}</p>
+      <p><strong>Email:</strong> {{ party_data.0.3 }}</p>
+      <p><strong>Address:</strong> {{ party_data.0.4 }}</p>
+    </div>
+
+    <!-- RECEIVER -->
+    <div class="card">
+      <div class="section-title">Receiver Information</div>
+
+      <p><strong>Company:</strong> {{ party_data.1.0 }}</p>
+      <p><strong>Full Name:</strong> {{ party_data.1.1 }}</p>
+      <p><strong>Phone:</strong> {{ party_data.1.2 }}</p>
+      <p><strong>Email:</strong> {{ party_data.1.3 }}</p>
+    </div>
+
+    <!-- CARGO TABLE -->
+    <div class="card">
+      <div class="section-title">Cargo Details</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Qty / VIN</th>
+            <th>Value (CAD)</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for item in cargo_details %}
+          <tr>
+            <td>
+              {% if cargo_type == 'GOODS' %}
+              Goods
+              {% else %}
+              Vehicle
+              {% endif %}
+            </td>
+
+            <td>
+              {% if cargo_type == 'GOODS' %}
+              {{ item.goods_description }}
+              {% else %}
+              {{ item.vehicle_make }}
+              {% endif %}
+            </td>
+
+            <td>
+              {% if cargo_type == 'GOODS' %}
+              {{ item.goods_quantity }}
+              {% else %}
+              {{ item.vehicle_vin }}
+              {% endif %}
+            </td>
+
+            <td>
+              {% if cargo_type == 'GOODS' %}
+              {{ item.goods_value_in_CAD }}
+              {% else %}
+              {{ item.vehicle_cost_in_CAD }}
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4">No cargo found for this booking</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

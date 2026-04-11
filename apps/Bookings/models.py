@@ -38,12 +38,13 @@ class booking_freight_tbl(models.Model):
     container_number = models.CharField(max_length=50, default='N/A')
     vessel_number = models.CharField(max_length=10, default='N/A')
     hs_code = models.CharField(max_length=20, default='N/A')
-    cers = models.IntegerField(default=0)
+    cers = models.IntegerField(max_length=10, default=0)
     comments = models.TextField(max_length=300, default='N/A')
     updated_by = models.CharField(max_length=50, default='0')
     updated_date_time = models.DateTimeField(auto_now=True)
     request_status = models.CharField(max_length=20, default='Pending')
     locked_by = models.CharField(max_length=50, default='0')
+    blockchain_tx_receipt=models.CharField(max_length=100, default='0')
 
     class Meta:
         db_table = 'booking_freight_tbl'

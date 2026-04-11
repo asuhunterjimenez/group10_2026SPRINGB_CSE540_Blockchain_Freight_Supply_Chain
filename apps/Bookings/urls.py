@@ -8,9 +8,9 @@ urlpatterns = [
    path('booking_details/', login_required(views.BookingsView.booking_details), name='booking_details'),
    path('booking_approvals/', login_required(views.BookingsView.booking_approvals), name='booking_approvals'),
    path('booking_approvals_details/<int:id>/', login_required(views.BookingsView.booking_approvals_details), name='booking_approvals_details'),
-   path('convert_booking_to_shipment/<int:request_id>/', login_required(views.BookingsView.convert_booking_to_shipment), name='convert_booking_to_shipment')
+   path('convert_booking_to_shipment/<int:request_id>/', login_required(views.BookingsView.convert_booking_to_shipment), name='convert_booking_to_shipment'),
+   path('shipment/track/<int:booking_id>/', views.BookingsView.track_shipment, name='track_shipment')
    
-
 
    
 ]

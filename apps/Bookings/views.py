@@ -19,6 +19,7 @@ from apps.Payments.models import blockchain_payment
 from django.contrib.contenttypes.models import ContentType
 import json
 import datetime
+from datetime import datetime
 from web3 import Web3
 
 #for image access
@@ -298,6 +299,7 @@ class BookingsView:
             booking_freight_tbl.objects
             .filter(
                 request_status="Pending",
+                blockchain_tx_receipt ="0",
                 quote_reference_number__in=blockchain_payment.objects.filter(
                     paid_amount__isnull=False
                 ).values_list("quote_request_id", flat=True)
@@ -522,9 +524,50 @@ class BookingsView:
             # Update booking with shipment details in postgree
             booking.updated_by = request.user.username
             booking.booking_reference_number = booking.quote_reference_number
-            #add more fields
-            booking.save()
-            #Add email notification with shipment details to the customer and Tracking link to the shipment on the blockchain explorer
+            booking.blockchain_tx_receipt=tx_receipt.transactionHash.hex()
+            if service_type == "Ocean Freight":
+                booking.desired_type_of_release=request.POST.get("desired_type_of_release")
+                booking.container_number=request.POST.get("container_number")
+                booking.vessel_number=request.POST.get("vessel_number")
+                booking.cers=request.POST.get("cers")
+                booking.save()
+            else:
+            #Update bookings with shipment details for other freight modes
+                booking.save()
+            #Email Notifications
+            
+
+            tracking_link = request.build_absolute_uri( reverse('track_shipment', args=[booking.id]) )
+            shipper_name = request.POST.get("shipper_fullname") or "Customer"
+            receiver_name = request.POST.get("receiver_fullname") or "N/A"
+            send_mail(
+                "Your Shipment has been Created - G10 Blockchain CRM",
+                f"Dear {shipper_name},\n\n"
+                f"Your shipment has been successfully created on our blockchain freight platform.\n\n"
+                f"Shipment Details:\n"
+                f"-------------------------\n"
+                f"Shipment ID: {booking.id}\n"
+                f"Booking Reference: {quote_ref}\n"
+                f"Service Type: {service_type}\n"
+                f"Route: {route}\n"
+                f"Receiver Name: {receiver_name}\n"
+                f"Paid Amount (ETH): {paid_amount}\n\n"
+                f"Blockchain Tracking Details:\n"
+                f"-------------------------\n"
+                f"Transaction Hash: {tx_receipt.transactionHash.hex()}\n"
+                f"Block Number: {tx_receipt.blockNumber}\n"
+                f"Network: Ganache Local Blockchain\n"
+                f"Track Shipment: {tracking_link}\n\n"
+                f"Thank you for choosing G10 Blockchain CRM.\n\n"
+                f"Best regards,\n"
+                f"G10 Blockchain CRM Team",
+                settings.DEFAULT_FROM_EMAIL,
+                [
+                    request.POST.get("receiver_email"),
+                    request.POST.get("shipper_email")
+                ],
+                fail_silently=False
+            )
             messages.success(
                 request,
                 f"Shipment created successfully. TX: {tx_receipt.transactionHash.hex()}"
@@ -537,3 +580,56 @@ class BookingsView:
             messages.error(request, f"Error: {str(e)}")
 
         return redirect('booking_approvals')
+
+    def track_shipment(request, booking_id):
+        booking = booking_freight_tbl.objects.get(id=booking_id)
+
+        # Connect to Ganache
+        w3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
+
+        if not w3.is_connected():
+            return HttpResponse("Ganache not connected")
+
+        # Load ABI
+        shipment_abi_path = os.path.join(
+            settings.BASE_DIR,
+            "blockchain",
+            "abi",
+            "ShipmentABI.json"
+        )
+
+        with open(shipment_abi_path, "r") as abi_file:
+            shipment_abi = json.load(abi_file)
+
+        contract = w3.eth.contract(
+            address=Web3.to_checksum_address(settings.SHIPMENT_CONTRACT_ADDRESS),
+            abi=shipment_abi
+        )
+
+        #Correct getter from  public mapping
+        shipment_data = contract.functions.shipments(booking_id).call()
+        # Get parties
+        party_data = contract.functions.parties(booking_id).call()
+        # get details from the booking_freight_tbl
+        booking_details = booking_freight_tbl.objects.get(id=booking_id)
+        
+        if booking_details.content_type.model == 'vehicle':
+            cargo_details = vehicle.objects.filter(booking_id_ref=booking_id)
+        else:
+            cargo_details = goods.objects.filter(booking_id_ref=booking_id)
+
+        
+        
+
+
+        context = {
+            "booking": booking,
+            "shipment_data": shipment_data,
+            "party_data": party_data,
+            "cargo_type": "VEHICLE" if booking_details.content_type.model == 'vehicle' else "GOODS",
+            #dateTime formatting
+            "date_time" : datetime.fromtimestamp(shipment_data[7]),
+            "txt_hash" :booking_details.blockchain_tx_receipt,
+            "cargo_details": cargo_details
+        }
+        return render(request, "Tracking/shipment_tracking.html", context)
