@@ -183,34 +183,34 @@
           {% for item in cargo_details %}
           <tr>
             <td>
-              {% if cargo_type == 'GOODS' %}
-              Goods
-              {% else %}
+              {% if is_vehicle %}
               Vehicle
+              {% else %}
+              Goods
               {% endif %}
             </td>
 
             <td>
-              {% if cargo_type == 'GOODS' %}
-              {{ item.goods_description }}
-              {% else %}
+              {% if is_vehicle %}
               {{ item.vehicle_make }}
+              {% else %}
+              {{ item.goods_description }}
               {% endif %}
             </td>
 
             <td>
-              {% if cargo_type == 'GOODS' %}
-              {{ item.goods_quantity }}
-              {% else %}
+              {% if is_vehicle %}
               {{ item.vehicle_vin }}
+              {% else %}
+              {{ item.goods_quantity }}
               {% endif %}
             </td>
 
             <td>
-              {% if cargo_type == 'GOODS' %}
-              {{ item.goods_value_in_CAD }}
-              {% else %}
+              {% if is_vehicle %}
               {{ item.vehicle_cost_in_CAD }}
+              {% else %}
+              {{ item.goods_value_in_CAD }}
               {% endif %}
             </td>
           </tr>

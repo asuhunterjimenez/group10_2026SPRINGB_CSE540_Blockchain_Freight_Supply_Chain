@@ -19,7 +19,7 @@ from apps.Payments.models import blockchain_payment
 from django.contrib.contenttypes.models import ContentType
 import json
 import datetime
-from datetime import datetime
+#from datetime import datetime
 from web3 import Web3
 
 #for image access
@@ -606,30 +606,28 @@ class BookingsView:
             abi=shipment_abi
         )
 
-        #Correct getter from  public mapping
+        # get shipment + parties
         shipment_data = contract.functions.shipments(booking_id).call()
-        # Get parties
         party_data = contract.functions.parties(booking_id).call()
-        # get details from the booking_freight_tbl
+
+        # get booking
         booking_details = booking_freight_tbl.objects.get(id=booking_id)
-        
+
+        # determine cargo type
         if booking_details.content_type.model == 'vehicle':
+            cargo_type = "VEHICLE"
             cargo_details = vehicle.objects.filter(booking_id_ref=booking_id)
         else:
+            cargo_type = "GOODS"
             cargo_details = goods.objects.filter(booking_id_ref=booking_id)
 
-        
-        
-
-
+        # context
         context = {
-            "booking": booking,
             "shipment_data": shipment_data,
             "party_data": party_data,
-            "cargo_type": "VEHICLE" if booking_details.content_type.model == 'vehicle' else "GOODS",
-            #dateTime formatting
-            "date_time" : datetime.fromtimestamp(shipment_data[7]),
-            "txt_hash" :booking_details.blockchain_tx_receipt,
-            "cargo_details": cargo_details
+            "cargo_type": cargo_type,
+            "cargo_details": cargo_details,
+            "date_time": datetime.datetime.fromtimestamp(shipment_data[7]),
+            "txt_hash": booking_details.blockchain_tx_receipt,
         }
         return render(request, "Tracking/shipment_tracking.html", context)

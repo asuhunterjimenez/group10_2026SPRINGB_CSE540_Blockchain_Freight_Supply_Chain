@@ -79,7 +79,7 @@ This section describes the main folders and files in the project and their purpo
 │  ├─ contracts/ <span style="color:gray;font-style:italic;"># Solidity smart contracts</span>
 │  │  ├─ Freight.sol <span style="color:gray;font-style:italic;"># Freight-related smart contract</span>
 │  │  └─ Payment.sol <span style="color:gray;font-style:italic;"># Payment storage and tracking contract</span>
-│  └─ migrations/ <span style="color:gray;font-style:italic;"># Blockchain migrations (local/testnet deployments)</span>
+│  └─ abi/ <span style="color:gray;font-style:italic;"># Blockchain abi (remix/ganache deployments)</span>
 │
 ├─ <b>dependencies/</b> <span style="color:gray;font-style:italic;"># Shared resources and project-wide variables</span>
 ├─ <b>static/</b> <span style="color:gray;font-style:italic;"># CSS, JS, images, and other static files</span>
@@ -190,11 +190,11 @@ This section describes the main folders and files in the project and their purpo
 - Smart contract Django-Ganache for **Shipment transactions** is stored in **apps/Shipments/**
 
 ## Smart Contract Structure & Interfaces
-Our project uses three smart contracts on Ethereum to handle payments, shipments and product creation for company registered producers or clients securely:<br>
+Our project uses two smart contracts on Ethereum to handle payments and shipments creation for company registered producers or clients securely:<br>
 
 ### Payment.sol
 
-  - Manages all payment transactions for freight bookings.
+  - Manages all payment transactions for freight bookings like Gas fees,transaction amount, wallet fees,.
   - Tracks each payment with details such as sessionId, transactionId, amount, currency, status (success/failed), payer, and associated shipmentId.
   - Supports payments via ETH through **MetaMask integration**.
   - Emits events like **PaymentCreated, PaymentProcessed, and EmailMarkedSent** to notify the system when a payment occurs, is confirmed, or a confirmation email is sent.
@@ -207,20 +207,17 @@ Our project uses three smart contracts on Ethereum to handle payments, shipments
   - Stores shipment information like shipmentId, origin, destination, containerType, weight, status, and delivery confirmation.
   - Emits events such as ShipmentCreated, ShipmentStatusUpdated, and DeliveryConfirmed for real-time monitoring.
   - Only the contract owner can create or update shipments, maintaining integrity of shipment data.
+  - Shipment also includes the tracking phase.
+#### Tracking phase
+   - The shipment status is updated through predefined milestones:
+   **Created → Processing → In Transit → Delivered**
+   - Every update emits blockchain events for: live progress bars,shipment history,admin dashboard updates,client-side tracking portal
 
 ### How Payment.sol and Shipment.sol work together:
 - When a customer makes a payment (Payment.sol), it is linked to a freight quote.
 - Once the payment is confirmed, a shipment record (Shipment.sol) is created and tracked until delivery.
 - Events from both contracts allow the frontend to update the UI in real-time.
 
-### ProducerProduct.sol
-- Manages decentralized product registration and storage for supply chain systems.
-  - Restricts product creation to **approved producers** only, ensuring controlled and secure access.
-  - Allows the **contract owner (admin/producer/client)** to add or remove producers from the approved list.
-  - Stores each product with details such as `id`, `name`, `description`, `timestamp`, and `producer address`.
-  - Maintains an on-chain array of all products for transparent, immutable, and tamper-proof record keeping.
-  - Provides read functions like `getProductCount` and `getProduct` to efficiently retrieve product data.
-  - Emits `ProductCreated` events whenever a new product is added, enabling seamless integration with backend systems (e.g., Django) and real-time tracking.
     
 ### MetaMask → Ganache Shipment Payment & Provenance Flow
 
