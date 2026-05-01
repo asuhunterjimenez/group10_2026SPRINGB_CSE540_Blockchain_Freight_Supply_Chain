@@ -58,7 +58,8 @@ Note: File with settings and configurations are always hidden for security reaso
 
 ## Project Folder and File structure
 This section describes the main folders and files in the project and their purposes.
-<br>
+<br
+```
 Blockchain-Freight-SupplyChain/
 │
 ├── manage.py                          # Django project management entry point
