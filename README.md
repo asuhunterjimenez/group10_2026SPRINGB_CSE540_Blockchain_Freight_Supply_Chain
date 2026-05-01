@@ -66,7 +66,7 @@ This section describes the main folders and files in the project and their purpo
 ```
 Blockchain-Freight-SupplyChain/
 │
-├── manage.py                          # Django project management entry point
+├── manage.py                         # Django project management entry point
 ├── requirements.txt                  # Python project dependencies
 ├── README.md                         # Project documentation and setup instructions
 ├── UserIds.txt                       # Stores generated or sample user identifiers
