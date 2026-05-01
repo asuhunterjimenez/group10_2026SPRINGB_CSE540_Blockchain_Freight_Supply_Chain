@@ -268,7 +268,7 @@ Our project uses three smart contracts on Ethereum to handle payments and shipme
   - Emits events such as ShipmentCreated, ShipmentStatusUpdated, and DeliveryConfirmed for real-time monitoring.
   - Only the contract owner can create or update shipments, maintaining integrity of shipment data.
   - Shipment also includes the tracking phase.
-#### FreightTracking.sol
+### FreightTracking.sol
    - The shipment status is updated through predefined milestones:
    **Passed → Current → Pending**
    - Every update emits blockchain events for: live progress bars,shipment history,admin dashboard updates,client-side tracking portal
