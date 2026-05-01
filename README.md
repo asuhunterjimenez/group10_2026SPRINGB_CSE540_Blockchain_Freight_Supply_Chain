@@ -23,7 +23,7 @@ The project tracks product creation for registered company clients and producers
 | **Producer**  | Producer / Manufacturer         | Creates and registers shipments/products on blockchain,request quotes, initiating the provenance record | producer1       | your_password_here   |
 | **Admin**     | Regulator / System Authority    | Full system access, manages users, roles, permissions, and audits blockchain events | admin_user      | your_password_here   |
 | **Client**    | Retailer / Consumer             | Views shipments,request quotes, confirms bookings, tracks delivery, verifies product authenticity | client_user     | your_password_here   |
-| **Finance**   | Financial Authority / Support   | handles both on-chain and off-chain reporting by running executive dashboards,Payments,Shipment<Quaoting,Booking and Tracking reports   | finance1    | your_password_here   |
+| **Finance**   | Financial Authority / Support   | handles both on-chain and off-chain reporting by running executive dashboards,Payments,Shipment,Quaoting,Booking and Tracking reports   | finance1    | your_password_here   |
 | **Sales**     | Distributor / Supplier          | Manages bookings, quotations, and coordinates shipment operations           | sales1          | your_password_here   |
 | **Warehouse** | Storage / Logistics Handler     | Updates shipment status (received, stored, dispatched)                     | warehouse1      | your_password_here   |
 
