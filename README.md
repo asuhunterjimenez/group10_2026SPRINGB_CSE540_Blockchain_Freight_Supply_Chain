@@ -66,13 +66,6 @@ This section describes the main folders and files in the project and their purpo
 ```
 Blockchain-Freight-SupplyChain/
 │
-├── manage.py                         # Django project management entry point
-├── requirements.txt                  # Python project dependencies
-├── README.md                         # Project documentation and setup instructions
-├── UserIds.txt                       # Stores generated or sample user identifiers
-│
-├── .vscode/                          # VS Code workspace configurations
-│
 ├── apps/                             # Django apps for different modules of the system (Off-chain and On-chain)
 │  │
 │  ├── Account_settings/              # Off-chain: User profile/account settings and unit tests
@@ -154,18 +147,25 @@ Blockchain-Freight-SupplyChain/
 │
 ├── static/                           # Static assets (CSS, JavaScript, Images, Fonts, Sounds)
 │
-└── templates/                        # HTML templates for all Django applications
-   ├── Account_settings/              # Account settings HTML templates
-   ├── Bookings/                      # Booking management templates
-   ├── Documentations/                # Documentation form templates
-   ├── extended_base_tamplates/       # Shared reusable base templates/layouts
-   ├── Home/                          # Dashboard and homepage templates
-   ├── Login/                         # Login/authentication templates
-   ├── Payments/                      # Blockchain payment templates
-   ├── Quotings/                      # Freight quotation templates
-   ├── Reports/                       # Reporting templates
-   ├── Shipments/                     # Shipment and tracking templates
-   └── Tracking/                      # Shipment live tracking templates
+├── templates/                        # HTML templates for all Django applications
+│  ├── Account_settings/              # Account settings HTML templates
+│  ├── Bookings/                      # Booking management templates
+│  ├── Documentations/                # Documentation form templates
+│  ├── extended_base_tamplates/       # Shared reusable base templates/layouts
+│  ├── Home/                          # Dashboard and homepage templates
+│  ├── Login/                         # Login/authentication templates
+│  ├── Payments/                      # Blockchain payment templates
+│  ├── Quotings/                      # Freight quotation templates
+│  ├── Reports/                       # Reporting templates
+│  ├── Shipments/                     # Shipment and tracking templates
+│  └── Tracking/                      # Shipment live tracking templates
+│
+├── manage.py                         # Django project management entry point
+├── requirements.txt                  # Python project dependencies
+├── README.md                         # Project documentation and setup instructions
+├── UserIds.txt                       # Stores generated or sample user identifiers
+│
+└── .vscode/                          # VS Code workspace configurations
    ```
 *Figure 1: Overview of the project folder structure showing all main apps, blockchain folder, and supporting Django files.*
 
