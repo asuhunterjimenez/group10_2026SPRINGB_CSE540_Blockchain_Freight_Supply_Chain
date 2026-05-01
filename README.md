@@ -23,7 +23,7 @@ The project tracks product creation for registered company clients and producers
 | **Producer**  | Producer / Manufacturer         | Creates and registers shipments/products on blockchain,request quotes, initiating the provenance record | producer1       | your_password_here   |
 | **Admin**     | Regulator / System Authority    | Full system access, manages users, roles, permissions, and audits blockchain events | admin_user      | your_password_here   |
 | **Client**    | Retailer / Consumer             | Views shipments,request quotes, confirms bookings, tracks delivery, verifies product authenticity | client_user     | your_password_here   |
-| **Finance**   | Financial Authority / Support   | Handles payments, monitors transactions, and generates financial reports    | finance_user    | your_password_here   |
+| **Finance**   | Financial Authority / Support   | Handles payments, monitors transactions, and generates financial reports    | finance1    | your_password_here   |
 | **Sales**     | Distributor / Supplier          | Manages bookings, quotations, and coordinates shipment operations           | sales1          | your_password_here   |
 | **Warehouse** | Storage / Logistics Handler     | Updates shipment status (received, stored, dispatched)                     | warehouse1      | your_password_here   |
 
@@ -186,7 +186,7 @@ Blockchain-Freight-SupplyChain/
       ```bash
       docker-compose down
       ```
-
+### If you don't use Docker(Manual Process)
 1. **Setup PostgreSQL database and update**
    - Update/edit settings.py file
    - PostgreSQL database will be handling off-Chain services like Bookings,Quoting,Documentation,User Accounts Settings
@@ -220,28 +220,6 @@ Blockchain-Freight-SupplyChain/
             <img width="1247" height="211" alt="image" src="https://github.com/user-attachments/assets/3d41ec8e-60ce-4eac-a674-ed54c30ff719" />
             <br>*Figure 2: Output of python manage.py runserver showing the local server URL to access the application.*
             
-6a. **Optional: Run the Project Using Docker**  
-- If you prefer not to manually install Python, PostgreSQL, or Ganache, you can use Docker to run the entire application in containers:
-
-   - Make sure Docker Desktop is installed and running.
-   - Navigate to the project root folder:  
-      ```bash
-      cd Blockchain-Freight-SupplyChain
-      ```
-   - Build the Docker containers:  
-      ```bash
-      docker-compose build
-      ```
-  - Start the application stack (Django + PostgreSQL + Ganache):  
-      ```bash
-      docker-compose up
-      ```
-  - Access your application using the URL shown in the terminal (usually http://localhost:8000)
-  - Stop the containers anytime with:  
-      ```bash
-      docker-compose down
-      ```
-    
 7.  **Install**
      - Web3.py via virtual Python environment. so as to open up communication between our appliactaion and blockchain service(Ganache)
      - Vscode: To edit and write your python codes
@@ -256,7 +234,7 @@ Blockchain-Freight-SupplyChain/
 - **Producer / Manufacturer** can create and register new shipments/products on the blockchain, request quotes, initiating the provenance record. Each creation triggers a `ProductCreated` blockchain event.  
 - **Admin** (Regulator / System Authority) can manage users, roles, system settings, and audit all blockchain records for compliance.  
 - **Clients / Consumers** can view their shipments, request quotes, confirm bookings, track delivery status, and verify product authenticity.  
-- **Finance** team can handle payments, monitor transactions, generate financial reports, and verify payments on-chain.  
+- **Finance** Finance team handles both on-chain and off-chain reporting by running executive dashboards and financial reports, monitoring transactions, processing payments, and verifying payments on-chain for blockchain-based financial transparency. 
 - **Sales / Distributor** team can create and manage bookings, quotations, and coordinate shipment operations.  
 - **Warehouse / Logistics Handler** can update shipment status during storage and delivery (e.g., received, stored, dispatched), triggering `StatusUpdated` events on the blockchain.  
 
@@ -266,14 +244,15 @@ Blockchain-Freight-SupplyChain/
 - Every shipment and payment action generates blockchain events (e.g., **`ProductCreated`, `OwnershipTransferred`, `StatusUpdated`**) to ensure a full **provenance trail** across the product lifecycle.
   
 ## Notes
-- Smart contract logic is stored in blockchain/contracts/
+- Smart contract logic is stored in **blockchain/contracts/**
 - Smart contract Django-Ganache-MetaMask for **Payments transactions** is stored in **apps/Payments/**
-- Smart contract Django-Ganache for **Shipment transactions** is stored in **apps/Shipments/**
+- Smart contract Django-Ganache for **Shipment transactions and tracking** are stored in **apps/Shipments/**
+- Smart contract tests for **Payments,Tracking,Shipment** are stored in **blockchain/test/**
 
 ## Smart Contract Structure & Interfaces
-Our project uses two smart contracts on Ethereum to handle payments and shipments creation for company registered producers or clients securely:<br>
+Our project uses three smart contracts on Ethereum to handle payments and shipments creation for company registered producers or clients securely:<br>
 
-### Payment.sol
+### FreightPayment.sol
 
   - Manages all payment transactions for freight bookings like Gas fees,transaction amount, wallet fees,.
   - Tracks each payment with details such as sessionId, transactionId, amount, currency, status (success/failed), payer, and associated shipmentId.
@@ -283,18 +262,18 @@ Our project uses two smart contracts on Ethereum to handle payments and shipment
   - Only the contract owner can create and update payments, enforcing controlled and secure management through Django Interface.
   - Provides functions to query payment history for a shipment or blockchain transaction fees, supporting transparency for stakeholders.
 
-### Shipment.sol
+### FreightShipment.sol
   - Handles creation, tracking, and status updates of shipments.
   - Stores shipment information like shipmentId, origin, destination, containerType, weight, status, and delivery confirmation.
   - Emits events such as ShipmentCreated, ShipmentStatusUpdated, and DeliveryConfirmed for real-time monitoring.
   - Only the contract owner can create or update shipments, maintaining integrity of shipment data.
   - Shipment also includes the tracking phase.
-#### Tracking phase
+#### FreightTracking.sol
    - The shipment status is updated through predefined milestones:
-   **Created → Processing → In Transit → Delivered**
+   **Passed → Current → Pending**
    - Every update emits blockchain events for: live progress bars,shipment history,admin dashboard updates,client-side tracking portal
 
-### How Payment.sol and Shipment.sol work together:
+### How FreightPayment.sol and FreightShipment.sol work together:
 - When a customer makes a payment (Payment.sol), it is linked to a freight quote.
 - Once the payment is confirmed, a shipment record (Shipment.sol) is created and tracked until delivery.
 - Events from both contracts allow the frontend to update the UI in real-time.
