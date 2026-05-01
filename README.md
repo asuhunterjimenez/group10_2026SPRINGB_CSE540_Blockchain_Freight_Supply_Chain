@@ -59,52 +59,127 @@ Note: File with settings and configurations are always hidden for security reaso
 ## Project Folder and File structure
 This section describes the main folders and files in the project and their purposes.
 <br>
-<pre>
-<b>Blockchain-Freight-SupplyChain/</b> <span style="color:gray;font-style:italic;"># Root folder of the Django + Blockchain project</span>
+Blockchain-Freight-SupplyChain/
 │
-├─ <b>apps/</b> <span style="color:gray;font-style:italic;"># Django apps for different modules of the system</span>
-│  ├─ Account_settings/ <span style="color:gray;font-style:italic;"># User account management (profile, preferences)</span>
-│  ├─ Bookings/ <span style="color:gray;font-style:italic;"># Freight booking functionalities</span>
-│  ├─ Documentations/ <span style="color:gray;font-style:italic;"># Documentation forms and handling</span>
-│  ├─ Home/ <span style="color:gray;font-style:italic;"># Home page and dashboard</span>
-│  ├─ Login/ <span style="color:gray;font-style:italic;"># Authentication and login/logout</span>
-│  ├─ Payments/ <span style="color:gray;font-style:italic;"># Stripe payments, webhook handling</span>
-│  ├─ Quotings/ <span style="color:gray;font-style:italic;"># Freight quotes and price calculations</span>
-│  ├─ Reports/ <span style="color:gray;font-style:italic;"># Generating reports (CSV, PDF, etc.)</span>
-   ├─ Products/ <span style="color:gray;font-style:italic;"># Manages Products for company registered clients,producers,suppliers</span>
-│  ├─ Shipments/ <span style="color:gray;font-style:italic;"># Shipment tracking and details</span>
-│  └─ Helpers/ <span style="color:gray;font-style:italic;"># Shared helper functions and utilities across apps</span>
+├── manage.py                          # Django project management entry point
+├── requirements.txt                  # Python project dependencies
+├── README.md                         # Project documentation and setup instructions
+├── UserIds.txt                       # Stores generated or sample user identifiers
 │
-├─ <b>blockchain/</b> <span style="color:gray;font-style:italic;"># Smart contract related files</span>
-│  ├─ contracts/ <span style="color:gray;font-style:italic;"># Solidity smart contracts</span>
-│  │  ├─ Freight.sol <span style="color:gray;font-style:italic;"># Freight-related smart contract</span>
-│  │  └─ Payment.sol <span style="color:gray;font-style:italic;"># Payment storage and tracking contract</span>
-│  └─ abi/ <span style="color:gray;font-style:italic;"># Blockchain abi (remix/ganache deployments)</span>
+├── .vscode/                          # VS Code workspace configurations
 │
-├─ <b>dependencies/</b> <span style="color:gray;font-style:italic;"># Shared resources and project-wide variables</span>
-├─ <b>static/</b> <span style="color:gray;font-style:italic;"># CSS, JS, images, and other static files</span>
-├─ <b>templates/</b> <span style="color:gray;font-style:italic;"># Django HTML templates</span>
-├─ global_variables.py <span style="color:gray;font-style:italic;"># Project-wide Python variables/settings</span>
+├── apps/                             # Django apps for different modules of the system (Off-chain and On-chain)
+│  │
+│  ├── Account_settings/              # Off-chain: User profile/account settings and unit tests
+│  ├── Bookings/                      # Off-chain: Freight booking management and testing modules
+│  ├── Documentations/                # Off-chain: Documentation forms, uploads, and validations
+│  ├── Helpers/                       # Off-chain: Shared helper functions, middleware, utilities, context processors
+│  ├── Home/                          # Off-chain: Dashboard and home page functionality
+│  ├── Login/                         # Off-chain: Authentication, sessions, login/logout handling
+│  ├── Payments/                      # On-chain: Blockchain freight payment processing using Ethereum/Web3
+│  ├── Products/                      # Off-chain: Product management for clients, suppliers, and producers
+│  ├── Quotings/                      # Off-chain: Freight quotation generation and pricing calculations
+│  ├── Reports/                       # Hybrid (Off-chain & On-chain): Generates reports (PDF, CSV, blockchain logs)
+│  └── Shipments/                     # On-chain: Shipment registration and blockchain shipment tracking
 │
-├─ <b>Jenik_freight_crm/</b> <span style="color:gray;font-style:italic;"># Main Django project folder</span>
-│  ├─ manage.py <span style="color:gray;font-style:italic;"># Django management script</span>
-│  ├─ local_settings.py <span style="color:gray;font-style:italic;"># Configurations like local database or debug settings</span>
-│  ├─ requirements.txt <span style="color:gray;font-style:italic;"># Python dependencies</span>
-│  └─ settings.py <span style="color:gray;font-style:italic;"># Django project configuration (databases, apps, middleware, etc.)</span>
+├── blockchain/                       # Blockchain layer powered by Hardhat and Node.js
+│  │
+│  ├── .gitignore                     # Excludes blockchain build artifacts and node modules from Git
+│  ├── hardhat.config.cjs             # Hardhat configuration for Ethereum development and testing
+│  ├── package.json                   # Node.js dependencies and blockchain project scripts
+│  ├── package-lock.json              # Exact Node.js dependency versions
+│  ├── README.md                      # Blockchain deployment/testing documentation
+│  │
+│  ├── abi/                           # Contract ABI files used by Django Web3 integration
+│  │  ├── PaymentContractABI.json     # ABI for blockchain payment smart contract
+│  │  ├── ShipmentABI.json            # ABI for shipment management smart contract
+│  │  └── TrackingContractABI.json    # ABI for shipment tracking smart contract
+│  │
+│  ├── contracts/                     # Solidity smart contracts deployed on Ethereum/Ganache
+│  │  ├── FreightPayment.sol          # Handles blockchain freight payments and transaction logging
+│  │  ├── FreightShipment.sol         # Handles shipment creation and shipment lifecycle
+│  │  ├── FreightTracking.sol         # Handles shipment tracking updates and blockchain verification
+│  │  └── Lock.sol                    # Default Hardhat sample contract used for testing/demo purposes
+│  │
+│  ├── ignition/                      # Hardhat Ignition deployment framework configuration
+│  │  └── modules/                    # Deployment modules for automated smart contract deployment
+│  │      └── Lock.js                 # Sample Hardhat Ignition deployment module
+│  │
+│  ├── scripts/                       # Hardhat deployment scripts
+│  │  └── deployTracking.js           # Deploys shipment tracking contract to Ganache/Ethereum network
+│  │
+│  └── test/                          # Smart contract unit/integration testing using Hardhat
+│      ├── FreightPayment.test.js     # Tests blockchain payment contract functionality
+│      ├── FreightShipment.test.js    # Tests shipment contract business logic
+│      ├── FreightTracking.test.js    # Tests tracking contract operations and validations
+│      └── Lock.js                    # Sample Hardhat contract test
 │
-├─ <b>media/</b> <span style="color:gray;font-style:italic;"># Uploaded files, videos, and other media assets</span>
-├─ <b>Tests/</b> <span style="color:gray;font-style:italic;"># Pytests and testing scripts</span>
-├─ <b>Docker/</b> <span style="color:gray;font-style:italic;"># Docker configurations and deployment scripts</span>
-│  ├─ Dockerfile <span style="color:gray;font-style:italic;"># Instructions to build the Docker image</span>
-│  ├─ docker-compose.yml <span style="color:gray;font-style:italic;"># Multi-container setup (Django, Postgres, blockchain nodes)</span>
-│  └─ .dockerignore <span style="color:gray;font-style:italic;"># Files/folders to ignore when building Docker image</span>
+├── core/                             # Core project configurations and centralized utilities
+│  ├── test_runner.py                 # Custom Django test runner for executing centralized test suites
+│  └── __pycache__/                   # Python compiled cache files
 │
-├─ README.md <span style="color:gray;font-style:italic;"># Project documentation, setup instructions, code explanations, and figures</span>
-</pre>
+├── dependencies/                     # Global shared project configurations
+│  └── global_variables/
+│      └── global_variables.py        # Stores reusable global variables/constants
+│
+├── docker/                           # Docker containerization and deployment configurations
+│  │
+│  ├── Dockerfile                     # Custom Docker image definition for Django + Blockchain application
+│  ├── docker-compose.yml             # Multi-container orchestration configuration
+│  ├── .dockerignore                  # Excludes unnecessary files from Docker image builds
+│  ├── entrypoint.sh                  # Container startup script for migrations and server startup
+│  └── README.md                      # Docker setup and deployment instructions
+│
+├── Jenik_freight_crm/                # Main Django project configuration package
+│  │
+│  ├── .env                           # Environment variables and sensitive configuration values
+│  ├── __init__.py                    # Python package initialization file
+│  ├── asgi.py                        # ASGI server configuration
+│  ├── local_settings.py              # Local PostgreSQL database configuration
+│  ├── settings.py                    # Main Django settings and blockchain/Web3 configuration
+│  ├── urls.py                        # Central URL routing configuration
+│  ├── wsgi.py                        # WSGI server configuration
+│  ├── __pycache__/                   # Python compiled cache files
+│  └── __pycache__1111/               # Additional Python cache files
+│
+├── media/                            # User uploaded documents and generated files
+│  ├── customs_brokerage/             # Customs brokerage documents
+│  ├── system_documents/              # Generated system documents and PDFs
+│  └── uploads/                       # General user uploaded files
+│
+├── static/                           # Static assets (CSS, JavaScript, Images, Fonts, Sounds)
+│
+└── templates/                        # HTML templates for all Django applications
+   ├── Account_settings/              # Account settings HTML templates
+   ├── Bookings/                      # Booking management templates
+   ├── Documentations/                # Documentation form templates
+   ├── extended_base_tamplates/       # Shared reusable base templates/layouts
+   ├── Home/                          # Dashboard and homepage templates
+   ├── Login/                         # Login/authentication templates
+   ├── Payments/                      # Blockchain payment templates
+   ├── Quotings/                      # Freight quotation templates
+   ├── Reports/                       # Reporting templates
+   ├── Shipments/                     # Shipment and tracking templates
+   └── Tracking/                      # Shipment live tracking templates
 *Figure 1: Overview of the project folder structure showing all main apps, blockchain folder, and supporting Django files.*
 
 
 ## Setup Instructions
+
+1. **Using Docker**
+- If you prefer not to manually install Python, PostgreSQL, or Ganache, you can use Docker to run the entire application in containers:
+
+   - Make sure Docker Desktop is installed and running.
+   - Navigate to the project root folder and this auto start the application stack (Django + PostgreSQL + Ganache):  
+      ```bash
+      docker compose -f docker/docker-compose.yml up --build
+      ```
+   - Go to your browser and run (usually http://localhost:8000)
+      
+   - Stop the containers anytime with:  
+      ```bash
+      docker-compose down
+      ```
 
 1. **Setup PostgreSQL database and update**
    - Update/edit settings.py file
