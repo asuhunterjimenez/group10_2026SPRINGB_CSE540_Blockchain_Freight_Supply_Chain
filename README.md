@@ -162,6 +162,7 @@ Blockchain-Freight-SupplyChain/
    ├── Reports/                       # Reporting templates
    ├── Shipments/                     # Shipment and tracking templates
    └── Tracking/                      # Shipment live tracking templates
+   ```
 *Figure 1: Overview of the project folder structure showing all main apps, blockchain folder, and supporting Django files.*
 
 
