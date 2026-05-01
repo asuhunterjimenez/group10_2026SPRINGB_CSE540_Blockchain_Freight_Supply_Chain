@@ -43,7 +43,9 @@ The project tracks product creation for registered company clients and producers
 - **Web3.py** – Interaction with Ethereum blockchain  
 - **Ganache** – Local Ethereum blockchain for testing. <a href="https://archive.trufflesuite.com/ganache/" target="_blank">Download</a> 
 - **MetaMask Wallet** – User wallet for blockchain transactions and ETH based shipping fee payments. <a href="https://metamask.io/download" target="_blank">Download</a>   
-- **Remix IDE** – Smart contract development and deployment. <a href="https://remix.ethereum.org/" target="_blank">Download</a>   
+- **Remix IDE** – Smart contract development and deployment. <a href="https://remix.ethereum.org/" target="_blank">Download</a>
+- **Hardhat** – Ethereum development environment for compiling, testing, debugging, and deploying smart contracts. <a href="https://hardhat.org/docs/getting-started" target="_blank">Download</a>
+- **Node.js** – JavaScript runtime required for Hardhat, blockchain tooling, and package management. <a href="https://nodejs.org/en/download/" target="_blank">Download</a> 
 
 ### 📄 Reporting & Email
 - **requirements.txt packages**:
