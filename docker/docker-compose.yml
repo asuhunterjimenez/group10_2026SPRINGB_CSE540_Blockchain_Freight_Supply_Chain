@@ -1,0 +1,48 @@
+
+services:
+
+  django_app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+    container_name: blockchain_freight_app
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ..:/app
+
+    env_file:
+      - ../Jenik_freight_crm/.env
+
+    depends_on:
+      - postgres_db
+
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+
+  postgres_db:
+    image: postgres:16
+
+    container_name: blockchain_postgres
+
+    restart: always
+
+    environment:
+      POSTGRES_DB: Jenik_freight_crm
+      POSTGRES_USER: Jenik_freight_crm
+      POSTGRES_PASSWORD: XAX@Nigeria@XNX
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

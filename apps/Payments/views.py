@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,7 @@ from django.utils import timezone
 from decimal import Decimal
 from django.core.mail import send_mail
 from apps.Helpers.payment_email import send_payment_email
+import json
 
 # Connect to Ganache
 w3 = Web3(Web3.HTTPProvider(settings.GANACHE_URL))
@@ -27,6 +28,7 @@ def create_blockchain_payment(request):
     """
     Save ETH payment to Ganache and store off-chain safely.
     """
+
     if request.method != "POST":
         return JsonResponse({"success": False, "error": "Invalid request method"})
 
@@ -41,42 +43,68 @@ def create_blockchain_payment(request):
         wallet_address = Web3.to_checksum_address(request.POST.get("wallet_address"))
         transaction_id = request.POST.get("transaction_id")
 
-        # Connect Web3
         web3 = w3
         amount_wei = web3.to_wei(amount, 'ether')
 
-        # Send ETH to destination account using user's MetaMask (frontend already sends TX)
-        # Just validate transaction hash
         transaction_hash = request.POST.get("transaction_hash")
 
-        # Gas fees from frontend (Wei)
         blockchain_gas_amount = int(request.POST.get("blockchain_gas_amount", 0))
         gas_fee_eth = Decimal(web3.from_wei(blockchain_gas_amount, 'ether'))
 
-        #Save off-chain safely in DB
-        balance_after_payment = total_payment - amount
+        # ---------------------------------------------------
+        # CHECK CONDITION (> 0.5 ETH LOGIC ADDED)
+        # ---------------------------------------------------
+        existing_payment = blockchain_payment.objects.filter(
+            quote_request_id=quote_request_id
+        ).first()
 
-        payment_record = blockchain_payment.objects.create(
-            user=request.user.username,
-            quote_request_id=quote_request_id,
-            transaction_id=transaction_id,
-            total_charges=total_payment,
-            paid_amount=amount,
-            balance=balance_after_payment,
-            blockchain_gas_fees=gas_fee_eth,
-            date_created=timezone.now()
-        )
+        if amount > Decimal("0.5"):
 
-        # Send email notification
+            # if existing_payment:
+            #     # UPDATE existing record
+            #     existing_payment.paid_amount += amount
+            #     existing_payment.balance = total_payment - existing_payment.paid_amount
+            #     existing_payment.blockchain_gas_fees += gas_fee_eth
+            #     existing_payment.save()
+
+            # else:
+                # CREATE new record
+                existing_payment = blockchain_payment.objects.create(
+                    user=request.user.username,
+                    quote_request_id=quote_request_id,
+                    transaction_id=transaction_id,
+                    total_charges=total_payment,
+                    paid_amount=amount,
+                    balance=existing_payment.balance - amount,
+                    blockchain_gas_fees=gas_fee_eth,
+                    date_created=timezone.now()
+                )
+
+        else:
+            # DEFAULT BEHAVIOR
+            existing_payment = blockchain_payment.objects.create(
+                user=request.user.username,
+                quote_request_id=quote_request_id,
+                transaction_id=transaction_id,
+                total_charges=total_payment,
+                paid_amount=amount,
+                balance=total_payment - amount,
+                blockchain_gas_fees=gas_fee_eth,
+                date_created=timezone.now()
+            )
+
+        # ---------------------------------------------------
+        # EMAIL (UNCHANGED)
+        # ---------------------------------------------------
         user_email_hidden = request.user.email
-        client_name= request.user.get_full_name()
+        client_name = request.user.get_full_name()
+
         send_payment_email(
-            payment_record,
+            existing_payment,
             service_type,
             client_name.capitalize(),
             user_email_hidden,
             company_email_hidden
-        
         )
 
         return JsonResponse({
@@ -103,8 +131,7 @@ def payment_success(request):
         payment_on_chain = contract.functions.getPayment(tx_id).call()
 
         # Safe type conversions
-        amount_wei = int(payment_on_chain[3])
-        amount_eth = Decimal(w3.from_wei(amount_wei, 'ether'))
+        amount_eth = Decimal(w3.from_wei(payment_on_chain[3], 'ether'))
         blockchain_gas_eth = Decimal(latest_payment.blockchain_gas_fees)
 
         payment_data = {
@@ -137,3 +164,62 @@ def payment_success(request):
 def payment_cancel(request):
     messages.error(request, "Payment not completed or already processed.")
     return render(request, "Payments/cancel.html")
+
+# def payment_balance_list(request):
+#     payments = blockchain_payment.objects.filter(user=request.user.username).order_by('-date_created')
+#     return render(request, "Payments/payment_balance_list.html", {"payments": payments})
+def payment_balance_list(request):
+    payments = blockchain_payment.objects.filter(
+        user=request.user.username
+    ).order_by('-id')
+
+    final_records = {}
+    
+    for p in payments:
+        qid = p.quote_request_id
+
+        # If not seen yet → store it
+        if qid not in final_records:
+            final_records[qid] = p
+
+        # BUT if we find a FULL PAID record → override immediately
+        if p.balance == 0:
+            final_records[qid] = p
+
+    filtered_payments = list(final_records.values())
+
+    return render(
+        request,
+        "Payments/payment_balance_list.html",
+        {"payments": filtered_payments}
+    )
+#update balance details: Pay balance
+def update_blockchain_payment(request, id):
+
+    try:
+        payment_record = blockchain_payment.objects.get(
+            id=id,
+            user=request.user.username
+        )
+
+        return render(
+            request,
+            "Payments/payments_balance_update.html",
+            {
+                "payments": payment_record,
+
+                "booking_id": payment_record.id,
+                "quote_request": payment_record.quote_request_id,
+                "total_charges": payment_record.total_charges,
+
+                "contract_address": settings.PAYMENT_CONTRACT_ADDRESS,
+                "contract_abi_json": json.dumps(settings.PAYMENT_CONTRACT_ABI)
+            }
+        )
+    except blockchain_payment.DoesNotExist:
+        messages.error(request, "Payment record not found.")
+        return redirect("Payments:payment_balance_list")
+
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return redirect("Payments:payment_balance_list")

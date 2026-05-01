@@ -1,0 +1,58 @@
+<div class="left-custom-menu-adp-wrap">
+  <ul class="nav navbar-nav left-sidebar-menu-pro">
+    <li class="nav-item">
+      <a href="{% url 'dashboard' %}" class="nav-link">
+        <i class="fa big-icon fa-home"></i>
+        <span class="mini-dn">Dashboard</span>
+      </a>
+    </li>
+
+
+    <li class="nav-item">
+      <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle">
+        <i class="fa big-icon fa-truck"></i>
+        <span class="mini-dn">Shipments</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span>
+      </a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+
+        <a href="{% url 'shipment_list' %}" class="dropdown-item">History</a>
+
+      </div>
+
+
+    <li class="nav-item">
+      <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle">
+        <i class="fa fa-bar-chart"></i>
+        <span class="mini-dn">Reports</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span>
+      </a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown animated flipInX">
+
+        <a href="#" class="dropdown-item">Shipping Reports</a>
+
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="nav-link dropdown-toggle">
+        <i class="fa big-icon fa-user"></i>
+        <span class="mini-dn">Account settings</span>
+        <span class="indicator-right-menu mini-dn"><i class="fa indicator-mn fa-angle-left"></i></span>
+      </a>
+      <div role="menu" class="dropdown-menu left-menu-dropdown form-left-menu-std animated flipInX">
+        <a href="{% url 'update_user_password' %}" class="dropdown-item">Password Reset</a>
+        <a href="#" class="dropdown-item">User Details</a>
+      </div>
+    </li>
+
+    <!-- end if -->
+
+    <li class="nav-item">
+      <a href="{% url 'logout' %}" role="button" aria-expanded="false" class="nav-link dropdown-toggle">
+        <i class="fa big-icon fa-sign-out"></i>
+        <span class="mini-dn">Log Out</span>
+      </a>
+    </li>
+  </ul>
+</div>

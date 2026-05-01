@@ -30,7 +30,7 @@ urlpatterns = [
     path('apps/Bookings/',include('apps.Bookings.urls')),
     path('apps/Payments/',include('apps.Payments.urls')),
     path('apps/Shipments/',include('apps.Shipments.urls')),
-    #path('apps/Reports/',include('apps.Reports.urls')),
+    path('apps/Reports/',include('apps.Reports.urls')),
     path('apps/Account_settings/',include('apps.Account_settings.urls')),
       
 ]

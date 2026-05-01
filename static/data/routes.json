@@ -1,0 +1,42 @@
+{
+  "canada_to_india_air": [
+    {"location": "Vancouver", "lat": 49.2827, "lng": -123.1207},
+    {"location": "Toronto", "lat": 43.6510, "lng": -79.3470},
+    {"location": "London (Transit Hub)", "lat": 51.5072, "lng": -0.1276},
+    {"location": "Delhi", "lat": 28.6139, "lng": 77.2090}
+  ],
+
+  "usa_to_nigeria_sea": [
+    {"location": "New York", "lat": 40.7128, "lng": -74.0060},
+    {"location": "Miami Port", "lat": 25.7617, "lng": -80.1918},
+    {"location": "Lagos Port", "lat": 6.5244, "lng": 3.3792}
+  ],
+
+  "canada_to_uae_air": [
+    {"location": "Vancouver", "lat": 49.2827, "lng": -123.1207},
+    {"location": "Calgary", "lat": 51.0447, "lng": -114.0719},
+    {"location": "Frankfurt (Transit Hub)", "lat": 50.1109, "lng": 8.6821},
+    {"location": "Dubai", "lat": 25.276987, "lng": 55.296249}
+  ],
+
+  "canada_to_nigeria_sea": [
+    {"location": "Vancouver Port", "lat": 49.2827, "lng": -123.1207},
+    {"location": "Montreal Port", "lat": 45.5019, "lng": -73.5674},
+    {"location": "Lagos Port", "lat": 6.5244, "lng": 3.3792}
+  ],
+  
+  
+  "canada_to_nigeria_air": [
+    {"location": "Vancouver International Airport", "lat": 49.1967, "lng": -123.1815},
+    {"location": "Toronto Pearson International Airport", "lat": 43.6777, "lng": -79.6248},
+    {"location": "London Heathrow Airport (Transit Hub)", "lat": 51.4700, "lng": -0.4543},
+    {"location": "Murtala Muhammed International Airport (Lagos)", "lat": 6.5774, "lng": 3.3212}
+  ],
+
+
+  "domestic_canada": [
+    {"location": "Vancouver", "lat": 49.2827, "lng": -123.1207},
+    {"location": "Edmonton", "lat": 53.5461, "lng": -113.4938},
+    {"location": "Toronto", "lat": 43.6510, "lng": -79.3470}
+  ]
+}

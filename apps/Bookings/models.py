@@ -101,3 +101,30 @@ class goods(models.Model):
 
     class Meta:
         db_table = 'goods'
+
+    #creat tracking model to track the shipment status and location updates
+    # models.py
+class TrackingPoint(models.Model):
+    booking = models.ForeignKey(
+        booking_freight_tbl,
+        on_delete=models.CASCADE,
+        related_name="TrackingPoint_set"
+    )
+    
+    booking_reference_number = models.CharField(max_length=100, default='N/A')
+    location = models.CharField(max_length=255)   # canada, dubai...
+    sequence = models.IntegerField()              # 1,2,3,4...
+
+    status = models.CharField(max_length=20, choices=[
+        ("pending", "Pending"),
+        ("current", "Current"),
+        ("passed", "Passed"),
+    ], default="pending")
+
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    arrival_time = models.DateTimeField(null=True, blank=True)
+    departure_time = models.DateTimeField(null=True, blank=True)
+    class Meta:
+        db_table = 'tracking_point'

@@ -1,0 +1,210 @@
+<!-- Tabs Start -->
+<div class="admintab-area py-4">
+    <div class="container-fluid">
+
+        <div class="card shadow-sm border-0 rounded">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fa fa-file-text-o"></i> Business Intelligence Reports
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <p>&nbsp;</p>
+                <form method="get" action="{% url 'generate_report' %}" class="report-form">
+
+                    <div class="row g-3">
+
+                        <!-- Report Type -->
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="report_type" class="fw-bold mb-2">
+                                    Report Type
+                                </label>
+
+                                <select class="form-control custom-input" id="report_type" name="report_type"
+                                    data-validate="required">
+
+                                    <option value="" selected>Select Report Type</option>
+
+                                    <!-- High-Impact Presentation Reports -->
+                                    <option value="">--High-Impact Presentation Reports--</option>
+                                    <option value="dashboard">Executive Dashboard Report</option>
+                                    <!-- Traditional Tabular Reports -->
+                                    <option value="">--Traditional Tabular Reports--</option>
+                                    <option value="quoting">Quoting Reports</option>
+                                    <option value="booking">Booking Reports</option>
+                                    <option value="shipping">Shipping Reports</option>
+                                    <option value="payment">Payment Reports</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Start Date -->
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="start_date" class="fw-bold mb-2">
+                                    Start Date
+                                </label>
+
+                                <input type="date" class="form-control custom-input" id="start_date" name="start_date"
+                                    data-validate="required">
+                            </div>
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="col-lg-4 col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="end_date" class="fw-bold mb-2">
+                                    End Date
+                                </label>
+
+                                <input type="date" class="form-control custom-input" id="end_date" name="end_date"
+                                    data-validate="required">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-sm-12" id="freight_mode_container" style="display:none;">
+                            <div class="form-group">
+                                <label for="freight_mode" class="fw-bold mb-2">
+                                    Freight Mode
+                                </label>
+
+                                <select class="form-control custom-input" id="freight_mode" name="freight_mode"
+                                    data-validate="required">
+                                    <option value="" selected>Select Freight Mode</option>
+                                    <option value="air">Air Freight</option>
+                                    <option value="ocean">Sea Freight</option>
+                                    <option value="roro">Roro Freight</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Button -->
+                    <div class="mt-4 text-end">
+                        <button type="submit" class="btn btn-primary px-4 py-2">
+                            <i class="fa fa-bar-chart"></i> Generate Report
+                        </button>
+                    </div>
+                    <p>&nbsp;</p>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .admintab-area {
+        background: #f5f7fb;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-header {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        padding: 15px 20px;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .custom-input {
+        height: 45px;
+        border-radius: 8px;
+        border: 1px solid #dcdfe6;
+        transition: all 0.3s ease;
+        box-shadow: none;
+    }
+
+    .custom-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+        border-radius: 50px;
+        /* Oval Shape */
+        padding: 12px 35px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0056b3, #004494);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 123, 255, 0.45);
+    }
+
+    .btn-primary:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-primary i {
+        margin-right: 8px;
+        font-size: 16px;
+    }
+
+    /* Center Button */
+    .text-end {
+        text-align: center !important;
+    }
+
+    /* Nice Border Around Whole Form */
+    .report-form {
+        border: 2px solid #dbe4f0;
+        border-radius: 18px;
+        padding: 35px 25px;
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    /* Optional Hover Effect */
+    .report-form:hover {
+        border-color: #007bff;
+        box-shadow: 0 8px 22px rgba(0, 123, 255, 0.12);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const reportType = document.getElementById("report_type");
+        const freightModeContainer = document.getElementById("freight_mode_container");
+
+        function toggleFreightMode() {
+
+            if (reportType.value === "quoting") {
+                freightModeContainer.style.display = "block";
+            } else {
+                freightModeContainer.style.display = "none";
+            }
+        }
+
+        // run on change
+        reportType.addEventListener("change", toggleFreightMode);
+
+        // run on page load (important for refresh/back)
+        toggleFreightMode();
+    });
+</script>

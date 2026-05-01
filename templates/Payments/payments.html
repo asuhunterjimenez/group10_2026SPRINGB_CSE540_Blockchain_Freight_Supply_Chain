@@ -1,0 +1,140 @@
+{% load group_tags %}
+<style>
+    /* Blinking Effect */
+    .blink {
+        animation: blink 1s infinite;
+        color: red;
+        font-weight: bold;
+    }
+
+    @keyframes blink {
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
+<!-- Static Table Start -->
+
+<div class="data-table-area mg-b-15">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="sparkline13-list shadow-reset">
+                    <div class="sparkline13-hd">
+                        <div class="main-sparkline13-hd">
+                            <h4 class="text-warning">All Payments </h4>
+                            <h4 class="text-muted"><span class="blink">👉 Payments Details</span> </h4>
+                            <div style="
+                                background: linear-gradient(135deg, #0d6efd, #0a58ca);
+                                color: white;
+                                padding: 12px 20px;
+                                border-radius: 10px;
+                                display: inline-block;
+                                font-size: 18px;
+                                font-weight: bold;
+                                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                                margin-bottom: 20px;
+                            ">
+                                🚚 {{ payments.count }} Payments Found
+                            </div>
+
+
+                            <!-- load Queries to be worked on -->
+                            <div class="view-mail-action view-mail-ov-d-n">
+
+                                <a class="compose-draft-bt" href="javascript:window.print()"><i class="fa fa-print"></i>
+                                    Print</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+
+                            <div class="sparkline13-outline-icon">
+                                <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                                <span><i class="fa fa-wrench"></i></span>
+                                <span class="sparkline13-collapse-close"><i class="fa fa-times"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sparkline13-graph">
+                        <div class="datatable-dashv1-list custom-datatable-overright">
+                            <div id="toolbar">
+                                <select class="form-control">
+                                    <option value="">Export Basic</option>
+                                    <option value="all">Export All</option>
+                                    <option value="selected">Export Selected</option>
+                                </select>
+                            </div>
+                            <table id="table" data-toggle="table" data-pagination="true" data-search="true"
+                                data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true"
+                                data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true"
+                                data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true"
+                                data-toolbar="#toolbar">
+                                <thead>
+                                    <tr>
+
+                                        <th>Shipment ID</th>
+                                        <th>Transaction ID</th>
+                                        <th>Total Charges</th>
+                                        <th>Paid Amount</th>
+                                        <th>Balance</th>
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in payments %}
+                                    <tr>
+                                        <td>{{ item.quote_request_id }}</td>
+                                        <td>{{ item.transaction_id }}</td>
+                                        <td>{{ item.total_charges }}</td>
+                                        <td>{{ item.paid_amount }}</td>
+                                        <td>{{ item.balance }}</td>
+                                        <td>
+
+                                            {% if item.balance > 0 and item.paid_amount > 0 %}
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                style="background-color: #ffc107; color: black; font-size: 14px; font-weight: 600;">
+                                                Partial Payment
+                                            </span>
+
+                                            <a href="{% url 'Payments:update_blockchain_payment' item.id %}"
+                                                class="btn btn-success btn-sm ms-2">
+                                                💰 Pay Balance
+                                            </a>
+
+                                            {% elif item.balance > 0 and item.paid_amount == 0 %}
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                style="background-color: #dc3545; color: white; font-size: 14px; font-weight: 600;">
+                                                Pending Payment
+                                            </span>
+
+                                            <a href="{% url 'Payments:update_blockchain_payment' item.id %}"
+                                                class="btn btn-primary btn-sm ms-2">
+                                                💰 Pay Now
+                                            </a>
+
+                                            {% else %}
+                                            <span class="badge rounded-pill px-3 py-2"
+                                                style="background-color: #198754; color: white; font-size: 14px; font-weight: 600;">
+                                                Paid in Full
+                                            </span>
+                                            {% endif %}
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Static Table End -->

@@ -1,3 +1,4 @@
+{% load group_tags %}
 <style>
     /* Blinking Effect */
     .blink {
@@ -90,13 +91,27 @@
                                         <td>{{ item.service_type }}</td>
                                         <td>
 
-                                            <span class="text-success">✅ Created and Tracking Started</span>
+                                            {% if item.is_current == True %}
+                                            <span class="fa fa-truck text-success"> <b>Delivered</b></span>
+                                            {% else %}
+                                            <span class="text-primary">🚚 In Transit</span>
+                                            {% endif %}
+
+
 
                                         </td>
                                         <td>
+                                            {% if user|has_group:"ware_house" %}
+                                            {% if item.is_current == False %}
                                             <a href="{% url 'shipment_details' item.id %}"
-                                                class="btn btn-primary btn-sm">View Shipment</a>
+                                                class="btn btn-primary btn-sm">Update Tracking</a>
 
+                                            {% else %}
+                                            <a href="#" class="btn btn-success btn-sm">
+                                                <i class="fa fa-check"></i> View Shipment
+                                            </a>
+                                            {% endif %}
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% empty %}

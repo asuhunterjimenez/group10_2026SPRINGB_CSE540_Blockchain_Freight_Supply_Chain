@@ -1,0 +1,552 @@
+{% load static %}
+<!-- loads user groups -->
+{% load group_tags %}
+
+
+{% block auto_css %}
+<!-- Address Auto Increment Start -->
+<link href="{% static 'auto_completion/address_auto_completion.css' %}" rel="stylesheet">
+<!-- Address Auto Increment End -->
+<!-- Table auto addition -->
+<link href="{% static 'auto_completion/table_auto_addition.css' %}" rel="stylesheet">
+{% endblock auto_css %} <!-- Breadcome End-->
+<style>
+  input[type="text"] {
+    width: 100%;
+  }
+
+  .touchspin1,
+  .touchspin2,
+  .touchspin3,
+  .touchspin4 {
+    width: 100%;
+    /* full width of parent */
+    height: 45px;
+    /* taller input */
+    font-size: 16px;
+    /* bigger text */
+    padding: 10px;
+    /* more padding inside */
+  }
+
+  .autocomplete-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    /* wrapper takes full width of parent */
+  }
+
+  .autocomplete-results {
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    z-index: 1000;
+    width: 100%;
+    /* full width */
+    box-sizing: border-box;
+    /* include padding/border inside width */
+  }
+
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    /* full width */
+    padding: 8px;
+    box-sizing: border-box;
+    /* keep padding inside width */
+  }
+
+  .autocomplete-suggestions {
+    border: none;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: antiquewhite;
+    z-index: 9999;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: 2px;
+    /* space from input box */
+    border-radius: 4px;
+    /* rounded edges */
+  }
+
+  .suggestion {
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .suggestion:hover {
+    background-color: #eee;
+  }
+
+  .highlight {
+    background-color: yellow;
+    font-weight: bold;
+  }
+</style>
+<!------start form-->
+<form method="POST" action="{% url 'update_tracking_info' request_id=request_id %}">
+  {% csrf_token %}
+  <!-- Basic Form Start -->
+  <div class="advanced-form-area mg-b-15">
+    <div class="container-fluid">
+      <div class="row">
+        <h1 class="text-info" align="center">Shipment Details</h1>
+        <h4 align="center"><span style="color: #ff00e6">{{ service_type }}</span></h4>
+        <div class="col-lg-6">
+          <div class="sparkline10-list shadow-reset mg-t-30">
+            <div class="sparkline10-hd">
+              <div class="main-sparkline10-hd">
+                <h4>Shipper's / Exporter Information</h4>
+                <div class="sparkline10-outline-icon">
+                  <span class="sparkline10-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline10-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline10-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12 ">
+                    <div class="form-group">
+                      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                      <input type="hidden" name="request_id" value="{{ customer_details.request_id }}">
+                      <input type="hidden" name="service_type" value="{{ service_type }}">
+                      <label class="form-control-label">Company Name </label>
+                      <input type="text" class="form-control" value="{{shipper_company_name}}"
+                        name="shipper_company_name" style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Name </label>
+                      <input type="text" class="form-control" name="shipper_fullname" value="{{shipper_fullname }}"
+                        placeholder="Shipper Full Name"
+                        data-validate="required,min(3),regex(^[A-Za-z\s]+$,Only letters allowed)"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Phone Number </label>
+                      <input type="text" class="form-control" name="shipper_telephone_number"
+                        value="{{shipper_phone_number }}" placeholder="Telephone Name"
+                        data-validate="required,min(3),regex(^[0-9]+$,Only numbers allowed)"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Email </label>
+                      <input type="text" class="form-control" name="shipper_email" value="{{shipper_email }}"
+                        placeholder="Shipper Name" data-validate="required,email"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipment Type </label>
+                      <input type="text" class="form-control" name="shipment_type" value="{{ service_type }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Export Number
+                      </label>
+                      <input type="text" class="form-control" name="shipper_export_number"
+                        value="{{ shipper_export_number }}" style="background-color: antiquewhite;" readonly>
+                      <label class="form-control-label">Shipper Address</label>
+                      <input type="text" id="address1" class="form-control" name="shipper_address"
+                        value="{{ shipper_address }}" autocomplete="off" data-validate="required,min(4)"
+                        style="background-color: antiquewhite;" readonly>
+                      <div class="autocomplete-suggestions" id="results1"></div>
+                      <!--end form-group-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline11-list shadow-reset mg-t-30">
+            <div class="sparkline11-hd">
+              <div class="main-sparkline11-hd">
+                <h4>Consignee / Receiver Information</h4>
+                <div class="sparkline11-outline-icon">
+                  <span class="sparkline11-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline11-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <label class="form-control-label">Receiver Company Name</label>
+                    <input type="text" class="form-control" name="receiver_company_name"
+                      value="{{ receiver_company_name }}" style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Name<font class="text-danger">**
+                      </font></label>
+                    <input type="text" class="form-control" name="receiver_fullname" value="{{ receiver_fullname }}"
+                      style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Phone Number<font class="text-danger">**</font></label>
+                    <input type="text" class="form-control" name="receiver_phone_number"
+                      value="{{ receiver_phone_number }}" style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Email<font class="text-danger">**
+                      </font></label>
+                    <input type="text" class="form-control" name="receiver_email" value="{{ receiver_email }}"
+                      style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Tax Id <font color="red">(if Company)
+                      </font></label>
+                    <input type="text" class="form-control" name="receiver_tax_id" value="{{ receiver_tax_id }}"
+                      style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Driver Licence <font color="red">(if
+                        Individual)</font>
+                    </label>
+                    <input type="text" class="form-control" name="receiver_driver_licence_number"
+                      value="{{ receiver_driver_lincence_number }}" style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Passport No <font color="red">(if
+                        Individual)</font>
+                    </label>
+                    <input type="text" class="form-control" name="receiver_passport_no"
+                      value="{{ receiver_passport_no }}" style="background-color: antiquewhite;" readonly>
+                    <label class="form-control-label">Receiver Address<font class="text-danger">**
+                      </font></label>
+                    <input type="text" id="address2" class="form-control" name="receiver_address"
+                      value="{{ receiver_address }}" style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="sparkline12-list shadow-reset mg-t-30">
+            <div class="sparkline12-hd">
+              <div class="main-sparkline12-hd">
+                <h4>
+                  <font color="red">{{service_type}} </font> Quoting Details
+                </h4>
+                <div class="sparkline12-outline-icon">
+                  <span class="sparkline12-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline12-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline11-graph">
+              <div class="input-knob-dial-wrap">
+                <div class="row">
+                  <div class="col-lg-12">
+
+                    <!-- Quote Reference -->
+                    <label class="form-control-label">Quote Reference</label>
+                    <input type="text" class="form-control" value="{{ quote_reference_number }}"
+                      name="quote_reference_number" style="background-color: antiquewhite;" readonly>
+
+                    {% if service_type == 'Ocean Freight' or service_type == 'Customs Brokerage' %}
+                    <!-- Place of Receipt -->
+                    <label class="form-control-label">Place of Receipt</label>
+                    <input type="text" class="form-control" name="place_of_receipt" value="{{ ocean.place_of_receipt }}"
+                      style="background-color: antiquewhite;" readonly>
+
+                    <!-- Port of Loading -->
+                    <label class="form-control-label">Port of Loading</label>
+                    <input type="text" id="ocean_port-loading" name="port_of_loading"
+                      value="{{ ocean.port_of_loading }}" readonly class="form-control"
+                      style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ ocean.country_of_loading }}" style="background-color: bisque;"
+                      readonly>
+
+                    <!-- Port of Discharge -->
+                    <label class="form-control-label">Port of Discharge</label>
+                    <input type="text" class="form-control" name="port_of_discharge"
+                      value="{{ ocean.port_of_discharge }}" style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ ocean.country_of_discharge }}"
+                      style="background-color: bisque;" readonly>
+
+                    {% if user.is_authenticated and user|has_group:"sales_team" %}
+                    <!-- Sales Team Fields -->
+                    <label class="form-control-label">Container Number <font class="text-danger">**
+                      </font></label>
+                    <input type="text" class="form-control" name="container_number" placeholder="Container Number"
+                      data-validate="min(3),required">
+
+                    <label class="form-control-label">Vessel Number <font class="text-danger">**
+                      </font></label>
+                    <input type="text" class="form-control" name="vessel_number" placeholder="Vessel Number"
+                      data-validate="min(3),required">
+                    <!-- 
+                                        <label class="form-control-label">HS Code</label>
+                                        <input type="text" class="form-control" name="hs_code" placeholder="HS Code"
+                                            data-validate="min(3),required"> -->
+
+                    <label class="form-control-label">CERS <font class="text-danger"> min:3 Max:10
+                      </font>
+                    </label>
+                    <input type="text" class="form-control" name="cers" placeholder="CERS"
+                      data-validate="min(3),max(10),required">
+
+                    <label class="form-control-label">Desired Type of Release: <font class="text-danger">**</font>
+                    </label>
+                    <select class="form-control" name="desired_type_of_release" data-validate="required">
+                      <option value=" " selected>Select Desired Type of Release</option>
+                      <option value="Print at Destination">Print at Destination</option>
+                      <option value="Telex">Telex</option>
+                      <option value="Seaway bill">Seaway bill</option>
+                    </select>
+                    {% endif %}
+
+                    {% elif service_type == 'Air Freight' %}
+                    <!-- Air Freight Fields -->
+                    <label class="form-control-label">Departure</label>
+                    <input type="text" name="departure" value="{{ air.departure }}" readonly class="form-control"
+                      style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ air.country_of_departure }}" style="background-color: bisque;"
+                      readonly>
+
+                    <label class="form-control-label">Destination</label>
+                    <input type="text" class="form-control" name="destination" value="{{ air.destination }}"
+                      style="background-color: antiquewhite;">
+                    <input type="text" value="Country: {{ air.country_of_destination }}"
+                      style="background-color: bisque;" readonly>
+
+                    {% elif service_type == 'RORO Freight' %}
+                    <!-- RORO Freight Fields -->
+                    <label class="form-control-label">Pick-Up Address</label>
+                    <input type="text" name="departure" value="{{ roro.vehicle_pickup_address }}" readonly
+                      class="form-control" style="background-color: antiquewhite;">
+
+                    <label class="form-control-label">Delivery Address</label>
+                    <input type="text" class="form-control" name="destination"
+                      value="{{ roro.vehicle_delivery_address }}" style="background-color: antiquewhite;">
+
+                    {% else %}
+                    No Service selected
+                    {% endif %}
+
+                  </div> <!-- col-lg-12 -->
+                </div> <!-- row -->
+              </div> <!-- input-knob-dial-wrap -->
+            </div> <!-- sparkline11-graph -->
+
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="sparkline13-list shadow-reset mg-t-30">
+            <div class="sparkline13-hd">
+              <div class="main-sparkline13-hd">
+                <h4>
+                  More On Quote
+                </h4>
+                <div class="sparkline13-outline-icon">
+                  <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
+                  <span><i class="fa fa-wrench"></i></span>
+                  <span class="sparkline13-collapse-close"><i class="fa fa-times"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline13-graph">
+              <div class="input-knob-dial-wrap">
+
+                <div class="row">
+                  <div class="chosen-select-single mg-b-20" align="left">
+                    <div class="tsbox">
+                      <!-- for Air freight -->
+                      {% if service_type == 'Air Freight' or service_type == 'RORO Freight' %}
+                      <label class="form-control-label"><b>Number of Units</b></label>
+                      <input type="text" value="{{ customer_quoting_details.number_of_units }}"
+                        style="background-color: antiquewhite;" readonly>
+
+                      {% elif service_type == 'Ocean Freight' %}
+                      <label class="form-control-label"><b>Estimated date of shipment</b></label>
+                      <input type="text" value="{{ customer_quoting_details.estimated_shipping_date }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <br><br>
+
+                      {% elif service_type == 'Customs Brokerage' %}
+                      <label class="form-control-label"><b>Estimated date of shipment</b></label>
+                      <input type="text" value="{{ customer_quoting_details.estimated_shipping_date }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <br><br>
+
+                      {%elif service_type == 'Ocean Freight'%}
+                      <label class="form-control-label"><b>Equipment size</b></label>
+                      <input type="text" class="form-control" value="{{ ocean.equipment_size }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <br>
+                      {%endif%}
+                      <label class="form-control-label"><b>Do you require Tracking?</b> </label>
+                      <input type="text" value="{{ customer_quoting_details.tracking }}"
+                        style="background-color: antiquewhite;" readonly>
+                      <input type="text" value="Address: {{ customer_quoting_details.door_delivery_address }}"
+                        style="background-color: bisque;" readonly>
+                      <br>
+                      <label class="form-control-label"><b>Quote Expiry date</b> </label>
+                      <input type="text" value="{{ customer_quoting_details.validity_date }}"
+                        style="background-color: antiquewhite;" readonly>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- start tracking information -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-hd">
+              <div class="main-sparkline15-hd">
+                <h4 class="text-danger">
+                  Update Tracking Information
+                </h4>
+              </div>
+            </div>
+            {% for tracking in tracking_info %}
+            <div class="sparkline15-graph">
+
+              <div class="row">
+
+                <!-- Sequence -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Sequence</label>
+                    <input type="text" class="commodity-select form-control" value="{{ tracking.sequence }}"
+                      style="background-color: rgb(239, 146, 53);" readonly>
+                  </div>
+                </div>
+
+                <!-- Location -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner subCategory">
+                    <label>Location</label>
+                    <input type="text" class="subDetails form-control" value="{{ tracking.location }}"
+                      style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+
+                <!-- Status -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Status</label>
+                    <input type="text" class="form-control" value="{{ tracking.status }}"
+                      style="background-color: antiquewhite;" readonly>
+                  </div>
+                </div>
+                <!-- Dropdown -->
+                <div class="col-lg-3">
+                  <div class="touchspin-inner">
+                    <label>Update Status</label>
+
+                    {% if tracking.status == "current" %}
+                    <!-- Only pending allowed -->
+                    <select class="form-control" name="status_{{ tracking.id }}">
+                      <option value="current" selected>current</option>
+                      <option value="passed">passed</option>
+                      <option value="pending">pending</option>
+                    </select>
+
+
+                    {%elif tracking.status == "passed" %}
+
+                    <!-- Only pending allowed -->
+                    <select class="form-control" name="status_{{ tracking.id }}">
+                      <option value="passed" selected>passed</option>
+                      <option value="current">current</option>
+                      <option value="pending">pending</option>
+                    </select>
+
+                    {% elif tracking.status == "pending" %}
+
+                    <!-- Only pending allowed -->
+                    <select class="form-control" name="status_{{ tracking.id }}">
+                      <option value="pending" selected>pending</option>
+                      <option value="passed">passed</option>
+                      <option value="current">current</option>
+                    </select>
+
+                    {% endif %}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- end Tracking Information -->
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="sparkline15-list shadow-reset mg-t-30">
+            <div class="sparkline15-graph">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="touchspin-inner mb-3">
+
+
+                    <!-- Submit Button -->
+                    <p align="center">
+                      <button type="submit" class="forgot-password">Update Tracking</button>
+                    </p>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+  <!-- Basic Form End-->
+</form>
+
+
+<!-- Table auto addition -->
+<script src="{% static 'auto_completion/table_auto_addition.js' %}"></script>
+
+<script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
+
+
+
+<!-- Image Modal -->
+<div id="imageModal" style="display:none;
+            position:fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.8);
+            justify-content:center;
+            align-items:center;
+            z-index:9999;">
+
+  <span onclick="closeModal()" style="position:absolute;
+                 top:20px;
+                 right:30px;
+                 font-size:40px;
+                 color:white;
+                 cursor:pointer;">
+    &times;
+  </span>
+
+  <img id="modalImage" style="max-width:90%;
+                max-height:90%;
+                border-radius:10px;
+                box-shadow:0 0 20px black;" />
+</div>
+
+<script>
+  function openModal(imageSrc) {
+    document.getElementById("imageModal").style.display = "flex";
+    document.getElementById("modalImage").src = imageSrc;
+  }
+
+  function closeModal() {
+    document.getElementById("imageModal").style.display = "none";
+  }
+</script>

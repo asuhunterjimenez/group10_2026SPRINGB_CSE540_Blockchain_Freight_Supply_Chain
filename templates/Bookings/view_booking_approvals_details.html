@@ -272,6 +272,9 @@
                                         <input type="text" value="Country: {{ ocean.country_of_loading }}"
                                             style="background-color: bisque;" readonly>
 
+                                        <input type="hidden" value="{{ ocean.country_of_loading }}"
+                                            style="background-color: bisque;" name="ocean_loading_country">
+
                                         <!-- Port of Discharge -->
                                         <label class="form-control-label">Port of Discharge</label>
                                         <input type="text" class="form-control" name="port_of_discharge"
@@ -279,6 +282,8 @@
                                             style="background-color: antiquewhite;">
                                         <input type="text" value="Country: {{ ocean.country_of_discharge }}"
                                             style="background-color: bisque;" readonly>
+                                        <input type="hidden" value="{{ ocean.country_of_discharge }}"
+                                            name="ocean_discharge_country">
 
                                         {% if user.is_authenticated and user|has_group:"sales_team" %}
                                         <!-- Sales Team Fields -->
@@ -322,11 +327,18 @@
                                         <input type="text" value="Country: {{ air.country_of_departure }}"
                                             style="background-color: bisque;" readonly>
 
+                                        <input type="hidden" value="{{ air.country_of_departure }}"
+                                            name="air_departure_country">
+
+
+
                                         <label class="form-control-label">Destination</label>
                                         <input type="text" class="form-control" name="destination"
                                             value="{{ air.destination }}" style="background-color: antiquewhite;">
                                         <input type="text" value="Country: {{ air.country_of_destination }}"
                                             style="background-color: bisque;" readonly>
+                                        <input type="hidden" value="{{ air.country_of_destination }}"
+                                            name="air_destination_country">
 
                                         {% elif service_type == 'RORO Freight' %}
                                         <!-- RORO Freight Fields -->

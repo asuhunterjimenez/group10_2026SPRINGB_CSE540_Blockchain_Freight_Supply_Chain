@@ -4,6 +4,9 @@
 <head>
   <title>Shipment Tracker</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -19,90 +22,117 @@
     }
 
     h1,
-    h2,
-    h3 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      font-size: 36px;
-      color: #38bdf8;
-    }
-
     h2 {
-      color: #a5f3fc;
-    }
-
-    h3 {
-      color: #cbd5e1;
+      text-align: center;
+      color: #38bdf8;
     }
 
     .card {
       background: #0b1220;
-      border: 1px solid #1f2937;
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      border: 1px solid #1f2937;
+    }
+
+    #map {
+      height: 450px;
+      border-radius: 12px;
+    }
+
+    /* -----------------------------
+       ROUTE LEGEND
+    ------------------------------*/
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .passed {
+      background: #22c55e;
+    }
+
+    .current {
+      background: #3b82f6;
+    }
+
+    .pending {
+      background: #6b7280;
+    }
+
+    /* -----------------------------
+       ROUTE FLOW BAR
+    ------------------------------*/
+    .route-flow {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .route-step {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 13px;
+      position: relative;
+    }
+
+    .route-step::after {
+      content: "";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      width: 20px;
+      height: 3px;
+      background: #334155;
+    }
+
+    .route-step:last-child::after {
+      display: none;
+    }
+
+    .step-passed {
+      background: #14532d;
+      color: #bbf7d0;
+    }
+
+    .step-current {
+      background: #1d4ed8;
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    .step-pending {
+      background: #334155;
+      color: #cbd5e1;
     }
 
     .section-title {
-      font-size: 18px;
       margin-bottom: 10px;
       color: #38bdf8;
-      border-bottom: 1px solid #1f2937;
-      padding-bottom: 5px;
-    }
-
-    p {
-      margin: 6px 0;
-      line-height: 1.5;
-    }
-
-    strong {
-      color: #93c5fd;
-    }
-
-    /* TABLE */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      background: #0b1220;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    th {
-      background: #1e3a8a;
-      color: white;
-      padding: 12px;
-      text-align: left;
-    }
-
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #1f2937;
-    }
-
-    tr:hover {
-      background: #111827;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      background: #2563eb;
-      color: white;
-    }
-
-    .hash {
-      word-break: break-all;
-      font-size: 12px;
-      color: #94a3b8;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -112,119 +142,193 @@
   <div class="container">
 
     <h1>G10 Shippers System</h1>
-    <h2>Shipment Tracker</h2>
-    <h3>Blockchain Data Extraction</h3>
+    <h2>Block-chain Live Shipment Tracking : {{ shipment_data.2 }}</h2>
 
-    <!-- SHIPMENT DETAILS -->
+
+    <!-- MAP -->
     <div class="card">
-      <div class="section-title">Shipment Details</div>
-
-      <p><strong>Booking ID:</strong> {{ shipment_data.0 }}</p>
-      <p><strong>Booking Ref:</strong> {{ shipment_data.1 }}</p>
-      <p><strong>Freight Type:</strong> {{ shipment_data.2 }}</p>
-      <p><strong>Route:</strong> <span class="badge" style="background: #f59e0b;">{{ shipment_data.3 }}</span></p>
-      <p><strong>Status:</strong>
-
-        {% if shipment_data.4 == 'Shipment' %}
-        <span class="badge" style="background: #2563eb;">Shipment Created</span>
-        {% elif shipment_data.4 == 'Processing' %}
-        <span class="badge" style="background: #f59e0b;">Processing</span>
-        {% elif shipment_data.4 == 'In Transit' %}
-        <span class="badge" style="background: #10b981;">In Transit</span>
-        {% elif shipment_data.4 == 'Delivered' %}
-        <span class="badge" style="background: #16a34a;">Delivered</span>
-        {% else %}
-        <span class="badge" style="background: #6b7280;">Unknown</span>
-        {% endif %}
-      </p>
-      <p><strong>Paid (Wei):</strong> {{ shipment_data.5 }}</p>
-      <p><strong>Gas Fee:</strong> {{ shipment_data.6 }}</p>
-      <p><strong>Created:</strong> {{ date_time }}</p>
-      <p><strong>Tx Hash:</strong> <span class="hash">{{ txt_hash }}</span></p>
-      <p><strong>Cargo Type:</strong> {{ cargo_type }}</p>
+      <div id="map"></div>
     </div>
 
-    <!-- SHIPPER -->
+    <!-- ROUTE VISUAL LEGEND -->
     <div class="card">
-      <div class="section-title">Shipper Information</div>
 
-      <p><strong>Company:</strong> {{ party_data.0.0 }}</p>
-      <p><strong>Full Name:</strong> {{ party_data.0.1 }}</p>
-      <p><strong>Phone:</strong> {{ party_data.0.2 }}</p>
-      <p><strong>Email:</strong> {{ party_data.0.3 }}</p>
-      <p><strong>Address:</strong> {{ party_data.0.4 }}</p>
-    </div>
+      <div class="section-title">Route Status Legend</div>
 
-    <!-- RECEIVER -->
-    <div class="card">
-      <div class="section-title">Receiver Information</div>
+      <div class="legend">
+        <div class="legend-item">
+          <span class="dot passed"></span> Passed
+        </div>
+        <div class="legend-item">
+          <span class="dot current"></span> Current
+        </div>
+        <div class="legend-item">
+          <span class="dot pending"></span> Pending
+        </div>
+      </div>
 
-      <p><strong>Company:</strong> {{ party_data.1.0 }}</p>
-      <p><strong>Full Name:</strong> {{ party_data.1.1 }}</p>
-      <p><strong>Phone:</strong> {{ party_data.1.2 }}</p>
-      <p><strong>Email:</strong> {{ party_data.1.3 }}</p>
-    </div>
+      <div class="section-title">Shipment Progress</div>
 
-    <!-- CARGO TABLE -->
-    <div class="card">
-      <div class="section-title">Cargo Details</div>
+      <div class="route-flow">
+        {% for p in route %}
 
-      <table>
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Qty / VIN</th>
-            <th>Value (CAD)</th>
-          </tr>
-        </thead>
+        <div class="route-step
+          {% if p.status == 'passed' %}step-passed
+          {% elif p.status == 'current' %}step-current
+          {% else %}step-pending{% endif %}">
 
-        <tbody>
-          {% for item in cargo_details %}
-          <tr>
-            <td>
-              {% if is_vehicle %}
-              Vehicle
-              {% else %}
-              Goods
-              {% endif %}
-            </td>
+          📍 {{ p.location }}
 
-            <td>
-              {% if is_vehicle %}
-              {{ item.vehicle_make }}
-              {% else %}
-              {{ item.goods_description }}
-              {% endif %}
-            </td>
+        </div>
 
-            <td>
-              {% if is_vehicle %}
-              {{ item.vehicle_vin }}
-              {% else %}
-              {{ item.goods_quantity }}
-              {% endif %}
-            </td>
+        {% endfor %}
+      </div>
+      <div style="text-align: center; margin-top: 10px; font-size: 18px; color: #94a3b8;">
 
-            <td>
-              {% if is_vehicle %}
-              {{ item.vehicle_cost_in_CAD }}
-              {% else %}
-              {{ item.goods_value_in_CAD }}
-              {% endif %}
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="4">No cargo found for this booking</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <p><strong>Receiver:</strong> {{ party_data.1.1 }}</p>
+        <p><strong>Reciever Company:</strong> {{ party_data.1.0 }}</p>
+        <p><strong>Booking Ref:</strong> {{ shipment_data.1 }}</p>
+        <p><strong>Date Created:</strong> {{ date_time }}</p>
+        <p><strong>Tx Hash:</strong> <span class="hash">{{ txt_hash }}</span></p>
+      </div>
+
     </div>
 
   </div>
 
+  <!-- SAFE ROUTE DATA -->
+  {{ route|json_script:"route-data" }}
+
+  <script>
+    const map = L.map('map');
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // -----------------------------
+    // LOAD DATA
+    // -----------------------------
+    let route = JSON.parse(document.getElementById("route-data").textContent || "[]");
+
+    let latlngs = [];
+
+    // -----------------------------
+    // ICON (bigger + visible)
+    // -----------------------------
+    const truckIcon = L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/1995/1995474.png",
+      iconSize: [50, 50],
+      iconAnchor: [25, 25]
+    });
+
+    let truck = null;
+
+    // -----------------------------
+    // BUILD ROUTE
+    // -----------------------------
+    route.forEach((p) => {
+      let lat = parseFloat(p.lat);
+      let lng = parseFloat(p.lng);
+
+      if (isNaN(lat) || isNaN(lng)) return;
+
+      let point = [lat, lng];
+      latlngs.push(point);
+
+      L.marker(point)
+        .addTo(map)
+        .bindPopup(p.location || "Location");
+
+      if (p.status === "current") {
+        truck = L.marker(point, { icon: truckIcon }).addTo(map);
+      }
+    });
+
+    // fallback if no "current"
+    if (!truck && latlngs.length) {
+      truck = L.marker(latlngs[0], { icon: truckIcon }).addTo(map);
+    }
+
+    // -----------------------------
+    // STATIC BASE LINE
+    // -----------------------------
+    let baseLine = null;
+
+    if (latlngs.length > 1) {
+      baseLine = L.polyline(latlngs, {
+        color: "#1e40af",
+        weight: 5,
+        opacity: 0.4
+      }).addTo(map);
+
+      map.fitBounds(baseLine.getBounds());
+    } else if (latlngs.length === 1) {
+      map.setView(latlngs[0], 6);
+    }
+
+    // -----------------------------
+    // ANIMATED DASH LINE
+    // -----------------------------
+    let dashLine = L.polyline(latlngs, {
+      color: "#3b82f6",
+      weight: 4,
+      dashArray: "10, 10"
+    }).addTo(map);
+
+    let dashOffset = 0;
+
+    function animateDash() {
+      dashOffset++;
+      dashLine.setStyle({
+        dashOffset: dashOffset
+      });
+      requestAnimationFrame(animateDash);
+    }
+
+    animateDash();
+
+    // -----------------------------
+    // SMOOTH MOVEMENT
+    // -----------------------------
+    function interpolate(a, b, t) {
+      return [
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t
+      ];
+    }
+
+    let segment = 0;
+    let progress = 0;
+
+    function moveTruckSmooth() {
+      if (!truck || latlngs.length < 2) return;
+
+      let start = latlngs[segment];
+      let end = latlngs[segment + 1];
+
+      progress += 0.02; // speed
+
+      if (progress >= 1) {
+        progress = 0;
+        segment++;
+
+        if (segment >= latlngs.length - 1) return;
+      }
+
+      let pos = interpolate(start, end, progress);
+      truck.setLatLng(pos);
+
+      // follow camera
+      map.panTo(pos, { animate: true, duration: 0.5 });
+
+      requestAnimationFrame(moveTruckSmooth);
+    }
+
+    if (latlngs.length > 1) {
+      moveTruckSmooth();
+    }
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,31 @@
+
+------URLs-----
+Admin URL: http://127.0.0.1:8000/admin/
+App URL: http://127.0.0.1:8000/apps/Login/
+
+All Users
+
+---Admin-----
+username:geoffrex
+Password:Jenik_freight@250
+Group: admin
+
+------Client/customer-----
+username:client1
+Password:Customer250
+Group: clients_team
+
+------Sales Team-----
+username:sales1
+Password:Jenik250
+Group: sales_team
+
+---WareHouse---
+username:warehouse1
+Password:Jenik250
+Group : ware_house
+
+---Finance---
+username:finance1
+Password:Jenik250
+Group : finance_team

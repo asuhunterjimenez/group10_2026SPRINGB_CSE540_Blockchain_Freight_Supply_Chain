@@ -20,14 +20,21 @@ load_dotenv()  # load from .env
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 from web3 import Web3
 
+TEST_RUNNER = "core.test_runner.MyTestRunner"
+
 #change in production
 #Ganache,remix,MetaMask details
 GANACHE_URL = os.getenv('GANACHE_URL')
 
+GANACHE_PRIVATE_KEY = os.getenv('GANACHE_PRIVATE_KEY')  #ganache account 2 private key
 COMPANY_MAIN_WALLET = Web3.to_checksum_address("0x381340d14a8d304FFaD95970636E046a61236396") #ganache account 2
 # PAYMENT_CONTRACT_ADDRESS = "0x8b564427D5F1AA731E51FcE3637cE291D284cfc8"
 PAYMENT_CONTRACT_ADDRESS="0x495b93504F0Aa82b3AD3B9A7A525719E1E72Af29" #ganache remix deployment
-SHIPMENT_CONTRACT_ADDRESS = "0x54D5268F82d3AD138c4cE511662515De36a9d71E" #ganache remix deployment
+SHIPMENT_CONTRACT_ADDRESS = "0x2D91eB47966bAeB060D6C9DBAb1470e8D489F682" #ganache remix deployment
+TRACKING_CONTRACT_ADDRESS = "0x82DC8D261E7C4009bB22f25f07c9c8bfFEc6F08b" #ganache remix deployment
+
+# ABIs - load from local folders
+TRACKING_CONTRACT_ABI="blockchain/abi/TrackingContractABI.json"
 
 
 PAYMENT_CONTRACT_ABI =[

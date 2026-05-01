@@ -37,7 +37,7 @@ class HomeView:
 
     @login_required
 
-    @group_required(['admin','clients_team','finance_team','sales_team'])
+    @group_required(['admin','clients_team','finance_team','sales_team','ware_house'])
 
     def dashboard(request):
 

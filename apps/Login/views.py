@@ -38,7 +38,7 @@ def generate_request_id():
 request_id = generate_request_id()
 
 @login_required
-@group_required(['admin','clients_team','finance_team','sales_team'])
+@group_required(['admin','clients_team','finance_team','sales_team','ware_house'])
 def dashboard(request):
    return render(request, 'Home/dashboard.html')
 
