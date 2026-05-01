@@ -274,8 +274,8 @@ Our project uses three smart contracts on Ethereum to handle payments and shipme
    - Every update emits blockchain events for: live progress bars,shipment history,admin dashboard updates,client-side tracking portal
 
 ### How FreightPayment.sol and FreightShipment.sol work together:
-- When a customer makes a payment (Payment.sol), it is linked to a freight quote.
-- Once the payment is confirmed, a shipment record (Shipment.sol) is created and tracked until delivery.
+- When a customer makes a payment (FreightPayment.sol), it is linked to a freight quote.
+- Once the payment is confirmed, a shipment record (FreightShipment.sol) is created and tracked until delivery.
 - Events from both contracts allow the frontend to update the UI in real-time.
 
     
